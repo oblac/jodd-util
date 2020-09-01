@@ -25,11 +25,11 @@
 
 package jodd.typeconverter.impl;
 
-import jodd.buffer.FastIntBuffer;
 import jodd.typeconverter.TypeConverter;
 import jodd.typeconverter.TypeConverterManager;
 import jodd.util.StringUtil;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -96,14 +96,14 @@ public class IntegerArrayConverter implements TypeConverter<int[]> {
 		if (value instanceof Iterable) {
 			final Iterable iterable = (Iterable) value;
 
-			final FastIntBuffer fastIntBuffer = new FastIntBuffer();
+			final ArrayList<Integer> intArrayList = new ArrayList<>();
 
 			for (final Object element : iterable) {
 				final int convertedValue = convertType(element);
-				fastIntBuffer.append(convertedValue);
+				intArrayList.add(convertedValue);
 			}
 
-			return fastIntBuffer.toArray();
+			return intArrayList.stream().mapToInt(integer -> integer).toArray();
 		}
 
 		if (value instanceof CharSequence) {

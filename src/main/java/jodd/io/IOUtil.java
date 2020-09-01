@@ -30,6 +30,8 @@ import jodd.Jodd;
 import javax.activation.DataSource;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.CharArrayWriter;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
@@ -61,13 +63,13 @@ public class IOUtil {
 			if (closeable instanceof Flushable) {
 				try {
 					((Flushable) closeable).flush();
-				} catch (IOException ignored) {
+				} catch (final IOException ignored) {
 				}
 			}
 
 			try {
 				closeable.close();
-			} catch (IOException ignored) {
+			} catch (final IOException ignored) {
 			}
 		}
 	}
@@ -84,8 +86,8 @@ public class IOUtil {
 	 * @throws IOException if there is an error reading or writing.
 	 */
 	public static int copy(final Reader input, final Writer output) throws IOException {
-		int numToRead = bufferSize();
-		char[] buffer = new char[numToRead];
+		final int numToRead = bufferSize();
+		final char[] buffer = new char[numToRead];
 
 		int totalRead = ZERO;
 		int read;
@@ -110,8 +112,8 @@ public class IOUtil {
 	 * @throws IOException if there is an error reading or writing.
 	 */
 	public static int copy(final InputStream input, final OutputStream output) throws IOException {
-		int numToRead = bufferSize();
-		byte[] buffer = new byte[numToRead];
+		final int numToRead = bufferSize();
+		final byte[] buffer = new byte[numToRead];
 
 		int totalRead = ZERO;
 		int read;
@@ -141,7 +143,7 @@ public class IOUtil {
 		}
 
 		int numToRead = count;
-		char[] buffer = new char[numToRead];
+		final char[] buffer = new char[numToRead];
 
 		int totalRead = ZERO;
 		int read;
@@ -177,7 +179,7 @@ public class IOUtil {
 		}
 
 		int numToRead = count;
-		byte[] buffer = new byte[numToRead];
+		final byte[] buffer = new byte[numToRead];
 
 		int totalRead = ZERO;
 		int read;
@@ -210,8 +212,8 @@ public class IOUtil {
 	 * @throws IOException if total read is less than {@link InputStream#available()};
 	 */
 	public static byte[] readAvailableBytes(final InputStream input) throws IOException {
-		int numToRead = input.available();
-		byte[] buffer = new byte[numToRead];
+		final int numToRead = input.available();
+		final byte[] buffer = new byte[numToRead];
 
 		int totalRead = ZERO;
 		int read;
@@ -256,37 +258,37 @@ public class IOUtil {
 	 * @see #copy(Reader, Writer, int)
 	 */
 	public static <T extends OutputStream> T copy(final Reader input, final T output, final String encoding, final int count) throws IOException {
-		try (Writer out = outputStreamWriterOf(output, encoding)) {
+		try (final Writer out = outputStreamWriterOf(output, encoding)) {
 			copy(input, out, count);
 			return output;
 		}
 	}
 
 	/**
-	 * Copies data from {@link DataSource} to a new {@link FastByteArrayOutputStream} and returns this.
+	 * Copies data from {@link DataSource} to a new {@link ByteArrayOutputStream} and returns this.
 	 *
 	 * @param input {@link DataSource} to copy from.
-	 * @return new {@link FastByteArrayOutputStream} with data from input.
+	 * @return new {@link ByteArrayOutputStream} with data from input.
 	 * @see #copyToOutputStream(InputStream)
 	 */
-	public static FastByteArrayOutputStream copyToOutputStream(final DataSource input) throws IOException {
+	public static ByteArrayOutputStream copyToOutputStream(final DataSource input) throws IOException {
 		return copyToOutputStream(input.getInputStream());
 	}
 
 	/**
 	 * @see #copyToOutputStream(InputStream, int)
 	 */
-	public static FastByteArrayOutputStream copyToOutputStream(final InputStream input) throws IOException {
+	public static ByteArrayOutputStream copyToOutputStream(final InputStream input) throws IOException {
 		return copyToOutputStream(input, ALL);
 	}
 
 	/**
-	 * Copies {@link InputStream} to a new {@link FastByteArrayOutputStream} using buffer and specified encoding.
+	 * Copies {@link InputStream} to a new {@link ByteArrayOutputStream} using buffer and specified encoding.
 	 *
 	 * @see #copy(InputStream, OutputStream, int)
 	 */
-	public static FastByteArrayOutputStream copyToOutputStream(final InputStream input, final int count) throws IOException {
-		try (FastByteArrayOutputStream output = createFastByteArrayOutputStream()) {
+	public static ByteArrayOutputStream copyToOutputStream(final InputStream input, final int count) throws IOException {
+		try (final ByteArrayOutputStream output = createFastByteArrayOutputStream()) {
 			copy(input, output, count);
 			return output;
 		}
@@ -295,31 +297,31 @@ public class IOUtil {
 	/**
 	 * @see #copyToOutputStream(Reader, String)
 	 */
-	public static FastByteArrayOutputStream copyToOutputStream(final Reader input) throws IOException {
+	public static ByteArrayOutputStream copyToOutputStream(final Reader input) throws IOException {
 		return copyToOutputStream(input, encoding());
 	}
 
 	/**
 	 * @see #copyToOutputStream(Reader, String, int)
 	 */
-	public static FastByteArrayOutputStream copyToOutputStream(final Reader input, final String encoding) throws IOException {
+	public static ByteArrayOutputStream copyToOutputStream(final Reader input, final String encoding) throws IOException {
 		return copyToOutputStream(input, encoding, ALL);
 	}
 
 	/**
 	 * @see #copyToOutputStream(Reader, String, int)
 	 */
-	public static FastByteArrayOutputStream copyToOutputStream(final Reader input, final int count) throws IOException {
+	public static ByteArrayOutputStream copyToOutputStream(final Reader input, final int count) throws IOException {
 		return copyToOutputStream(input, encoding(), count);
 	}
 
 	/**
-	 * Copies {@link Reader} to a new {@link FastByteArrayOutputStream} using buffer and specified encoding.
+	 * Copies {@link Reader} to a new {@link ByteArrayOutputStream} using buffer and specified encoding.
 	 *
 	 * @see #copy(Reader, OutputStream, String, int)
 	 */
-	public static FastByteArrayOutputStream copyToOutputStream(final Reader input, final String encoding, final int count) throws IOException {
-		try (FastByteArrayOutputStream output = createFastByteArrayOutputStream()) {
+	public static ByteArrayOutputStream copyToOutputStream(final Reader input, final String encoding, final int count) throws IOException {
+		try (final ByteArrayOutputStream output = createFastByteArrayOutputStream()) {
 			copy(input, output, encoding, count);
 			return output;
 		}
@@ -361,31 +363,31 @@ public class IOUtil {
 	/**
 	 * @see #copy(InputStream, String)
 	 */
-	public static FastCharArrayWriter copy(final InputStream input) throws IOException {
+	public static CharArrayWriter copy(final InputStream input) throws IOException {
 		return copy(input, encoding());
 	}
 
 	/**
 	 * @see #copy(InputStream, String, int)
 	 */
-	public static FastCharArrayWriter copy(final InputStream input, final int count) throws IOException {
+	public static CharArrayWriter copy(final InputStream input, final int count) throws IOException {
 		return copy(input, encoding(), count);
 	}
 
 	/**
 	 * @see #copy(InputStream, String, int)
 	 */
-	public static FastCharArrayWriter copy(final InputStream input, final String encoding) throws IOException {
+	public static CharArrayWriter copy(final InputStream input, final String encoding) throws IOException {
 		return copy(input, encoding, ALL);
 	}
 
 	/**
-	 * Copies {@link InputStream} to a new {@link FastCharArrayWriter} using buffer and specified encoding.
+	 * Copies {@link InputStream} to a new {@link CharArrayWriter} using buffer and specified encoding.
 	 *
 	 * @see #copy(InputStream, Writer, String, int)
 	 */
-	public static FastCharArrayWriter copy(final InputStream input, final String encoding, final int count) throws IOException {
-		try (FastCharArrayWriter output = createFastCharArrayWriter()) {
+	public static CharArrayWriter copy(final InputStream input, final String encoding, final int count) throws IOException {
+		try (final CharArrayWriter output = createFastCharArrayWriter()) {
 			copy(input, output, encoding, count);
 			return output;
 		}
@@ -394,30 +396,30 @@ public class IOUtil {
 	/**
 	 * @see #copy(Reader, int)
 	 */
-	public static FastCharArrayWriter copy(final Reader input) throws IOException {
+	public static CharArrayWriter copy(final Reader input) throws IOException {
 		return copy(input, ALL);
 	}
 
 	/**
-	 * Copies {@link Reader} to a new {@link FastCharArrayWriter} using buffer and specified encoding.
+	 * Copies {@link Reader} to a new {@link CharArrayWriter} using buffer and specified encoding.
 	 *
 	 * @see #copy(Reader, Writer, int)
 	 */
-	public static FastCharArrayWriter copy(final Reader input, final int count) throws IOException {
-		try (FastCharArrayWriter output = createFastCharArrayWriter()) {
+	public static CharArrayWriter copy(final Reader input, final int count) throws IOException {
+		try (final CharArrayWriter output = createFastCharArrayWriter()) {
 			copy(input, output, count);
 			return output;
 		}
 	}
 
 	/**
-	 * Copies data from {@link DataSource} to a new {@link FastCharArrayWriter} and returns this.
+	 * Copies data from {@link DataSource} to a new {@link CharArrayWriter} and returns this.
 	 *
 	 * @param input {@link DataSource} to copy from.
-	 * @return new {@link FastCharArrayWriter} with data from input.
+	 * @return new {@link CharArrayWriter} with data from input.
 	 * @see #copy(InputStream)
 	 */
-	public static FastCharArrayWriter copy(final DataSource input) throws IOException {
+	public static CharArrayWriter copy(final DataSource input) throws IOException {
 		return copy(input.getInputStream());
 	}
 
@@ -526,13 +528,13 @@ public class IOUtil {
 		}
 		int ch = input1.read();
 		while (ch != NEGATIVE_ONE) {
-			int ch2 = input2.read();
+			final int ch2 = input2.read();
 			if (ch != ch2) {
 				return false;
 			}
 			ch = input1.read();
 		}
-		int ch2 = input2.read();
+		final int ch2 = input2.read();
 		return (ch2 == NEGATIVE_ONE);
 	}
 
@@ -552,13 +554,13 @@ public class IOUtil {
 
 		int ch = input1.read();
 		while (ch != NEGATIVE_ONE) {
-			int ch2 = input2.read();
+			final int ch2 = input2.read();
 			if (ch != ch2) {
 				return false;
 			}
 			ch = input1.read();
 		}
-		int ch2 = input2.read();
+		final int ch2 = input2.read();
 		return (ch2 == NEGATIVE_ONE);
 	}
 
@@ -599,21 +601,16 @@ public class IOUtil {
 	// ---------------------------------------------------------------- wrappers
 
 	/**
-	 * Returns new {@link FastCharArrayWriter} using default IO buffer size.
+	 * Returns new {@link CharArrayWriter} using default IO buffer size.
 	 *
-	 * @return new {@link FastCharArrayWriter} using default IO buffer size.
+	 * @return new {@link CharArrayWriter} using default IO buffer size.
 	 */
-	private static FastCharArrayWriter createFastCharArrayWriter() {
-		return new FastCharArrayWriter(bufferSize());
+	private static CharArrayWriter createFastCharArrayWriter() {
+		return new CharArrayWriter(bufferSize());
 	}
 
-	/**
-	 * Returns new {@link FastByteArrayOutputStream} using default IO buffer size.
-	 *
-	 * @return new {@link FastByteArrayOutputStream} using default IO buffer size.
-	 */
-	private static FastByteArrayOutputStream createFastByteArrayOutputStream() {
-		return new FastByteArrayOutputStream(bufferSize());
+	private static ByteArrayOutputStream createFastByteArrayOutputStream() {
+		return new ByteArrayOutputStream(bufferSize());
 	}
 
 	/**

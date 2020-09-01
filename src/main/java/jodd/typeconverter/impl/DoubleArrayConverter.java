@@ -103,14 +103,7 @@ public class DoubleArrayConverter implements TypeConverter<double[]> {
 				doubleArrayList.add(Double.valueOf(convertedValue));
 			}
 
-			final double[] array = new double[doubleArrayList.size()];
-
-			for (int i = 0; i < doubleArrayList.size(); i++) {
-				final Double d = doubleArrayList.get(i);
-				array[i] = d.doubleValue();
-			}
-
-			return array;
+			return doubleArrayList.stream().mapToDouble(d -> d).toArray();
 		}
 
 		if (value instanceof CharSequence) {
