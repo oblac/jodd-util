@@ -1,0 +1,208 @@
+// Copyright (c) 2003-present, Jodd Team (http://jodd.org)
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+// 1. Redistributions of source code must retain the above copyright notice, this
+//    list of conditions and the following disclaimer.
+//
+// 2. Redistributions in binary form must reproduce the above copyright notice,
+//    this list of conditions and the following disclaimer in the documentation
+//    and/or other materials provided with the distribution.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+// FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+// DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+// SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+// CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+// OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+// Copyright (c) 2003-present, Jodd Team (https://jodd.org)
+
+plugins {
+	id 'java-library'
+	id 'maven-publish'
+	id 'jacoco'
+	id 'signing'
+	id 'io.codearte.nexus-staging' version '0.21.2'
+}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+group = 'org.jodd'
+//version = '6.0.0.' + timestamp() + "-SNAPSHOT"
+version = '6.0.0'
+
+rootProject.description = 'Jodd Util'
+
+ext {
+}
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+	withSourcesJar()
+	withJavadocJar()
+}
+
+dependencies {
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.+'
+	testImplementation 'org.junit.jupiter:junit-jupiter-params:5.6.+'
+	testImplementation 'org.mockito:mockito-core:3.5.5'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.6.+'
+}
+
+jar {
+	manifest {
+		attributes(
+				'Implementation-Title': project.name,
+				'Implementation-Version': project.version,
+				'Debug-Info': 'on',
+				'Built-By': 'jodd.org'
+		)
+	}
+}
+
+javadoc {
+	options.addStringOption('Xdoclint:none', '-quiet')
+	if (JavaVersion.current().isJava9Compatible()) {
+		options.addBooleanOption('html5', true)
+	}
+}
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "standardOut", "passed", "skipped", "failed"
+		showExceptions true
+		exceptionFormat "full"
+		showCauses true
+		showStackTraces true
+
+		afterSuite { desc, result ->
+			if (!desc.parent) { // will match the outermost suite
+				def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+				def startItem = '|  ', endItem = '  |'
+				def repeatLength = startItem.length() + output.length() + endItem.length()
+				println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+			}
+		}
+	}
+	jacoco {
+		excludes += ['*Test*', '*.?', '*.fixtures.*']
+	}
+}
+
+jacocoTestReport {
+    reports {
+		xml.enabled false
+		csv.enabled false
+		html.enabled true
+	}
+}
+
+//
+// PUBLISH
+//
+
+ext.admin = hasProperty('sonatypeUsername')
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifactId = 'jodd-util'
+			from components.java
+			versionMapping {
+				usage('java-api') {
+					fromResolutionOf('runtimeClasspath')
+				}
+				usage('java-runtime') {
+					fromResolutionResult()
+				}
+			}
+			pom {
+				name = 'Jodd Util'
+				description = 'Jodd Util'
+				url = 'https://util.jodd.org'
+				licenses {
+					license {
+						name = 'BSD-2-Clause'
+						url = 'https://github.com/oblac/jodd-util/blob/master/LICENSE'
+					}
+				}
+				developers {
+					developer {
+						id = 'igor'
+						name = 'Igor Spasić'
+						email = 'igor@jodd.org'
+						timezone = '+1'
+					}
+				}
+				scm {
+					url = 'https://github.com/oblac/jodd-util.git'
+					connection = 'scm:git:git://github.com/oblac/jodd-util.git'
+					developerConnection = 'scm:git:ssh://git@github.com/oblac/jodd-util.git'
+				}
+			}
+		}
+	}
+	repositories {
+		maven {
+			def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+			def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+			url = version.contains('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+			if (admin) {
+				credentials {
+					username sonatypeUsername
+					password sonatypePassword
+				}
+			}
+		}
+	}
+}
+
+signing {
+	required { admin }
+	sign publishing.publications.mavenJava
+}
+
+task install(dependsOn: publishToMavenLocal) {
+	group = 'Publishing'
+	description = 'Installs artifacts to local Maven repository'
+}
+
+//
+// RELEASE
+//
+
+task release() {
+	group 'Project'
+	description 'Rebuilds everything for the release.'
+
+	dependsOn clean
+	dependsOn build
+	dependsOn javadoc
+	dependsOn jacocoTestReport
+}
+
+
+//
+// UTILS
+//
+
+apply from: "${rootProject.projectDir}/gradle/license.gradle"
+
+tasks.named('wrapper') {
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+static def timestamp() {
+    return new Date().format('yyyyMMddHHmmss')
+}
