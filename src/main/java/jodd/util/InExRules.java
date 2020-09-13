@@ -51,45 +51,61 @@ public class InExRules<V, P> {
 	}
 
 	public boolean match(final V value) {
-		return apply(value, inExType == InExType.BLACKLIST);
-	}
-
-	public boolean apply(final V value, final boolean inputValue) {
-		boolean matchIncludes = false;
-		for (final Predicate<V> includePredicate : includePatterns) {
-			if (includePredicate.test(value)) {
-				matchIncludes = true;
-				break;
-			}
-		}
-
-		boolean matchExcludes = false;
-		for (final Predicate<V> exclude : excludePatterns) {
-			if (exclude.test(value)) {
-				matchExcludes = true;
-				break;
-			}
-		}
-
-		// resolution
+		boolean flag = inExType == InExType.BLACKLIST;
 
 		if (inExType == InExType.BLACKLIST) {
-			if (matchExcludes) {
-				if (includePatterns.isEmpty()) {
-					return false;
-				}
-				return matchIncludes;
-			}
+			flag = processExcludes(value, flag);
+			flag = processIncludes(value, flag);
 		}
 		else {
-			if (matchIncludes) {
-				if (excludePatterns.isEmpty()) {
-					return true;
-				}
-				return !matchExcludes;
+			flag = processIncludes(value, flag);
+			flag = processExcludes(value, flag);
+		}
+		return flag;
+	}
+
+	public boolean apply(final V value, boolean flag) {
+		if (inExType == InExType.BLACKLIST) {
+			flag = processExcludes(value, flag);
+			flag = processIncludes(value, flag);
+		}
+		else {
+			flag = processIncludes(value, flag);
+			flag = processExcludes(value, flag);
+		}
+		return flag;
+	}
+
+	protected boolean processIncludes(final V value, boolean include) {
+		if (includePatterns.isEmpty()) {
+			return include;
+		}
+		if (include) {
+			return include;
+		}
+		for (final Predicate<V> includePredicate : includePatterns) {
+			if (includePredicate.test(value)) {
+				include = true;
+				break;
 			}
 		}
-		return inputValue;
+		return include;
+	}
+
+	protected boolean processExcludes(final V value, boolean include) {
+		if (excludePatterns.isEmpty()) {
+			return include;
+		}
+		if (!include) {
+			return include;
+		}
+		for (final Predicate<V> excludePredicate : excludePatterns) {
+			if (excludePredicate.test(value)) {
+				include = false;
+				break;
+			}
+		}
+		return include;
 	}
 
 }
