@@ -29,6 +29,7 @@ import jodd.Jodd;
 import jodd.util.StringUtil;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
 
 /**
  * URL decoder.
@@ -49,7 +50,7 @@ public class URLDecoder {
 	 * @see #decodeQuery(String, String)
 	 */
 	public static String decode(final String source, final String encoding) {
-		return decode(source, encoding, false);
+		return decode(source, Charset.forName(encoding), false);
 	}
 
 	/**
@@ -63,12 +64,12 @@ public class URLDecoder {
 	 * Decodes query name or value.
 	 */
 	public static String decodeQuery(final String source, final String encoding) {
-		return decode(source, encoding, true);
+		return decode(source, Charset.forName(encoding), true);
 	}
 
-	private static String decode(final String source, final String encoding, final boolean decodePlus) {
-		int length = source.length();
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+	private static String decode(final String source, final Charset encoding, final boolean decodePlus) {
+		final int length = source.length();
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 
 		boolean changed = false;
 
@@ -77,10 +78,10 @@ public class URLDecoder {
 			switch (ch) {
 				case '%':
 					if ((i + 2) < length) {
-						char hex1 = source.charAt(i + 1);
-						char hex2 = source.charAt(i + 2);
-						int u = Character.digit(hex1, 16);
-						int l = Character.digit(hex2, 16);
+						final char hex1 = source.charAt(i + 1);
+						final char hex2 = source.charAt(i + 2);
+						final int u = Character.digit(hex1, 16);
+						final int l = Character.digit(hex2, 16);
 						if (u == -1 || l == -1) {
 							throw new IllegalArgumentException("Invalid sequence: " + source.substring(i));
 						}

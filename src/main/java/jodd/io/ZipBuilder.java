@@ -25,13 +25,13 @@
 
 package jodd.io;
 
-import jodd.util.StringPool;
 import jodd.util.StringUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.zip.ZipOutputStream;
 
 /**
@@ -86,7 +86,7 @@ public class ZipBuilder {
 			try {
 				return FileUtil.readBytes(targetZipFile);
 			}
-			catch (IOException ignore) {
+			catch (final IOException ignore) {
 				return null;
 			}
 		}
@@ -146,7 +146,7 @@ public class ZipBuilder {
 	// ---------------------------------------------------------------- add content
 
 	public AddContentToZip add(final String content) {
-		return new AddContentToZip(StringUtil.getBytes(content, StringPool.UTF_8));
+		return new AddContentToZip(StringUtil.getBytes(content, StandardCharsets.UTF_8.name()));
 	}
 
 	public AddContentToZip add(final byte[] content) {

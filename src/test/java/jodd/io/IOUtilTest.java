@@ -25,10 +25,9 @@
 
 package jodd.io;
 
-import jodd.Jodd;
-import jodd.util.SystemUtil;
 import jodd.util.ArraysUtil;
 import jodd.util.MathUtil;
+import jodd.util.SystemUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -69,7 +68,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>
  * Tests are grouped in nested classes.
  */
-class StreamUtilTest {
+class IOUtilTest {
 
     static final File BASE_DIR = new File(SystemUtil.info().getTempDir(), "jodd/StreamUtilTest");
 
@@ -148,8 +147,8 @@ class StreamUtilTest {
 
             final String text = new String("jodd and german umlauts öäü".getBytes(),Charset.forName("ISO-8859-1"));
 
-            boolean actual;
-            try (StringReader reader_1 = new StringReader(text); StringReader reader_2 = new StringReader(text)) {
+            final boolean actual;
+            try (final StringReader reader_1 = new StringReader(text); final StringReader reader_2 = new StringReader(text)) {
                 actual = IOUtil.compare(reader_1, reader_2);
             }
 
@@ -163,9 +162,9 @@ class StreamUtilTest {
             final String text_1 = "jodd and german umlauts öäü";
             final String text_2 = new String(text_1.getBytes(),Charset.forName("ISO-8859-1"));
 
-            boolean actual;
+            final boolean actual;
 
-            try (StringReader reader_1 = new StringReader(text_1); StringReader reader_2 = new StringReader(text_2)) {
+            try (final StringReader reader_1 = new StringReader(text_1); final StringReader reader_2 = new StringReader(text_2)) {
                 actual = IOUtil.compare(reader_1, reader_2);
             }
 
@@ -174,16 +173,16 @@ class StreamUtilTest {
         }
 
         @Test
-        void testCompareWithInputStreams_ExpectedSuccessfulCompare(TestInfo testInfo) throws Exception {
+        void testCompareWithInputStreams_ExpectedSuccessfulCompare(final TestInfo testInfo) throws Exception {
 
             final String text = "jodd makes fun!" + System.lineSeparator();
-            final File file = new File(StreamUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + ".txt");
+            final File file = new File(IOUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + ".txt");
             FileUtil.writeString(file, text, "UTF-8");
 
-            boolean actual;
+            final boolean actual;
 
-            try (ByteArrayInputStream in1 = new ByteArrayInputStream(text.getBytes());
-                 FileInputStream in2 = new FileInputStream(file)) {
+            try (final ByteArrayInputStream in1 = new ByteArrayInputStream(text.getBytes());
+                 final FileInputStream in2 = new FileInputStream(file)) {
                 actual = IOUtil.compare(in1, in2);
             }
 
@@ -192,16 +191,16 @@ class StreamUtilTest {
         }
 
         @Test
-        void testCompareWithInputStreams_ExpectedNoSuccessfulCompare(TestInfo testInfo) throws Exception {
+        void testCompareWithInputStreams_ExpectedNoSuccessfulCompare(final TestInfo testInfo) throws Exception {
 
             final String text = "jodd makes fun!";
-            final File file = new File(StreamUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + ".txt");
+            final File file = new File(IOUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + ".txt");
             FileUtil.writeString(file, " " + text, "UTF-8");
 
-            boolean actual;
+            final boolean actual;
 
-            try (ByteArrayInputStream in1 = new ByteArrayInputStream(text.getBytes());
-                 FileInputStream in2 = new FileInputStream(file)) {
+            try (final ByteArrayInputStream in1 = new ByteArrayInputStream(text.getBytes());
+                 final FileInputStream in2 = new FileInputStream(file)) {
                 actual = IOUtil.compare(in1, in2);
             }
 
@@ -264,7 +263,7 @@ class StreamUtilTest {
     class ReadChars {
 
         @Test
-        void testReadChars_InputStream(TestInfo testInfo) throws Exception {
+        void testReadChars_InputStream(final TestInfo testInfo) throws Exception {
 
             final String text = "jodd - Get things done!" + System.lineSeparator();
             final char[] expected = text.toCharArray();
@@ -274,7 +273,7 @@ class StreamUtilTest {
 
             char[] actual = null;
 
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try (final FileInputStream inputStream = new FileInputStream(file)) {
                 actual = IOUtil.readChars(inputStream);
             }
 
@@ -286,7 +285,7 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testReadChars_InputStream_CharCount")
-        void testReadChars_InputStream_CharCount(char[] expected, String text, int charCount, TestInfo testInfo ) throws Exception {
+        void testReadChars_InputStream_CharCount(final char[] expected, final String text, final int charCount, final TestInfo testInfo ) throws Exception {
 
             final int random = MathUtil.randomInt(1, 2500);
             final File file = new File(BASE_DIR, testInfo.getTestMethod().get().getName() + "." + random);
@@ -295,7 +294,7 @@ class StreamUtilTest {
 
             char[] actual = null;
 
-            try (FileInputStream inputStream = new FileInputStream(file)) {
+            try (final FileInputStream inputStream = new FileInputStream(file)) {
                 actual = IOUtil.readChars(inputStream, charCount);
             }
 
@@ -315,11 +314,11 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testReadChars_InputStream_Encoding")
-        void testReadChars_InputStream_Encoding(char[] expected, String text, String encoding) throws Exception {
+        void testReadChars_InputStream_Encoding(final char[] expected, final String text, final String encoding) throws Exception {
 
             char[] actual = null;
 
-            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
+            try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
                 actual = IOUtil.readChars(inputStream, encoding);
             }
 
@@ -338,11 +337,11 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testReadChars_InputStream_Encoding_CharCount")
-        void testReadChars_InputStream_Encoding_CharCount(char[] expected, String text, String encoding, int charCount) throws Exception {
+        void testReadChars_InputStream_Encoding_CharCount(final char[] expected, final String text, final String encoding, final int charCount) throws Exception {
 
             char[] actual = null;
 
-            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
+            try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
                 actual = IOUtil.readChars(inputStream, encoding, charCount);
             }
 
@@ -362,11 +361,11 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testReadChars_Reader")
-        void testReadChars_Reader(char[] expected, String text) throws Exception {
+        void testReadChars_Reader(final char[] expected, final String text) throws Exception {
 
             char[] actual = null;
 
-            try (StringReader reader = new StringReader(text)) {
+            try (final StringReader reader = new StringReader(text)) {
                 actual = IOUtil.readChars(reader);
             }
 
@@ -385,11 +384,11 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testReadChars_Reader_CharCount")
-        void testReadChars_Reader_CharCount(char[] expected, String text, int charCount) throws Exception {
+        void testReadChars_Reader_CharCount(final char[] expected, final String text, final int charCount) throws Exception {
 
             char[] actual = null;
 
-            try (StringReader reader = new StringReader(text)) {
+            try (final StringReader reader = new StringReader(text)) {
                 actual = IOUtil.readChars(reader, charCount);
             }
 
@@ -415,11 +414,11 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testReadBytes_InputStream")
-        void testReadBytes_InputStream(byte[] expected, String text) throws Exception {
+        void testReadBytes_InputStream(final byte[] expected, final String text) throws Exception {
 
             byte[] actual = null;
 
-            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
+            try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
                 actual = IOUtil.readBytes(inputStream);
             }
 
@@ -438,11 +437,11 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testReadBytes_InputStream_ByteCount")
-        void testReadBytes_InputStream_ByteCount(byte[] expected, String text, int byteCount) throws Exception {
+        void testReadBytes_InputStream_ByteCount(final byte[] expected, final String text, final int byteCount) throws Exception {
 
             byte[] actual = null;
 
-            try (ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
+            try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
                 actual = IOUtil.readBytes(inputStream, byteCount);
             }
 
@@ -462,11 +461,11 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testReadBytes_Reader")
-        void testReadBytes_Reader(byte[] expected, String text) throws Exception {
+        void testReadBytes_Reader(final byte[] expected, final String text) throws Exception {
 
             byte[] actual = null;
 
-            try (StringReader reader = new StringReader(text)) {
+            try (final StringReader reader = new StringReader(text)) {
                 actual = IOUtil.readBytes(reader);
             }
 
@@ -485,11 +484,11 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testReadBytes_Reader_ByteCount")
-        void testReadBytes_Reader_ByteCount(byte[] expected, String text, int byteCount) throws Exception {
+        void testReadBytes_Reader_ByteCount(final byte[] expected, final String text, final int byteCount) throws Exception {
 
             byte[] actual = null;
 
-            try (StringReader reader = new StringReader(text)) {
+            try (final StringReader reader = new StringReader(text)) {
                 actual = IOUtil.readBytes(reader, byteCount);
             }
 
@@ -510,16 +509,16 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testReadBytes_Reader_Encoding")
-        void testReadBytes_Reader_Encoding(byte[] expected, String text, String encoding, TestInfo testInfo) throws Exception {
+        void testReadBytes_Reader_Encoding(final byte[] expected, final String text, final String encoding, final TestInfo testInfo) throws Exception {
 
             final int random = MathUtil.randomInt(1, 2500);
-            final File file = new File(StreamUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + random);
+            final File file = new File(IOUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + random);
 
             FileUtil.writeString(file, text, encoding);
 
             byte[] actual = null;
 
-            try (FileReader reader = new FileReader(file)) {
+            try (final FileReader reader = new FileReader(file)) {
                 actual = IOUtil.readBytes(reader, encoding);
             }
 
@@ -538,16 +537,16 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testReadBytes_Reader_Encoding_ByteCount")
-        void testReadBytes_Reader_Encoding_ByteCount(byte[] expected, String text, String encoding, int byteCount, TestInfo testInfo) throws Exception {
+        void testReadBytes_Reader_Encoding_ByteCount(final byte[] expected, final String text, final String encoding, final int byteCount, final TestInfo testInfo) throws Exception {
 
             final int random = MathUtil.randomInt(1, 2500);
-            final File file = new File(StreamUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + random);
+            final File file = new File(IOUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + random);
 
             FileUtil.writeString(file, text, encoding);
 
             byte[] actual = null;
 
-            try (FileReader reader = new FileReader(file)) {
+            try (final FileReader reader = new FileReader(file)) {
                 actual = IOUtil.readBytes(reader, encoding, byteCount);
             }
 
@@ -574,8 +573,8 @@ class StreamUtilTest {
         @Test
         void testCopy_Inputstream_Outputstream() throws Exception {
 
-            try (ByteArrayInputStream in = new ByteArrayInputStream("input".getBytes());
-                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            try (final ByteArrayInputStream in = new ByteArrayInputStream("input".getBytes());
+                 final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
                 IOUtil.copy(in, out);
 
@@ -587,10 +586,10 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testCopy_Inputstream_Outputstream_ByteCount")
-        void testCopy_Inputstream_Outputstream_ByteCount(String expected, String text, int byteCount) throws Exception {
+        void testCopy_Inputstream_Outputstream_ByteCount(final String expected, final String text, final int byteCount) throws Exception {
 
-            try (ByteArrayInputStream in = new ByteArrayInputStream(text.getBytes());
-                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            try (final ByteArrayInputStream in = new ByteArrayInputStream(text.getBytes());
+                 final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
                 IOUtil.copy(in, out, byteCount);
 
@@ -602,7 +601,7 @@ class StreamUtilTest {
 
         Stream<Arguments> testdata_testCopy_Inputstream_Outputstream_ByteCount() {
             return Stream.of(
-                    Arguments.of("The Unbearable Lightness of Java", "The Unbearable Lightness of Java", Jodd.ioBufferSize + 250),
+                    Arguments.of("The Unbearable Lightness of Java", "The Unbearable Lightness of Java", IOUtil.ioBufferSize + 250),
                     Arguments.of("j", "jodd" , 1),
                     Arguments.of("jodd makes fun!", "jodd makes fun!",  15),
                     Arguments.of("", "text does not matter",  0)
@@ -611,10 +610,10 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testCopy_Inputstream_Writer_Encoding")
-        void testCopy_Inputstream_Writer_Encoding(String expected, String text, String encoding) throws Exception {
+        void testCopy_Inputstream_Writer_Encoding(final String expected, final String text, final String encoding) throws Exception {
 
-            try (ByteArrayInputStream in = new ByteArrayInputStream(text.getBytes());
-                 StringWriter writer = new StringWriter()) {
+            try (final ByteArrayInputStream in = new ByteArrayInputStream(text.getBytes());
+                 final StringWriter writer = new StringWriter()) {
 
                 IOUtil.copy(in, writer, encoding );
 
@@ -634,10 +633,10 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testCopy_Inputstream_Writer_Encoding_ByteCount")
-        void testCopy_Inputstream_Writer_Encoding_ByteCount(String expected, String text, String encoding, int byteCount) throws Exception {
+        void testCopy_Inputstream_Writer_Encoding_ByteCount(final String expected, final String text, final String encoding, final int byteCount) throws Exception {
 
-            try (ByteArrayInputStream in = new ByteArrayInputStream(text.getBytes());
-                 StringWriter writer = new StringWriter()) {
+            try (final ByteArrayInputStream in = new ByteArrayInputStream(text.getBytes());
+                 final StringWriter writer = new StringWriter()) {
 
                 IOUtil.copy(in, writer, encoding, byteCount );
 
@@ -657,10 +656,10 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testCopy_Reader_Outpustream_Encoding")
-        void testCopy_Reader_Outpustream_Encoding(byte[] expected, String text, String encoding) throws Exception {
+        void testCopy_Reader_Outpustream_Encoding(final byte[] expected, final String text, final String encoding) throws Exception {
 
-            try (StringReader reader = new StringReader(text);
-                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (final StringReader reader = new StringReader(text);
+                 final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
                 IOUtil.copy(reader, outputStream, encoding);
 
@@ -681,10 +680,10 @@ class StreamUtilTest {
 
         @ParameterizedTest
         @MethodSource("testdata_testCopy_Reader_Outpustream_Encoding_CharCount")
-        void testCopy_Reader_Outpustream_Encoding_CharCount(byte[] expected, String text, String encoding, int charCount) throws Exception {
+        void testCopy_Reader_Outpustream_Encoding_CharCount(final byte[] expected, final String text, final String encoding, final int charCount) throws Exception {
 
-            try (StringReader reader = new StringReader(text);
-                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (final StringReader reader = new StringReader(text);
+                 final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
                 IOUtil.copy(reader, outputStream, encoding, charCount);
 
@@ -705,30 +704,30 @@ class StreamUtilTest {
 
     @Test
     void testCopy_all() throws IOException {
-    	byte[] bytes = randomBuffer(128 * 1024*1024);
+    	final byte[] bytes = randomBuffer(128 * 1024*1024);
 
-    	InputStream inputStream = new ByteArrayInputStream(bytes);
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    	final InputStream inputStream = new ByteArrayInputStream(bytes);
+		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		IOUtil.copy(inputStream, outputStream);
-		byte[] outBytes = outputStream.toByteArray();
+		final byte[] outBytes = outputStream.toByteArray();
 
 		assertArrayEquals(bytes, outBytes);
     }
 
     @Test
     void testCopy_withSize() throws IOException {
-    	byte[] bytes = randomBuffer(128 * 1024*1024);
+    	final byte[] bytes = randomBuffer(128 * 1024*1024);
 
-    	InputStream inputStream = new ByteArrayInputStream(bytes);
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    	final InputStream inputStream = new ByteArrayInputStream(bytes);
+		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		IOUtil.copy(inputStream, outputStream, bytes.length);
-		byte[] outBytes = outputStream.toByteArray();
+		final byte[] outBytes = outputStream.toByteArray();
 
 		assertArrayEquals(bytes, outBytes);
     }
 
-    private byte[] randomBuffer(int size) {
-    	byte[] bytes = new byte[size];
+    private byte[] randomBuffer(final int size) {
+    	final byte[] bytes = new byte[size];
 		for (int i = 0; i < size; i++) {
 			bytes[i] = (byte) MathUtil.randomInt(Byte.MIN_VALUE, Byte.MAX_VALUE);
 		}

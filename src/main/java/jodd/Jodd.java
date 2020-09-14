@@ -25,8 +25,8 @@
 
 package jodd;
 
-import jodd.util.StringPool;
-
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.Security;
 
 /**
@@ -54,17 +54,8 @@ public class Jodd {
 	// ---------------------------------------------------------------- settings
 
 	/**
-	 * Default prefix for temporary files.
-	 */
-	public static String tempFilePrefix = "jodd-";
-
-	/**
 	 * The encoding used across the Jodd classes, "UTF-8" by default.
 	 */
-	public static String encoding = StringPool.UTF_8;
+	public static Charset encoding = StandardCharsets.UTF_8;
 
-	/**
-	 * Buffer size for various I/O operations.
-	 */
-	public static int ioBufferSize = 16384;
 }

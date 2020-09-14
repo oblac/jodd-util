@@ -33,8 +33,6 @@ import java.util.Collections;
 import java.util.Locale;
 
 import static jodd.util.ArraysUtil.array;
-import static jodd.util.StringPool.ISO_8859_1;
-import static jodd.util.StringPool.UTF_8;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -355,7 +353,7 @@ class StringUtilTest {
 
 	@Test
 	void testRemove() {
-		String s = "qwertyq";
+		final String s = "qwertyq";
 		assertEquals("qwertyq", StringUtil.remove(s, "W"));
 		assertEquals("qertyq", StringUtil.remove(s, "w"));
 		assertEquals("", StringUtil.remove(s, "qwertyq"));
@@ -374,7 +372,7 @@ class StringUtilTest {
 
 	@Test
 	void testArrays() {
-		String s = "qwertyuiop";
+		final String s = "qwertyuiop";
 
 		assertEquals("qWERtyuIOp", StringUtil.replace(s, new String[]{"wer", "io"}, new String[]{"WER", "IO"}));
 		assertEquals("qwertyuiop", StringUtil.replace(s, new String[]{"wer1", "io1"}, new String[]{"WER", "IO"}));
@@ -400,7 +398,7 @@ class StringUtilTest {
 
 	@Test
 	void testRanges() {
-		String s = "qwertyiop";
+		final String s = "qwertyiop";
 
 		assertEquals(1, StringUtil.indexOf(s, "wer", 0, 5));
 		assertEquals(1, StringUtil.indexOf(s, 'w', 0, 5));
@@ -568,13 +566,13 @@ class StringUtilTest {
 		assertNull(strings[2]);
 		assertNull(strings[3]);
 
-		String s = " \t123\t ";
+		final String s = " \t123\t ";
 		assertEquals("123\t ", StringUtil.trimLeft(s));
 		assertEquals(" \t123", StringUtil.trimRight(s));
 	}
 
 
-	void checkInts(int x, int y, int z, int w, int[] arr) {
+	void checkInts(final int x, final int y, final int z, final int w, final int[] arr) {
 		assertNotNull(arr);
 		assertEquals(x, arr[0], "1.arg");
 		assertEquals(y, arr[1], "2.arg");
@@ -649,7 +647,7 @@ class StringUtilTest {
 
 	@Test
 	void testReplaceChar() {
-		String s = "1234567890";
+		final String s = "1234567890";
 
 		assertEquals("x234567890", StringUtil.replaceChar(s, '1', 'x'));
 		assertEquals("x2yz567890", StringUtil.replaceChars(s, new char[] {'1', '3', '4'}, new char[] {'x', 'y', 'z'}));
@@ -707,7 +705,7 @@ class StringUtilTest {
 
 	@Test
 	void testCount() {
-		String s = "qwertywer";
+		final String s = "qwertywer";
 		assertEquals(0, StringUtil.count(s, "xxx"));
 		assertEquals(0, StringUtil.count(s, ""));
 		assertEquals(1, StringUtil.count(s, "qwe"));
@@ -730,7 +728,7 @@ class StringUtilTest {
 
 	@Test
 	void testIndexOfChars() {
-		String s = "12345qwerty";
+		final String s = "12345qwerty";
 		assertEquals(0, StringUtil.indexOfChars(s, "1q"));
 		assertEquals(0, StringUtil.indexOfChars(s, "1q", 0));
 		assertEquals(5, StringUtil.indexOfChars(s, "1q", 1));
@@ -871,7 +869,7 @@ class StringUtilTest {
 		assertEquals(" ", StringUtil.crop(" "));
 		assertNull(StringUtil.crop(""));
 
-		String[] s = new String[]{" ", null, ""};
+		final String[] s = new String[]{" ", null, ""};
 		StringUtil.cropAll(s);
 		assertEquals(" ", s[0]);
 		assertNull(s[1]);
@@ -924,9 +922,9 @@ class StringUtilTest {
 
 	@Test
 	void testCharset() {
-		assertEquals("123", StringUtil.convertCharset("123", UTF_8, UTF_8));
-		assertEquals("123", StringUtil.convertCharset("123", ISO_8859_1, UTF_8));
-		String s = StringUtil.convertCharset("\250\275", UTF_8, ISO_8859_1);
+		assertEquals("123", StringUtil.convertCharset("123", "UTF-8", "UTF-8"));
+		assertEquals("123", StringUtil.convertCharset("123", "ISO-8859-1", "UTF-8"));
+		final String s = StringUtil.convertCharset("\250\275", "UTF-8", "ISO-8859-1");
 		assertEquals(4, s.length());
 		assertEquals(194, s.charAt(0));
 		assertEquals(168, s.charAt(1));
@@ -936,7 +934,7 @@ class StringUtilTest {
 		try {
 			assertEquals("123", StringUtil.convertCharset("123", "yyy", "xxx"));
 			fail("error");
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			// ignore
 		}
 	}
@@ -1071,7 +1069,7 @@ class StringUtilTest {
 		try {
 			StringUtil.toStringArray(new char[]{'a','b'});
 			fail("error");
-		} catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			// ignore
 		}
 	}

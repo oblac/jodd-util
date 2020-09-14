@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Properties;
 
@@ -154,12 +155,10 @@ public class PropertiesUtil {
 	 * Loads properties from string.
 	 */
 	public static void loadFromString(final Properties p, final String data) throws IOException {
-		try (final ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes(StringPool.ISO_8859_1))) {
+		try (final ByteArrayInputStream is = new ByteArrayInputStream(data.getBytes(StandardCharsets.ISO_8859_1))) {
 			p.load(is);
 		}
 	}
-
-
 
 	// ---------------------------------------------------------------- subsets
 

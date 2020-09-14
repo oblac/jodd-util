@@ -48,6 +48,11 @@ import java.io.Writer;
  */
 public class IOUtil {
 
+	/**
+	 * Buffer size for various I/O operations.
+	 */
+	public static int ioBufferSize = 16384;
+
 	private static final int ZERO = 0;
 	private static final int NEGATIVE_ONE = -1;
 	private static final int ALL = -1;
@@ -572,7 +577,7 @@ public class IOUtil {
 	 * @return default IO buffer size.
 	 */
 	private static int bufferSize() {
-		return Jodd.ioBufferSize;
+		return ioBufferSize;
 	}
 
 	/**
@@ -582,12 +587,8 @@ public class IOUtil {
 	 * @return buffer size (either count or default IO buffer size, whichever is smaller).
 	 */
 	private static int bufferSize(final int count) {
-		final int ioBufferSize = Jodd.ioBufferSize;
-		if (count < ioBufferSize) {
-			return count;
-		} else {
-			return ioBufferSize;
-		}
+		final int ioBufferSize = IOUtil.ioBufferSize;
+		return Math.min(count, ioBufferSize);
 	}
 
 	/**
@@ -595,7 +596,7 @@ public class IOUtil {
 	 * @return default encoding.
 	 */
 	private static String encoding() {
-		return Jodd.encoding;
+		return Jodd.encoding.name();
 	}
 
 	// ---------------------------------------------------------------- wrappers

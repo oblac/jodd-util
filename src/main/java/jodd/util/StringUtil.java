@@ -28,6 +28,7 @@ package jodd.util;
 import jodd.Jodd;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
@@ -2798,11 +2799,7 @@ public class StringUtil {
 	 * Returns String bytes using Jodds default encoding.
 	 */
 	public static byte[] getBytes(final String string) {
-		try {
-			return string.getBytes(Jodd.encoding);
-		} catch (final UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		return string.getBytes(Jodd.encoding);
 	}
 	public static byte[] getBytes(final String string, final String charsetName) {
 		try {
@@ -2813,11 +2810,7 @@ public class StringUtil {
 	}
 
 	public static String newString(final byte[] bytes) {
-		try {
-			return new String(bytes, Jodd.encoding);
-		} catch (final UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
+		return new String(bytes, Jodd.encoding);
 	}
 	public static String newString(final byte[] bytes, final String charsetName) {
 		try {
@@ -2825,6 +2818,9 @@ public class StringUtil {
 		} catch (final UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	public static String newString(final byte[] bytes, final Charset charset) {
+		return new String(bytes, charset);
 	}
 
 	// ---------------------------------------------------------------- detectors

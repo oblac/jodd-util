@@ -27,10 +27,10 @@ package jodd.io;
 
 import jodd.Jodd;
 import jodd.net.URLDecoder;
-import jodd.util.SystemUtil;
 import jodd.util.DigestEngine;
 import jodd.util.StringPool;
 import jodd.util.StringUtil;
+import jodd.util.SystemUtil;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -46,6 +46,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,11 @@ import java.util.List;
  * File utilities.
  */
 public class FileUtil {
+
+	/**
+	 * Default prefix for temporary files.
+	 */
+	public static String tempFilePrefix = "jodd-";
 
 	private static final String MSG_NOT_A_DIRECTORY = "Not a directory: ";
 	private static final String MSG_CANT_CREATE = "Can't create: ";
@@ -1344,7 +1350,7 @@ public class FileUtil {
 	 * @see #createTempDirectory(String, String)
 	 */
 	public static File createTempDirectory() throws IOException {
-		return createTempDirectory(tempPrefix(), null);
+		return createTempDirectory(tempFilePrefix, null);
 	}
 
 	/**
@@ -1370,7 +1376,7 @@ public class FileUtil {
 	 * @see #createTempFile(String, String, File, boolean)
 	 */
 	public static File createTempFile() throws IOException {
-		return createTempFile(tempPrefix(), null, null, true);
+		return createTempFile(tempFilePrefix, null, null, true);
 	}
 
 	/**
@@ -1527,13 +1533,13 @@ public class FileUtil {
 	 * Detect encoding on {@link UnicodeInputStream} by using {@link UnicodeInputStream#getDetectedEncoding()}.
 	 *
 	 * @param in {@link UnicodeInputStream}
-	 * @return UTF encoding as a String. If encoding could not be detected, defaults to {@link StringPool#UTF_8}.
+	 * @return UTF encoding as a String. If encoding could not be detected, defaults to UTF_8
 	 * @see UnicodeInputStream#getDetectedEncoding()
 	 */
 	private static String detectEncoding(final UnicodeInputStream in) {
 		String encoding = in.getDetectedEncoding();
 		if (encoding == null) {
-			encoding = StringPool.UTF_8;
+			encoding = StandardCharsets.UTF_8.name();
 		}
 		return encoding;
 	}
@@ -1669,17 +1675,9 @@ public class FileUtil {
 
 	/**
 	 * Returns default encoding.
-	 * @return default encoding.
 	 */
 	private static String encoding() {
-		return Jodd.encoding;
+		return Jodd.encoding.name();
 	}
 
-	/**
-	 * Returns default prefix for temp files.
-	 * @return default prefix for temp files.
-	 */
-	private static String tempPrefix() {
-		return Jodd.tempFilePrefix;
-	}
 }
