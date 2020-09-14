@@ -1333,7 +1333,7 @@ public class ClassUtil {
 	}
 	public static String getShortClassName(final Class clazz, final int shortUpTo) {
 		final String[] chunks = StringUtil.splitc(clazz.getName(), '.');
-		final StringBand stringBand = new StringBand(chunks.length);
+		final StringBuilder stringBand = new StringBuilder();
 		int ndx = chunks.length - shortUpTo;
 		if (ndx < 0) {
 			ndx = 0;

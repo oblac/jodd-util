@@ -2521,7 +2521,7 @@ public class StringUtil {
 	 * Creates a new string that contains the provided string a number of times.
 	 */
 	public static String repeat(final String source, int count) {
-		final StringBand result = new StringBand(count);
+		final StringBuilder result = new StringBuilder(source.length() * count);
 		while (count > 0) {
 			result.append(source);
 			count--;

@@ -2063,7 +2063,7 @@ public class ArraysUtil {
 		if (array.length == 0) {
 			return StringPool.EMPTY;
 		}
-		final StringBand sb = new StringBand((array.length << 1) - 1);
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			if (i != 0) {
 				sb.append(StringPool.COMMA);
@@ -2084,7 +2084,7 @@ public class ArraysUtil {
 		if (array.length == 0) {
 			return StringPool.EMPTY;
 		}
-		final StringBand sb = new StringBand((array.length << 1) - 1);
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			if (i != 0) {
 				sb.append(StringPool.COMMA);
@@ -2105,7 +2105,7 @@ public class ArraysUtil {
 		if (array.length == 0) {
 			return StringPool.EMPTY;
 		}
-		final StringBand sb = new StringBand((array.length << 1) - 1);
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			if (i != 0) {
 				sb.append(StringPool.COMMA);
@@ -2126,7 +2126,7 @@ public class ArraysUtil {
 		if (array.length == 0) {
 			return StringPool.EMPTY;
 		}
-		final StringBand sb = new StringBand((array.length << 1) - 1);
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			if (i != 0) {
 				sb.append(StringPool.COMMA);
@@ -2147,7 +2147,7 @@ public class ArraysUtil {
 		if (array.length == 0) {
 			return StringPool.EMPTY;
 		}
-		final StringBand sb = new StringBand((array.length << 1) - 1);
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			if (i != 0) {
 				sb.append(StringPool.COMMA);
@@ -2168,7 +2168,7 @@ public class ArraysUtil {
 		if (array.length == 0) {
 			return StringPool.EMPTY;
 		}
-		final StringBand sb = new StringBand((array.length << 1) - 1);
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			if (i != 0) {
 				sb.append(StringPool.COMMA);
@@ -2189,7 +2189,7 @@ public class ArraysUtil {
 		if (array.length == 0) {
 			return StringPool.EMPTY;
 		}
-		final StringBand sb = new StringBand((array.length << 1) - 1);
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			if (i != 0) {
 				sb.append(StringPool.COMMA);
@@ -2210,7 +2210,7 @@ public class ArraysUtil {
 		if (array.length == 0) {
 			return StringPool.EMPTY;
 		}
-		final StringBand sb = new StringBand((array.length << 1) - 1);
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			if (i != 0) {
 				sb.append(StringPool.COMMA);
@@ -2231,7 +2231,7 @@ public class ArraysUtil {
 		if (array.length == 0) {
 			return StringPool.EMPTY;
 		}
-		final StringBand sb = new StringBand((array.length << 1) - 1);
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			if (i != 0) {
 				sb.append(StringPool.COMMA);
@@ -2252,7 +2252,7 @@ public class ArraysUtil {
 		if (array.length == 0) {
 			return StringPool.EMPTY;
 		}
-		final StringBand sb = new StringBand((array.length << 1) - 1);
+		final StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < array.length; i++) {
 			if (i != 0) {
 				sb.append(StringPool.COMMA);

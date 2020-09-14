@@ -52,7 +52,7 @@ public class ThreadFactoryBuilder {
 	 * Sets the printf-compatible naming format for threads.
 	 * Use {@code %d} to replace it with the thread number.
 	 */
-	public ThreadFactoryBuilder setNameFormat(final String nameFormat) {
+	public ThreadFactoryBuilder withNameFormat(final String nameFormat) {
 		this.nameFormat = nameFormat;
 		return this;
 	}
@@ -60,7 +60,7 @@ public class ThreadFactoryBuilder {
 	/**
 	 * Sets if new threads will be daemon.
 	 */
-	public ThreadFactoryBuilder setDaemon(final boolean daemon) {
+	public ThreadFactoryBuilder withDaemon(final boolean daemon) {
 		this.daemonThread = daemon;
 		return this;
 	}
@@ -68,7 +68,7 @@ public class ThreadFactoryBuilder {
 	/**
 	 * Sets the threads priority.
 	 */
-	public ThreadFactoryBuilder setPriority(final int priority) {
+	public ThreadFactoryBuilder withPriority(final int priority) {
 		this.priority = priority;
 		return this;
 	}
@@ -76,7 +76,7 @@ public class ThreadFactoryBuilder {
 	/**
 	 * Sets the {@code UncaughtExceptionHandler} for new threads created.
 	 */
-	public ThreadFactoryBuilder setUncaughtExceptionHandler(
+	public ThreadFactoryBuilder withUncaughtExceptionHandler(
 		final Thread.UncaughtExceptionHandler uncaughtExceptionHandler) {
 
 		this.uncaughtExceptionHandler = Objects.requireNonNull(uncaughtExceptionHandler);
@@ -87,7 +87,7 @@ public class ThreadFactoryBuilder {
 	 * Sets the backing {@code ThreadFactory} for new threads. Threads
 	 * will be created by invoking {@code newThread(Runnable} on this backing factory.
 	 */
-	public ThreadFactoryBuilder setBackingThreadFactory(final ThreadFactory backingThreadFactory) {
+	public ThreadFactoryBuilder withBackingThreadFactory(final ThreadFactory backingThreadFactory) {
 		this.backingThreadFactory = Objects.requireNonNull(backingThreadFactory);
 		return this;
 	}

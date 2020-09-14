@@ -29,6 +29,7 @@ import jodd.Jodd;
 import jodd.introspector.ClassIntrospector;
 import jodd.introspector.MethodDescriptor;
 import jodd.test.DisabledOnJava;
+import jodd.util.fixtures.StringB;
 import jodd.util.fixtures.subclass.IBase;
 import jodd.util.fixtures.subclass.IExtra;
 import jodd.util.fixtures.subclass.IOne;
@@ -873,7 +874,7 @@ class ClassUtilTest {
 
 		@Test
 		void userDefinedMethod() throws Exception {
-			final Method method = StringBand.class.getMethod("toString");
+			final Method method = StringB.class.getMethod("toString");
 
 			final boolean actual = ClassUtil.isUserDefinedMethod(method);
 
@@ -883,7 +884,7 @@ class ClassUtilTest {
 
 		@Test
 		void customObjectButMethodFromObject() throws Exception {
-			final Method method = StringBand.class.getMethod("hashCode");
+			final Method method = StringB.class.getMethod("hashCode");
 
 			final boolean actual = ClassUtil.isUserDefinedMethod(method);
 
@@ -942,30 +943,24 @@ class ClassUtilTest {
 		void methodFromObject() throws Exception {
 			final Method method = Object.class.getMethod("hashCode");
 
-			final boolean actual = ClassUtil.isObjectMethod(method);
-
 			// asserts
-			assertEquals(true, actual);
+			assertTrue(ClassUtil.isObjectMethod(method));
 		}
 
 		@Test
 		void userDefinedMethod() throws Exception {
-			final Method method = StringBand.class.getMethod("toString");
-
-			final boolean actual = ClassUtil.isObjectMethod(method);
+			final Method method = StringB.class.getMethod("toString");
 
 			// asserts
-			assertEquals(false, actual);
+			assertFalse(ClassUtil.isObjectMethod(method));
 		}
 
 		@Test
 		void customObjectButMethodFromObject() throws Exception {
-			final Method method = StringBand.class.getMethod("hashCode");
-
-			final boolean actual = ClassUtil.isObjectMethod(method);
+			final Method method = StringB.class.getMethod("hashCode");
 
 			// asserts
-			assertEquals(true, actual);
+			assertTrue(ClassUtil.isObjectMethod(method));
 		}
 
 	}
