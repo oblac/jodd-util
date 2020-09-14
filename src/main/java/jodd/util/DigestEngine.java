@@ -31,6 +31,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 
@@ -127,7 +128,7 @@ public interface DigestEngine {
 	 * Returns byte-hash of input string.
 	 */
 	public default byte[] digest(final String input) {
-		return digest(StringUtil.getBytes(input));
+		return digest(input.getBytes(StandardCharsets.UTF_8));
 	}
 
 	/**

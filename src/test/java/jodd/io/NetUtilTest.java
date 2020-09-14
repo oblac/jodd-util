@@ -35,6 +35,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -68,7 +69,7 @@ class NetUtilTest {
 	void testDownloadStringWithUTF8Encoding() throws IOException {
 		final String expected = "Jodd - The Unbearable Lightness of Java - üäößÜÄÖ";
 
-		final String actual = NetUtil.downloadString(joddInfoTxt.toExternalForm(), "UTF-8");
+		final String actual = NetUtil.downloadString(joddInfoTxt.toExternalForm(), StandardCharsets.UTF_8);
 
 		// Asserts
 		assertEquals(expected, actual);
@@ -79,7 +80,7 @@ class NetUtilTest {
 		// due to ISO-8859-1 encoding
 		final String expected = "Jodd - The Unbearable Lightness of Java - Ã¼Ã¤Ã¶Ã\u009FÃ\u009CÃ\u0084Ã\u0096";
 
-		final String actual = NetUtil.downloadString(joddInfoTxt.toExternalForm(), "ISO-8859-1");
+		final String actual = NetUtil.downloadString(joddInfoTxt.toExternalForm(), StandardCharsets.ISO_8859_1);
 
 		// Asserts
 		assertEquals(expected, actual);

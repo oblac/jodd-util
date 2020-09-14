@@ -50,6 +50,7 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -177,7 +178,7 @@ class IOUtilTest {
 
             final String text = "jodd makes fun!" + System.lineSeparator();
             final File file = new File(IOUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + ".txt");
-            FileUtil.writeString(file, text, "UTF-8");
+            FileUtil.writeString(file, text, StandardCharsets.UTF_8);
 
             final boolean actual;
 
@@ -195,7 +196,7 @@ class IOUtilTest {
 
             final String text = "jodd makes fun!";
             final File file = new File(IOUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + ".txt");
-            FileUtil.writeString(file, " " + text, "UTF-8");
+            FileUtil.writeString(file, " " + text, StandardCharsets.UTF_8);
 
             final boolean actual;
 
@@ -269,7 +270,7 @@ class IOUtilTest {
             final char[] expected = text.toCharArray();
             final File file = new File(BASE_DIR, testInfo.getTestMethod().get().getName());
 
-            FileUtil.writeString(file, text, "UTF-8");
+            FileUtil.writeString(file, text, StandardCharsets.UTF_8);
 
             char[] actual = null;
 
@@ -290,7 +291,7 @@ class IOUtilTest {
             final int random = MathUtil.randomInt(1, 2500);
             final File file = new File(BASE_DIR, testInfo.getTestMethod().get().getName() + "." + random);
 
-            FileUtil.writeString(file, text, "UTF-8");
+            FileUtil.writeString(file, text, StandardCharsets.UTF_8);
 
             char[] actual = null;
 
@@ -319,7 +320,7 @@ class IOUtilTest {
             char[] actual = null;
 
             try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
-                actual = IOUtil.readChars(inputStream, encoding);
+                actual = IOUtil.readChars(inputStream, Charset.forName(encoding));
             }
 
             // asserts
@@ -330,7 +331,7 @@ class IOUtilTest {
         Stream<Arguments> testdata_testReadChars_InputStream_Encoding() throws Exception {
             return Stream.of(
                     Arguments.of("äüö".toCharArray(),"äüö", "UTF-8" ),
-                    Arguments.of(new String("üöä".getBytes(), "ISO-8859-1").toCharArray(),"üöä", "ISO-8859-1" )
+                    Arguments.of(new String("üöä".getBytes(), StandardCharsets.ISO_8859_1).toCharArray(),"üöä", "ISO-8859-1" )
             );
         }
 
@@ -342,7 +343,7 @@ class IOUtilTest {
             char[] actual = null;
 
             try (final ByteArrayInputStream inputStream = new ByteArrayInputStream(text.getBytes())) {
-                actual = IOUtil.readChars(inputStream, encoding, charCount);
+                actual = IOUtil.readChars(inputStream, Charset.forName(encoding), charCount);
             }
 
             // asserts
@@ -354,7 +355,7 @@ class IOUtilTest {
             return Stream.of(
                     Arguments.of("äüö".toCharArray(),"äüö", "UTF-8", 4 ),
                     Arguments.of("j".toCharArray(), "jodd", "ISO-8859-1", 1 ),
-                    Arguments.of(new String("jodd".getBytes(), "US-ASCII").toCharArray(),"jodd", "US-ASCII", 44 )
+                    Arguments.of(new String("jodd".getBytes(), StandardCharsets.US_ASCII).toCharArray(),"jodd", "US-ASCII", 44 )
             );
         }
 
@@ -514,12 +515,12 @@ class IOUtilTest {
             final int random = MathUtil.randomInt(1, 2500);
             final File file = new File(IOUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + random);
 
-            FileUtil.writeString(file, text, encoding);
+            FileUtil.writeString(file, text, Charset.forName(encoding));
 
             byte[] actual = null;
 
             try (final FileReader reader = new FileReader(file)) {
-                actual = IOUtil.readBytes(reader, encoding);
+                actual = IOUtil.readBytes(reader, Charset.forName(encoding));
             }
 
             // asserts
@@ -529,8 +530,8 @@ class IOUtilTest {
 
         Stream<Arguments> testdata_testReadBytes_Reader_Encoding() throws Exception {
             return Stream.of(
-                    Arguments.of("jodd".getBytes("ISO-8859-1"), "jodd" , "ISO-8859-1"),
-                    Arguments.of("üäö".getBytes("UTF-8"), "üäö" , "UTF-8")
+                    Arguments.of("jodd".getBytes(StandardCharsets.ISO_8859_1), "jodd" , "ISO-8859-1"),
+                    Arguments.of("üäö".getBytes(StandardCharsets.UTF_8), "üäö" , "UTF-8")
             );
         }
 
@@ -542,12 +543,12 @@ class IOUtilTest {
             final int random = MathUtil.randomInt(1, 2500);
             final File file = new File(IOUtilTest.BASE_DIR, testInfo.getTestMethod().get().getName() + random);
 
-            FileUtil.writeString(file, text, encoding);
+            FileUtil.writeString(file, text, Charset.forName(encoding));
 
             byte[] actual = null;
 
             try (final FileReader reader = new FileReader(file)) {
-                actual = IOUtil.readBytes(reader, encoding, byteCount);
+                actual = IOUtil.readBytes(reader, Charset.forName(encoding), byteCount);
             }
 
             // asserts
@@ -555,11 +556,11 @@ class IOUtilTest {
             assertArrayEquals(expected, actual);
         }
 
-        Stream<Arguments> testdata_testReadBytes_Reader_Encoding_ByteCount() throws Exception {
+        Stream<Arguments> testdata_testReadBytes_Reader_Encoding_ByteCount() {
             return Stream.of(
-                    Arguments.of("jodd".getBytes("ISO-8859-1"), "jodd" , "ISO-8859-1", 10),
-                    Arguments.of("j".getBytes("ISO-8859-1"), "jodd" , "ISO-8859-1", 1),
-                    Arguments.of("üäö".getBytes("UTF-8"), "üäö" , "UTF-8", 3)
+                    Arguments.of("jodd".getBytes(StandardCharsets.ISO_8859_1), "jodd" , "ISO-8859-1", 10),
+                    Arguments.of("j".getBytes(StandardCharsets.ISO_8859_1), "jodd" , "ISO-8859-1", 1),
+                    Arguments.of("üäö".getBytes(StandardCharsets.UTF_8), "üäö" , "UTF-8", 3)
             );
         }
 
@@ -615,7 +616,7 @@ class IOUtilTest {
             try (final ByteArrayInputStream in = new ByteArrayInputStream(text.getBytes());
                  final StringWriter writer = new StringWriter()) {
 
-                IOUtil.copy(in, writer, encoding );
+                IOUtil.copy(in, writer, Charset.forName(encoding));
 
                 // asserts
                 assertEquals(expected, writer.toString());
@@ -638,7 +639,7 @@ class IOUtilTest {
             try (final ByteArrayInputStream in = new ByteArrayInputStream(text.getBytes());
                  final StringWriter writer = new StringWriter()) {
 
-                IOUtil.copy(in, writer, encoding, byteCount );
+                IOUtil.copy(in, writer, Charset.forName(encoding), byteCount );
 
                 // asserts
                 assertEquals(expected, writer.toString());
@@ -661,7 +662,7 @@ class IOUtilTest {
             try (final StringReader reader = new StringReader(text);
                  final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
-                IOUtil.copy(reader, outputStream, encoding);
+                IOUtil.copy(reader, outputStream, Charset.forName(encoding));
 
                 // asserts
                 assertArrayEquals(expected, outputStream.toByteArray());
@@ -685,7 +686,7 @@ class IOUtilTest {
             try (final StringReader reader = new StringReader(text);
                  final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
-                IOUtil.copy(reader, outputStream, encoding, charCount);
+                IOUtil.copy(reader, outputStream, Charset.forName(encoding), charCount);
 
                 // asserts
                 assertArrayEquals(expected, outputStream.toByteArray());

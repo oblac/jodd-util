@@ -31,7 +31,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -46,8 +46,8 @@ class CharUtilTest {
 
 	@Test
 	void testToSimpleByteArray() {
-		char[] src = new char[]{0, 10, 'A', 127, 128, 255, 256};
-		byte[] dest = CharUtil.toSimpleByteArray(src);
+		final char[] src = new char[]{0, 10, 'A', 127, 128, 255, 256};
+		final byte[] dest = CharUtil.toSimpleByteArray(src);
 
 		assertEquals(0, dest[0]);
 		assertEquals(10, dest[1]);
@@ -60,8 +60,8 @@ class CharUtilTest {
 
 	@Test
 	void testToSimpleCharArray() {
-		byte[] src = new byte[]{0, 10, 65, 127, -128, -1};
-		char[] dest = CharUtil.toSimpleCharArray(src);
+		final byte[] src = new byte[]{0, 10, 65, 127, -128, -1};
+		final char[] dest = CharUtil.toSimpleCharArray(src);
 
 		assertEquals(0, dest[0]);
 		assertEquals(10, dest[1]);
@@ -73,8 +73,8 @@ class CharUtilTest {
 
 	@Test
 	void testToAsciiByteArray() {
-		char[] src = new char[]{0, 10, 'A', 127, 128, 255, 256};
-		byte[] dest = CharUtil.toAsciiByteArray(src);
+		final char[] src = new char[]{0, 10, 'A', 127, 128, 255, 256};
+		final byte[] dest = CharUtil.toAsciiByteArray(src);
 
 		assertEquals(0, dest[0]);
 		assertEquals(10, dest[1]);
@@ -87,8 +87,8 @@ class CharUtilTest {
 
 	@Test
 	void testToRawByteArray() {
-		char[] src = new char[]{0, 'A', 255, 256, 0xFF7F};
-		byte[] dest = CharUtil.toRawByteArray(src);
+		final char[] src = new char[]{0, 'A', 255, 256, 0xFF7F};
+		final byte[] dest = CharUtil.toRawByteArray(src);
 
 		assertEquals(src.length * 2, dest.length);
 
@@ -110,8 +110,8 @@ class CharUtilTest {
 
 	@Test
 	void testToRawCharArray() {
-		byte[] src = new byte[]{0, 0, 0, 65, 0, -1, 1, 0, -1};
-		char[] dest = CharUtil.toRawCharArray(src);
+		final byte[] src = new byte[]{0, 0, 0, 65, 0, -1, 1, 0, -1};
+		final char[] dest = CharUtil.toRawCharArray(src);
 
 		assertEquals(src.length / 2 + src.length % 2, dest.length);
 
@@ -124,8 +124,8 @@ class CharUtilTest {
 	}
 
 	@Test
-	void testToByte() throws UnsupportedEncodingException {
-		char[] src = "tstč".toCharArray();
+	void testToByte() {
+		final char[] src = "tstč".toCharArray();
 		assertEquals(4, src.length);
 		assertEquals(269, src[3]);
 
@@ -136,22 +136,22 @@ class CharUtilTest {
 		assertEquals(4, src2.length);
 		assertTrue(src[3] != src2[3]);
 
-		byte[] dest2 = CharUtil.toByteArray(src, "US-ASCII");
+		final byte[] dest2 = CharUtil.toByteArray(src, StandardCharsets.US_ASCII);
 		assertEquals(4, dest2.length);
 		assertEquals(0x3F, dest2[3]);
 
-		byte[] dest3 = CharUtil.toAsciiByteArray(src);
+		final byte[] dest3 = CharUtil.toAsciiByteArray(src);
 		assertEquals(4, dest3.length);
 		assertEquals(0x3F, dest3[3]);
 
-		dest = CharUtil.toByteArray(src, "UTF16");
+		dest = CharUtil.toByteArray(src, StandardCharsets.UTF_16);
 		assertEquals(8 + 2, dest.length);    // BOM included
 		assertEquals(269 - 256, dest[9]);
 		assertEquals(1, dest[8]);
-		src2 = CharUtil.toCharArray(dest, "UTF16");
+		src2 = CharUtil.toCharArray(dest, StandardCharsets.UTF_16);
 		assertEquals(src[3], src2[3]);
 
-		dest = CharUtil.toByteArray(src, "UTF8");
+		dest = CharUtil.toByteArray(src, StandardCharsets.UTF_8);
 		assertEquals(5, dest.length);
 	}
 
@@ -190,7 +190,7 @@ class CharUtilTest {
 	private static List<Arguments> testdata_testToAscii() {
 		// from https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html
 		// The char data type is a single 16-bit Unicode character. It has a minimum value of '\u0000' (or 0) and a maximum value of '\uffff' (or 65,535 inclusive).
-		List<Arguments> params = new ArrayList<>();
+		final List<Arguments> params = new ArrayList<>();
 		// chars 0 - 255 -> ASCII chars
 		for (int c = 0; c <= 255; c++) {
 			params.add(Arguments.of(c, (char) c));
@@ -367,7 +367,7 @@ class CharUtilTest {
 	}
 
 	private static List<Arguments> testdata_testIsWhitespace() {
-		List<Arguments> params = new ArrayList<>();
+		final List<Arguments> params = new ArrayList<>();
 
 		// due to code -> char <= ' '
 		for (int c = 0; c <= 32; c++) {

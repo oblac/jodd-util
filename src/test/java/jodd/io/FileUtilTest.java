@@ -25,8 +25,8 @@
 
 package jodd.io;
 
-import jodd.util.SystemUtil;
 import jodd.util.StringUtil;
+import jodd.util.SystemUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -38,6 +38,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -74,32 +75,32 @@ class FileUtilTest {
 
 		try {
 			FileUtil.writeString(new File(dataRoot, "test.txt"), s);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			fail("FileUtil.writeString " + ex.toString());
 		}
 
 		String s2 = null;
 		try {
 			s2 = FileUtil.readString(dataRoot + "/test.txt");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			fail("FileUtil.readString " + ex.toString());
 		}
 		assertEquals(s, s2);
 
 		// test unicode chars (i.e. greater then 255)
-		char[] buf = s.toCharArray();
+		final char[] buf = s.toCharArray();
 		buf[0] = 256;
 		s = new String(buf);
 
 		try {
 			FileUtil.writeString(dataRoot + "/test.txt", s);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			fail("FileUtil.writeString " + ex.toString());
 		}
 
 		try {
 			s2 = FileUtil.readString(dataRoot + "/test.txt");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			fail("FileUtil.readString " + ex.toString());
 		}
 
@@ -108,7 +109,7 @@ class FileUtilTest {
 
 		try {
 			FileUtil.delete(dataRoot + "/test.txt");
-		} catch (IOException ioex) {
+		} catch (final IOException ioex) {
 			fail("FileUtil.delete" + ioex.toString());
 		}
 	}
@@ -117,27 +118,27 @@ class FileUtilTest {
 	void testUnicodeString() {
 		String s = "This is a test file\nIt only has\nthree lines!!";
 
-		char[] buf = s.toCharArray();
+		final char[] buf = s.toCharArray();
 		buf[0] = 256;
 		s = new String(buf);
 
 		try {
-			FileUtil.writeString(dataRoot + "/test2.txt", s, "UTF-16");
-		} catch (Exception ex) {
+			FileUtil.writeString(dataRoot + "/test2.txt", s, StandardCharsets.UTF_16);
+		} catch (final Exception ex) {
 			fail("FileUtil.writeString " + ex.toString());
 		}
 
 		String s2 = null;
 		try {
-			s2 = FileUtil.readString(dataRoot + "/test2.txt", "UTF-16");
-		} catch (Exception ex) {
+			s2 = FileUtil.readString(dataRoot + "/test2.txt", StandardCharsets.UTF_16);
+		} catch (final Exception ex) {
 			fail("FileUtil.readString " + ex.toString());
 		}
 		assertEquals(s, s2);
 
 		try {
 			FileUtil.delete(dataRoot + "/test2.txt");
-		} catch (IOException ioex) {
+		} catch (final IOException ioex) {
 			fail("FileUtil.delete" + ioex.toString());
 		}
 
@@ -145,17 +146,17 @@ class FileUtilTest {
 
 	@Test
 	void testFileManipulations() {
-		String root = dataRoot + "/file/";
-		String tmp = root + "tmp/";
-		String tmp2 = root + "xxx/";
-		String tmp3 = root + "zzz/";
+		final String root = dataRoot + "/file/";
+		final String tmp = root + "tmp/";
+		final String tmp2 = root + "xxx/";
+		final String tmp3 = root + "zzz/";
 
 		// copy
 		try {
 			FileUtil.copyFile(root + "a.txt", root + "w.txt");
 			FileUtil.copyFile(root + "a.png", root + "w.png");
 			FileUtil.copyFile(root + "a.txt", root + "w.txt");
-		} catch (IOException ioex) {
+		} catch (final IOException ioex) {
 			fail(ioex.toString());
 		}
 
@@ -165,7 +166,7 @@ class FileUtilTest {
 			FileUtil.mkdirs(tmp + "x/");
 			FileUtil.copyFileToDir(root + "a.txt", tmp);
 			FileUtil.copyFileToDir(root + "a.png", tmp);
-		} catch (IOException ioex) {
+		} catch (final IOException ioex) {
 			fail(ioex.toString());
 		}
 
@@ -173,7 +174,7 @@ class FileUtilTest {
 		try {
 			FileUtil.moveFile(root + "w.txt", tmp + "w.txt");
 			FileUtil.moveFileToDir(root + "w.png", tmp);
-		} catch (IOException ioex) {
+		} catch (final IOException ioex) {
 			fail(ioex.toString());
 		}
 
@@ -184,28 +185,28 @@ class FileUtilTest {
 			FileUtil.deleteFile(tmp + "a.png");
 			FileUtil.deleteFile(tmp + "w.txt");
 			FileUtil.deleteFile(tmp + "w.png");
-		} catch (IOException ioex) {
+		} catch (final IOException ioex) {
 			fail(ioex.toString());
 		}
 
 		try {
 			FileUtil.deleteFile(tmp + "a.txt");
 			fail("delete file strict delete");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// ignore
 		}
 
 		// movedir
 		try {
 			FileUtil.moveDir(tmp, tmp2);
-		} catch (IOException ioex) {
+		} catch (final IOException ioex) {
 			fail(ioex.toString());
 		}
 
 		// copyDir
 		try {
 			FileUtil.copyDir(tmp2, tmp3);
-		} catch (IOException ioex) {
+		} catch (final IOException ioex) {
 			fail(ioex.toString());
 		}
 
@@ -213,7 +214,7 @@ class FileUtilTest {
 		try {
 			FileUtil.deleteDir(tmp2);
 			FileUtil.deleteDir(tmp3);
-		} catch (IOException ioex) {
+		} catch (final IOException ioex) {
 			fail(ioex.toString());
 		}
 	}
@@ -221,15 +222,15 @@ class FileUtilTest {
 	@Test
 	void testBytes() {
 		try {
-			File file = new File(dataRoot + "/file/a.txt");
-			byte[] bytes = FileUtil.readBytes(dataRoot + "/file/a.txt");
+			final File file = new File(dataRoot + "/file/a.txt");
+			final byte[] bytes = FileUtil.readBytes(dataRoot + "/file/a.txt");
 
 			assertEquals(file.length(), bytes.length);
 			String content = new String(bytes);
 			content = StringUtil.remove(content, '\r');
 			assertEquals("test file\n", content);
 
-		} catch (IOException ioex) {
+		} catch (final IOException ioex) {
 			fail(ioex.toString());
 		}
 
@@ -240,7 +241,7 @@ class FileUtilTest {
 		String content = FileUtil.readUTFString(new File(utfdataRoot, "utf-8.txt"));
 		content = content.replace("\r\n", "\n");
 
-		String content8 = FileUtil.readString(new File(utfdataRoot, "utf-8.txt"), "UTF-8");
+		String content8 = FileUtil.readString(new File(utfdataRoot, "utf-8.txt"), StandardCharsets.UTF_8);
 		content8 = content8.replace("\r\n", "\n");
 		assertEquals(content, content8);
 
@@ -248,11 +249,11 @@ class FileUtilTest {
 		content1 = content1.replace("\r\n", "\n");
 		assertEquals(content, content1);
 
-		String content16 = FileUtil.readString(new File(utfdataRoot, "utf-16be.txt"), "UTF-16BE");
+		String content16 = FileUtil.readString(new File(utfdataRoot, "utf-16be.txt"), StandardCharsets.UTF_16BE);
 		content16 = content16.replace("\r\n", "\n");
 		assertEquals(content, content16);
 
-		String content162 = FileUtil.readString(new File(utfdataRoot, "utf-16be.txt"), "UTF-16");
+		String content162 = FileUtil.readString(new File(utfdataRoot, "utf-16be.txt"), StandardCharsets.UTF_16);
 		content162 = content162.replace("\r\n", "\n");
 		assertEquals(content, content162);
 
@@ -260,14 +261,14 @@ class FileUtilTest {
 		content2 = content2.replace("\r\n", "\n");
 		assertEquals(content, content2);
 
-		String content163 = FileUtil.readString(new File(utfdataRoot, "utf-16le.txt"), "UTF-16LE");
+		String content163 = FileUtil.readString(new File(utfdataRoot, "utf-16le.txt"), StandardCharsets.UTF_16LE);
 		content163 = content163.replace("\r\n", "\n");
 		assertEquals(content, content163);
 	}
 
 	@Test
 	void testIsAncestor() {
-		File folder = new File("/foo/bar");
+		final File folder = new File("/foo/bar");
 		File file = new File(folder, "foo.txt");
 
 		assertTrue(FileUtil.isAncestor(folder, folder, false));
@@ -304,8 +305,8 @@ class FileUtilTest {
 	)
 	@DisplayName(value = "tests for digest-algorithms")
 	void testDigestAlgorithms(final String method, final String expected) throws Exception {
-		Method declaredMethod = FileUtil.class.getMethod(method, File.class);
-		File file = new File(FileUtilTest.class.getResource("data/file/a.png").toURI());
+		final Method declaredMethod = FileUtil.class.getMethod(method, File.class);
+		final File file = new File(FileUtilTest.class.getResource("data/file/a.png").toURI());
 		
 		final String actual = (String) declaredMethod.invoke(null, file);
 

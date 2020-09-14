@@ -25,8 +25,6 @@
 
 package jodd;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.Security;
 
 /**
@@ -50,12 +48,5 @@ public class Jodd {
 		// They are enabled on Java9 by default.
 		Security.setProperty("crypto.policy", "unlimited");
 	}
-
-	// ---------------------------------------------------------------- settings
-
-	/**
-	 * The encoding used across the Jodd classes, "UTF-8" by default.
-	 */
-	public static Charset encoding = StandardCharsets.UTF_8;
 
 }

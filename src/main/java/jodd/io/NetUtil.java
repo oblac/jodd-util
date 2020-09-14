@@ -38,6 +38,7 @@ import java.net.UnknownHostException;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.Charset;
 import java.nio.file.StandardOpenOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,7 +58,7 @@ public class NetUtil {
 	 */
 	public static String resolveIpAddress(final String hostname) {
 		try {
-			InetAddress netAddress;
+			final InetAddress netAddress;
 
 			if (hostname == null || hostname.equalsIgnoreCase(LOCAL_HOST)) {
 				netAddress = InetAddress.getLocalHost();
@@ -65,7 +66,7 @@ public class NetUtil {
 				netAddress = Inet4Address.getByName(hostname);
 			}
 			return netAddress.getHostAddress();
-		} catch (UnknownHostException ignore) {
+		} catch (final UnknownHostException ignore) {
 			return null;
 		}
 	}
@@ -75,8 +76,8 @@ public class NetUtil {
 	 */
 	public static int getIpAsInt(final String ipAddress) {
 		int ipIntValue = 0;
-		String[] tokens = StringUtil.splitc(ipAddress, '.');
-		for (String token : tokens) {
+		final String[] tokens = StringUtil.splitc(ipAddress, '.');
+		for (final String token : tokens) {
 			if (ipIntValue > 0) {
 				ipIntValue <<= 8;
 			}
@@ -111,7 +112,7 @@ public class NetUtil {
 	 * @see <a href="https://en.wikipedia.org/wiki/IP_address#IPv4_addresses">ip address v4</a>
 	 */
 	public static boolean validateIPv4(final String input) {
-		Matcher m = ip4RegExp.matcher(input + '.');
+		final Matcher m = ip4RegExp.matcher(input + '.');
 		return m.matches();
 	}
 
@@ -120,9 +121,9 @@ public class NetUtil {
 	 */
 	public static String resolveHostName(final byte[] ip) {
 		try {
-			InetAddress address = InetAddress.getByAddress(ip);
+			final InetAddress address = InetAddress.getByAddress(ip);
 			return address.getHostName();
-		} catch (UnknownHostException ignore) {
+		} catch (final UnknownHostException ignore) {
 			return null;
 		}
 	}
@@ -133,7 +134,7 @@ public class NetUtil {
 	 * Downloads resource as byte array.
 	 */
 	public static byte[] downloadBytes(final String url) throws IOException {
-		try (InputStream inputStream = new URL(url).openStream()) {
+		try (final InputStream inputStream = new URL(url).openStream()) {
 			return IOUtil.readBytes(inputStream);
 		}
 	}
@@ -141,8 +142,8 @@ public class NetUtil {
 	/**
 	 * Downloads resource as String.
 	 */
-	public static String downloadString(final String url, final String encoding) throws IOException {
-		try (InputStream inputStream = new URL(url).openStream()) {
+	public static String downloadString(final String url, final Charset encoding) throws IOException {
+		try (final InputStream inputStream = new URL(url).openStream()) {
 			return new String(IOUtil.readChars(inputStream, encoding));
 		}
 	}
@@ -151,7 +152,7 @@ public class NetUtil {
 	 * Downloads resource as String.
 	 */
 	public static String downloadString(final String url) throws IOException {
-		try (InputStream inputStream = new URL(url).openStream()) {
+		try (final InputStream inputStream = new URL(url).openStream()) {
 			return new String(IOUtil.readChars(inputStream));
 		}
 	}
@@ -161,9 +162,9 @@ public class NetUtil {
 	 */
 	public static void downloadFile(final String url, final File file) throws IOException {
 		try (
-			InputStream inputStream = new URL(url).openStream();
-			ReadableByteChannel rbc = Channels.newChannel(inputStream);
-			FileChannel fileChannel = FileChannel.open(
+				final InputStream inputStream = new URL(url).openStream();
+				final ReadableByteChannel rbc = Channels.newChannel(inputStream);
+				final FileChannel fileChannel = FileChannel.open(
 				file.toPath(),
 				StandardOpenOption.CREATE,
 				StandardOpenOption.TRUNCATE_EXISTING,
@@ -180,7 +181,7 @@ public class NetUtil {
 	 * @return file size
 	 * @throws IOException JDK-IOException
 	 */
-	public static long getRemoteFileSize(String url) throws IOException {
+	public static long getRemoteFileSize(final String url) throws IOException {
 		HttpURLConnection connection = null;
 		try {
 			connection = (HttpURLConnection) new URL(url).openConnection();

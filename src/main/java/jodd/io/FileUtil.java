@@ -25,7 +25,6 @@
 
 package jodd.io;
 
-import jodd.Jodd;
 import jodd.net.URLDecoder;
 import jodd.util.DigestEngine;
 import jodd.util.StringPool;
@@ -46,6 +45,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -589,7 +589,7 @@ public class FileUtil {
 	 * @return array of characters.
 	 * @throws IOException if something went wrong.
 	 */
-	public static char[] readChars(final File file, final String encoding) throws IOException {
+	public static char[] readChars(final File file, final Charset encoding) throws IOException {
 		checkExists(file);
 		checkIsFile(file);
 
@@ -602,28 +602,28 @@ public class FileUtil {
 	}
 
 	/**
-	 * @see #readChars(String, String)
+	 * @see #readChars(String, Charset)
 	 */
 	public static char[] readChars(final String fileName) throws IOException {
 		return readChars(fileName, encoding());
 	}
 
 	/**
-	 * @see #readChars(File, String)
+	 * @see #readChars(File, Charset)
 	 */
 	public static char[] readChars(final File file) throws IOException {
 		return readChars(file, encoding());
 	}
 
 	/**
-	 * @see #readChars(File, String)
+	 * @see #readChars(File, Charset)
 	 */
-	public static char[] readChars(final String fileName, final String encoding) throws IOException {
+	public static char[] readChars(final String fileName, final Charset encoding) throws IOException {
 		return readChars(file(fileName), encoding);
 	}
 
 	/**
-	 * @see #writeChars(File, char[], String)
+	 * @see #writeChars(File, char[], Charset)
 	 */
 	public static void writeChars(final File dest, final char[] data) throws IOException {
 		writeChars(dest, data, encoding());
@@ -637,18 +637,18 @@ public class FileUtil {
 	}
 
 	/**
-	 * @see #writeChars(File, char[], String)
+	 * @see #writeChars(File, char[], Charset)
 	 */
-	public static void writeChars(final String dest, final char[] data, final String encoding) throws IOException {
+	public static void writeChars(final String dest, final char[] data, final Charset encoding) throws IOException {
 		writeChars(file(dest), data, encoding);
 	}
 
 	/**
 	 * Write characters. append = false
 	 *
-	 * @see #outChars(File, char[], String, boolean)
+	 * @see #outChars(File, char[], Charset, boolean)
 	 */
-	public static void writeChars(final File dest, final char[] data, final String encoding) throws IOException {
+	public static void writeChars(final File dest, final char[] data, final Charset encoding) throws IOException {
 		outChars(dest, data, encoding, false);
 	}
 
@@ -661,7 +661,7 @@ public class FileUtil {
 	 * @param append   {@code true} if appending; {@code false} if {@link File} should be overwritten.
 	 * @throws IOException if something went wrong.
 	 */
-	protected static void outChars(final File dest, final char[] data, final String encoding, final boolean append) throws IOException {
+	protected static void outChars(final File dest, final char[] data, final Charset encoding, final boolean append) throws IOException {
 		if (dest.exists()) {
 			checkIsFile(dest);
 		}
@@ -690,7 +690,7 @@ public class FileUtil {
 	 * @return String in UTF encoding.
 	 * @throws IOException if copy to {@link InputStream} errors.
 	 * @see #unicodeInputStreamOf(File)
-	 * @see IOUtil#copy(InputStream, String)
+	 * @see IOUtil#copy(InputStream, Charset)
 	 */
 	public static String readUTFString(final File file) throws IOException {
 		final UnicodeInputStream in = unicodeInputStreamOf(file);
@@ -709,7 +709,7 @@ public class FileUtil {
 	 * @return String in UTF encoding.
 	 * @throws IOException if copy to {@link InputStream} errors.
 	 * @see #unicodeInputStreamOf(File)
-	 * @see IOUtil#copy(InputStream, String)
+	 * @see IOUtil#copy(InputStream, Charset)
 	 */
 	public static String readUTFString(final InputStream inputStream) throws IOException {
 		UnicodeInputStream in = null;
@@ -729,10 +729,10 @@ public class FileUtil {
 	 * @param encoding Encoding to use.
 	 * @return String representing {@link File} content.
 	 * @throws IOException if copy to {@link InputStream} errors.
-	 * @see #streamOf(File, String)
-	 * @see IOUtil#copy(InputStream, String)
+	 * @see #streamOf(File, Charset)
+	 * @see IOUtil#copy(InputStream, Charset)
 	 */
-	public static String readString(final File file, final String encoding) throws IOException {
+	public static String readString(final File file, final Charset encoding) throws IOException {
 		checkExists(file);
 		checkIsFile(file);
 		final InputStream in = streamOf(file, encoding);
@@ -744,42 +744,42 @@ public class FileUtil {
 	}
 
 	/**
-	 * @see #readString(String, String)
+	 * @see #readString(String, Charset)
 	 */
 	public static String readString(final String source) throws IOException {
 		return readString(source, encoding());
 	}
 
 	/**
-	 * @see #readString(File, String)
+	 * @see #readString(File, Charset)
 	 */
-	public static String readString(final String source, final String encoding) throws IOException {
+	public static String readString(final String source, final Charset encoding) throws IOException {
 		return readString(file(source), encoding);
 	}
 
 	/**
-	 * @see #readString(File, String)
+	 * @see #readString(File, Charset)
 	 */
 	public static String readString(final File source) throws IOException {
 		return readString(source, encoding());
 	}
 
 	/**
-	 * @see #writeString(File, String, String)
+	 * @see #writeString(File, String, Charset)
 	 */
 	public static void writeString(final String dest, final String data) throws IOException {
 		writeString(file(dest), data, encoding());
 	}
 
 	/**
-	 * @see #writeString(File, String, String)
+	 * @see #writeString(File, String, Charset)
 	 */
-	public static void writeString(final String dest, final String data, final String encoding) throws IOException {
+	public static void writeString(final String dest, final String data, final Charset encoding) throws IOException {
 		writeString(file(dest), data, encoding);
 	}
 
 	/**
-	 * @see #writeString(File, String, String)
+	 * @see #writeString(File, String, Charset)
 	 */
 	public static void writeString(final File dest, final String data) throws IOException {
 		writeString(dest, data, encoding());
@@ -788,9 +788,9 @@ public class FileUtil {
 	/**
 	 * Writes String. append = false
 	 *
-	 * @see #outString(File, String, String, boolean)
+	 * @see #outString(File, String, Charset, boolean)
 	 */
-	public static void writeString(final File dest, final String data, final String encoding) throws IOException {
+	public static void writeString(final File dest, final String data, final Charset encoding) throws IOException {
 		outString(dest, data, encoding, false);
 	}
 
@@ -802,14 +802,14 @@ public class FileUtil {
 	}
 
 	/**
-	 * @see #appendString(File, String, String)
+	 * @see #appendString(File, String, Charset)
 	 */
-	public static void appendString(final String dest, final String data, final String encoding) throws IOException {
+	public static void appendString(final String dest, final String data, final Charset encoding) throws IOException {
 		appendString(file(dest), data, encoding);
 	}
 
 	/**
-	 * @see #appendString(File, String, String)
+	 * @see #appendString(File, String, Charset)
 	 */
 	public static void appendString(final File dest, final String data) throws IOException {
 		appendString(dest, data, encoding());
@@ -818,9 +818,9 @@ public class FileUtil {
 	/**
 	 * Appends String. append = true
 	 *
-	 * @see #outString(File, String, String, boolean)
+	 * @see #outString(File, String, Charset, boolean)
 	 */
-	public static void appendString(final File dest, final String data, final String encoding) throws IOException {
+	public static void appendString(final File dest, final String data, final Charset encoding) throws IOException {
 		outString(dest, data, encoding, true);
 	}
 
@@ -833,7 +833,7 @@ public class FileUtil {
 	 * @param append   {@code true} if appending; {@code false} if {@link File} should be overwritten.
 	 * @throws IOException if something went wrong.
 	 */
-	protected static void outString(final File dest, final String data, final String encoding, final boolean append) throws IOException {
+	protected static void outString(final File dest, final String data, final Charset encoding, final boolean append) throws IOException {
 		if (dest.exists()) {
 			checkIsFile(dest);
 		}
@@ -881,21 +881,21 @@ public class FileUtil {
 	// ---------------------------------------------------------------- read/write string lines
 
 	/**
-	 * @see #readLines(String, String)
+	 * @see #readLines(String, Charset)
 	 */
 	public static String[] readLines(final String source) throws IOException {
 		return readLines(source, encoding());
 	}
 
 	/**
-	 * @see #readLines(File, String)
+	 * @see #readLines(File, Charset)
 	 */
-	public static String[] readLines(final String source, final String encoding) throws IOException {
+	public static String[] readLines(final String source, final Charset encoding) throws IOException {
 		return readLines(file(source), encoding);
 	}
 
 	/**
-	 * @see #readLines(File, String)
+	 * @see #readLines(File, Charset)
 	 */
 	public static String[] readLines(final File source) throws IOException {
 		return readLines(source, encoding());
@@ -910,7 +910,7 @@ public class FileUtil {
 	 * @throws IOException if {@link File} does not exist or is not a {@link File} or there is an issue reading
 	 *                     the {@link File}.
 	 */
-	public static String[] readLines(final File file, final String encoding) throws IOException {
+	public static String[] readLines(final File file, final Charset encoding) throws IOException {
 		checkExists(file);
 		checkIsFile(file);
 		final List<String> list = new ArrayList<>();
@@ -1493,7 +1493,7 @@ public class FileUtil {
 	}
 
 	/**
-	 * @see #unicodeInputStreamOf(InputStream, String)
+	 * @see #unicodeInputStreamOf(InputStream, Charset)
 	 * @see #checkExists(File)
 	 * @see #checkIsFile(File)
 	 */
@@ -1510,7 +1510,7 @@ public class FileUtil {
 	 * @param targetEncoding Encoding to use.
 	 * @return new {@link UnicodeInputStream}.
 	 */
-	private static UnicodeInputStream unicodeInputStreamOf(final InputStream input, final String targetEncoding) {
+	private static UnicodeInputStream unicodeInputStreamOf(final InputStream input, final Charset targetEncoding) {
 		return new UnicodeInputStream(input, targetEncoding);
 	}
 
@@ -1519,11 +1519,11 @@ public class FileUtil {
 	 *
 	 * @return either {@link FileInputStream} or {@link UnicodeInputStream}.
 	 * @throws IOException if something went wrong.
-	 * @see #unicodeInputStreamOf(InputStream, String)
+	 * @see #unicodeInputStreamOf(InputStream, Charset)
 	 */
-	private static InputStream streamOf(final File file, final String encoding) throws IOException {
+	private static InputStream streamOf(final File file, final Charset encoding) throws IOException {
 		InputStream in = new FileInputStream(file);
-		if (encoding.startsWith("UTF")) {
+		if (encoding.name().startsWith("UTF")) {
 			in = unicodeInputStreamOf(in, encoding);
 		}
 		return in;
@@ -1536,10 +1536,10 @@ public class FileUtil {
 	 * @return UTF encoding as a String. If encoding could not be detected, defaults to UTF_8
 	 * @see UnicodeInputStream#getDetectedEncoding()
 	 */
-	private static String detectEncoding(final UnicodeInputStream in) {
-		String encoding = in.getDetectedEncoding();
+	private static Charset detectEncoding(final UnicodeInputStream in) {
+		Charset encoding = in.getDetectedEncoding();
 		if (encoding == null) {
-			encoding = StandardCharsets.UTF_8.name();
+			encoding = StandardCharsets.UTF_8;
 		}
 		return encoding;
 	}
@@ -1676,8 +1676,8 @@ public class FileUtil {
 	/**
 	 * Returns default encoding.
 	 */
-	private static String encoding() {
-		return Jodd.encoding.name();
+	private static Charset encoding() {
+		return StandardCharsets.UTF_8;
 	}
 
 }

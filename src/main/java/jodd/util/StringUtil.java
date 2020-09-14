@@ -25,9 +25,6 @@
 
 package jodd.util;
 
-import jodd.Jodd;
-
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Iterator;
@@ -2271,18 +2268,16 @@ public class StringUtil {
 	}
 
 
-
-
 	// ---------------------------------------------------------------- charset
 
 	/**
-	 * Converts string charset. If charset names are the same, the same string is returned.
+	 * Converts string charset. If charsets are the same, the same string is returned.
 	 */
-	public static String convertCharset(final String source, final String srcCharsetName, final String newCharsetName) {
-		if (srcCharsetName.equals(newCharsetName)) {
+	public static String convertCharset(final String source, final Charset sourceCharset, final Charset newCharset) {
+		if (sourceCharset.equals(newCharset)) {
 			return source;
 		}
-		return StringUtil.newString(StringUtil.getBytes(source, srcCharsetName), newCharsetName);
+		return new String(source.getBytes(sourceCharset), newCharset);
 	}
 
 
@@ -2792,36 +2787,6 @@ public class StringUtil {
 		return stringFunction.apply(input);
 	}
 
-
-	// ---------------------------------------------------------------- bytes
-
-	/**
-	 * Returns String bytes using Jodds default encoding.
-	 */
-	public static byte[] getBytes(final String string) {
-		return string.getBytes(Jodd.encoding);
-	}
-	public static byte[] getBytes(final String string, final String charsetName) {
-		try {
-			return string.getBytes(charsetName);
-		} catch (final UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static String newString(final byte[] bytes) {
-		return new String(bytes, Jodd.encoding);
-	}
-	public static String newString(final byte[] bytes, final String charsetName) {
-		try {
-			return new String(bytes, charsetName);
-		} catch (final UnsupportedEncodingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-	public static String newString(final byte[] bytes, final Charset charset) {
-		return new String(bytes, charset);
-	}
 
 	// ---------------------------------------------------------------- detectors
 

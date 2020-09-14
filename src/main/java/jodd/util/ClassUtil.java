@@ -44,6 +44,7 @@ import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -1294,7 +1295,7 @@ public class ClassUtil {
 		endIndex += ".jar".length();
 		String f = s.substring(beginIndex, endIndex);
 		// decode URL string - it may contain encoded chars (e.g. whitespaces) which are not supported for file-instances
-		f = URLDecoder.decode(f, "UTF-8");
+		f = URLDecoder.decode(f, StandardCharsets.UTF_8);
 		final File file = new File(f);
 
 		try {

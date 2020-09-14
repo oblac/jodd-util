@@ -28,6 +28,8 @@ package jodd.io;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Unicode input stream for detecting UTF encodings and reading BOM characters.
@@ -47,8 +49,8 @@ public class UnicodeInputStream extends InputStream {
 	private final PushbackInputStream internalInputStream;
 	private boolean initialized;
 	private int BOMSize = -1;
-	private String encoding;
-	private final String targetEncoding;
+	private Charset encoding;
+	private final Charset targetEncoding;
 
 	/**
 	 * Creates new unicode stream. It works in two modes: detect mode and read mode.
@@ -60,7 +62,7 @@ public class UnicodeInputStream extends InputStream {
 	 * Read mode is active when target encoding is set. Then this stream reads
 	 * optional BOM for given encoding. If BOM doesn't exist, nothing is skipped.
 	 */
-	public UnicodeInputStream(final InputStream in, final String targetEncoding) {
+	public UnicodeInputStream(final InputStream in, final Charset targetEncoding) {
 		internalInputStream = new PushbackInputStream(in, MAX_BOM_SIZE);
 		this.targetEncoding = targetEncoding;
 	}
@@ -69,11 +71,11 @@ public class UnicodeInputStream extends InputStream {
 	 * Returns detected UTF encoding or {@code null} if no UTF encoding has been detected (i.e. no BOM).
 	 * If stream is not read yet, it will be {@link #init() initalized} first.
 	 */
-	public String getDetectedEncoding() {
+	public Charset getDetectedEncoding() {
 		if (!initialized) {
 			try {
 				init();
-			} catch (IOException ioex) {
+			} catch (final IOException ioex) {
 				throw new IllegalStateException(ioex);
 			}
 		}
@@ -101,24 +103,24 @@ public class UnicodeInputStream extends InputStream {
 
 			// DETECT MODE
 
-			byte[] bom = new byte[MAX_BOM_SIZE];
-			int n = internalInputStream.read(bom, 0, bom.length);
-			int unread;
+			final byte[] bom = new byte[MAX_BOM_SIZE];
+			final int n = internalInputStream.read(bom, 0, bom.length);
+			final int unread;
 
 			if ((bom[0] == BOM_UTF32_BE[0]) && (bom[1] == BOM_UTF32_BE[1]) && (bom[2] == BOM_UTF32_BE[2]) && (bom[3] == BOM_UTF32_BE[3])) {
-				encoding = "UTF-32BE";
+				encoding = Charset.forName("UTF-32BE");
 				unread = n - 4;
 			} else if ((bom[0] == BOM_UTF32_LE[0]) && (bom[1] == BOM_UTF32_LE[1]) && (bom[2] == BOM_UTF32_LE[2]) && (bom[3] == BOM_UTF32_LE[3])) {
-				encoding = "UTF-32LE";
+				encoding = Charset.forName("UTF-32LE");
 				unread = n - 4;
 			} else if ((bom[0] == BOM_UTF8[0]) && (bom[1] == BOM_UTF8[1]) && (bom[2] == BOM_UTF8[2])) {
-				encoding = "UTF-8";
+				encoding = StandardCharsets.UTF_8;
 				unread = n - 3;
 			} else if ((bom[0] == BOM_UTF16_BE[0]) && (bom[1] == BOM_UTF16_BE[1])) {
-				encoding = "UTF-16BE";
+				encoding = StandardCharsets.UTF_16BE;
 				unread = n - 2;
 			} else if ((bom[0] == BOM_UTF16_LE[0]) && (bom[1] == BOM_UTF16_LE[1])) {
-				encoding = "UTF-16LE";
+				encoding = StandardCharsets.UTF_16LE;
 				unread = n - 2;
 			} else {
 				// BOM not found, unread all bytes
@@ -136,23 +138,34 @@ public class UnicodeInputStream extends InputStream {
 
 			byte[] bom = null;
 
-			if (targetEncoding.equals("UTF-8")) {
-				bom = BOM_UTF8;
-			} else if (targetEncoding.equals("UTF-16LE")) {
-				bom = BOM_UTF16_LE;
-			} else if (targetEncoding.equals("UTF-16BE") || targetEncoding.equals("UTF-16")) {
-				bom = BOM_UTF16_BE;
-			} else if (targetEncoding.equals("UTF-32LE")) {
-				bom = BOM_UTF32_LE;
-			} else if (targetEncoding.equals("UTF-32BE") || targetEncoding.equals("UTF-32")) {
-				bom = BOM_UTF32_BE;
-			} else {
-				// no UTF encoding, no BOM
+			final String targetEncodingName = targetEncoding.name();
+
+			switch (targetEncodingName) {
+				case "UTF-8":
+					bom = BOM_UTF8;
+					break;
+				case "UTF-16LE":
+					bom = BOM_UTF16_LE;
+					break;
+				case "UTF-16BE":
+				case "UTF-16":
+					bom = BOM_UTF16_BE;
+					break;
+				case "UTF-32LE":
+					bom = BOM_UTF32_LE;
+					break;
+				case "UTF-32BE":
+				case "UTF-32":
+					bom = BOM_UTF32_BE;
+					break;
+				default:
+					// no UTF encoding, no BOM
+					break;
 			}
 
 			if (bom != null) {
-				byte[] fileBom = new byte[bom.length];
-				int n = internalInputStream.read(fileBom, 0, bom.length);
+				final byte[] fileBom = new byte[bom.length];
+				final int n = internalInputStream.read(fileBom, 0, bom.length);
 
 				boolean bomDetected = true;
 				for (int i = 0; i < n; i++) {

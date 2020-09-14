@@ -25,6 +25,7 @@
 
 package jodd.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -59,18 +60,18 @@ public class Base64 {
 	 * @param lineSeparator optional CRLF after 76 chars, unless EOF.
 	 */
 	public static char[] encodeToChar(final byte[] arr, final boolean lineSeparator) {
-		int len = arr != null ? arr.length : 0;
+		final int len = arr != null ? arr.length : 0;
 		if (len == 0) {
 			return new char[0];
 		}
 
-		int evenlen = (len / 3) * 3;
-		int cnt = ((len - 1) / 3 + 1) << 2;
-		int destLen = cnt + (lineSeparator ? (cnt - 1) / 76 << 1 : 0);
-		char[] dest = new char[destLen];
+		final int evenlen = (len / 3) * 3;
+		final int cnt = ((len - 1) / 3 + 1) << 2;
+		final int destLen = cnt + (lineSeparator ? (cnt - 1) / 76 << 1 : 0);
+		final char[] dest = new char[destLen];
 
 		for (int s = 0, d = 0, cc = 0; s < evenlen;) {
-			int i = (arr[s++] & 0xff) << 16 | (arr[s++] & 0xff) << 8 | (arr[s++] & 0xff);
+			final int i = (arr[s++] & 0xff) << 16 | (arr[s++] & 0xff) << 8 | (arr[s++] & 0xff);
 
 			dest[d++] = CHARS[(i >>> 18) & 0x3f];
 			dest[d++] = CHARS[(i >>> 12) & 0x3f];
@@ -84,9 +85,9 @@ public class Base64 {
 			}
 		}
 
-		int left = len - evenlen; // 0 - 2.
+		final int left = len - evenlen; // 0 - 2.
 		if (left > 0) {
-			int i = ((arr[evenlen] & 0xff) << 10) | (left == 2 ? ((arr[len - 1] & 0xff) << 2) : 0);
+			final int i = ((arr[evenlen] & 0xff) << 10) | (left == 2 ? ((arr[len - 1] & 0xff) << 2) : 0);
 
 			dest[destLen - 4] = CHARS[i >> 12];
 			dest[destLen - 3] = CHARS[(i >>> 6) & 0x3f];
@@ -100,21 +101,22 @@ public class Base64 {
 	 * Decodes a BASE64 encoded char array.
 	 */
 	public static byte[] decode(final char[] arr) {
-		int length = arr.length;
+		final int length = arr.length;
 		if (length == 0) {
 			return new byte[0];
 		}
 
-		int sndx = 0, endx = length - 1;
-		int pad = arr[endx] == '=' ? (arr[endx - 1] == '=' ? 2 : 1) : 0;
-		int cnt = endx - sndx + 1;
-		int sepCnt = length > 76 ? (arr[76] == '\r' ? cnt / 78 : 0) << 1 : 0;
-		int len = ((cnt - sepCnt) * 6 >> 3) - pad;
-		byte[] dest = new byte[len];
+		int sndx = 0;
+		final int endx = length - 1;
+		final int pad = arr[endx] == '=' ? (arr[endx - 1] == '=' ? 2 : 1) : 0;
+		final int cnt = endx - sndx + 1;
+		final int sepCnt = length > 76 ? (arr[76] == '\r' ? cnt / 78 : 0) << 1 : 0;
+		final int len = ((cnt - sepCnt) * 6 >> 3) - pad;
+		final byte[] dest = new byte[len];
 
 		int d = 0;
 		for (int cc = 0, eLen = (len / 3) * 3; d < eLen;) {
-			int i = INV[arr[sndx++]] << 18 | INV[arr[sndx++]] << 12 | INV[arr[sndx++]] << 6 | INV[arr[sndx++]];
+			final int i = INV[arr[sndx++]] << 18 | INV[arr[sndx++]] << 12 | INV[arr[sndx++]] << 6 | INV[arr[sndx++]];
 
 			dest[d++] = (byte) (i >> 16);
 			dest[d++] = (byte) (i >> 8);
@@ -142,11 +144,11 @@ public class Base64 {
 	// ---------------------------------------------------------------- byte
 
 	public static byte[] encodeToByte(final String s) {
-		return encodeToByte(StringUtil.getBytes(s), false);
+		return encodeToByte(s.getBytes(StandardCharsets.UTF_8), false);
 	}
 
 	public static byte[] encodeToByte(final String s, final boolean lineSep) {
-		return encodeToByte(StringUtil.getBytes(s), lineSep);
+		return encodeToByte(s.getBytes(StandardCharsets.UTF_8), lineSep);
 	}
 
 	public static byte[] encodeToByte(final byte[] arr) {
@@ -158,18 +160,18 @@ public class Base64 {
 	 * @param lineSep optional CRLF after 76 chars, unless EOF.
 	 */
 	public static byte[] encodeToByte(final byte[] arr, final boolean lineSep) {
-		int len = arr != null ? arr.length : 0;
+		final int len = arr != null ? arr.length : 0;
 		if (len == 0) {
 			return new byte[0];
 		}
 
-		int evenlen = (len / 3) * 3;
-		int cnt = ((len - 1) / 3 + 1) << 2;
-		int destlen = cnt + (lineSep ? (cnt - 1) / 76 << 1 : 0);
-		byte[] dest = new byte[destlen];
+		final int evenlen = (len / 3) * 3;
+		final int cnt = ((len - 1) / 3 + 1) << 2;
+		final int destlen = cnt + (lineSep ? (cnt - 1) / 76 << 1 : 0);
+		final byte[] dest = new byte[destlen];
 
 		for (int s = 0, d = 0, cc = 0; s < evenlen;) {
-			int i = (arr[s++] & 0xff) << 16 | (arr[s++] & 0xff) << 8 | (arr[s++] & 0xff);
+			final int i = (arr[s++] & 0xff) << 16 | (arr[s++] & 0xff) << 8 | (arr[s++] & 0xff);
 
 			dest[d++] = (byte) CHARS[(i >>> 18) & 0x3f];
 			dest[d++] = (byte) CHARS[(i >>> 12) & 0x3f];
@@ -183,9 +185,9 @@ public class Base64 {
 			}
 		}
 
-		int left = len - evenlen;
+		final int left = len - evenlen;
 		if (left > 0) {
-			int i = ((arr[evenlen] & 0xff) << 10) | (left == 2 ? ((arr[len - 1] & 0xff) << 2) : 0);
+			final int i = ((arr[evenlen] & 0xff) << 10) | (left == 2 ? ((arr[len - 1] & 0xff) << 2) : 0);
 
 			dest[destlen - 4] = (byte) CHARS[i >> 12];
 			dest[destlen - 3] = (byte) CHARS[(i >>> 6) & 0x3f];
@@ -196,28 +198,29 @@ public class Base64 {
 	}
 
 	public static String decodeToString(final byte[] arr) {
-		return StringUtil.newString(decode(arr));
+		return new String(decode(arr));
 	}
 
 	/**
 	 * Decodes BASE64 encoded byte array.
 	 */
 	public static byte[] decode(final byte[] arr) {
-		int length = arr.length;
+		final int length = arr.length;
 		if (length == 0) {
 			return new byte[0];
 		}
 
-		int sndx = 0, endx = length - 1;
-		int pad = arr[endx] == '=' ? (arr[endx - 1] == '=' ? 2 : 1) : 0;
-		int cnt = endx - sndx + 1;
-		int sepCnt = length > 76 ? (arr[76] == '\r' ? cnt / 78 : 0) << 1 : 0;
-		int len = ((cnt - sepCnt) * 6 >> 3) - pad;
-		byte[] dest = new byte[len];
+		int sndx = 0;
+		final int endx = length - 1;
+		final int pad = arr[endx] == '=' ? (arr[endx - 1] == '=' ? 2 : 1) : 0;
+		final int cnt = endx - sndx + 1;
+		final int sepCnt = length > 76 ? (arr[76] == '\r' ? cnt / 78 : 0) << 1 : 0;
+		final int len = ((cnt - sepCnt) * 6 >> 3) - pad;
+		final byte[] dest = new byte[len];
 
 		int d = 0;
 		for (int cc = 0, eLen = (len / 3) * 3; d < eLen;) {
-			int i = INV[arr[sndx++]] << 18 | INV[arr[sndx++]] << 12 | INV[arr[sndx++]] << 6 | INV[arr[sndx++]];
+			final int i = INV[arr[sndx++]] << 18 | INV[arr[sndx++]] << 12 | INV[arr[sndx++]] << 6 | INV[arr[sndx++]];
 
 			dest[d++] = (byte) (i >> 16);
 			dest[d++] = (byte) (i >> 8);
@@ -245,11 +248,11 @@ public class Base64 {
 	// ---------------------------------------------------------------- string
 
 	public static String encodeToString(final String s) {
-		return new String(encodeToChar(StringUtil.getBytes(s), false));
+		return new String(encodeToChar(s.getBytes(StandardCharsets.UTF_8), false));
 	}
 
 	public static String encodeToString(final String s, final boolean lineSep) {
-		return new String(encodeToChar(StringUtil.getBytes(s), lineSep));
+		return new String(encodeToChar(s.getBytes(StandardCharsets.UTF_8), lineSep));
 	}
 
 	public static String encodeToString(final byte[] arr) {
@@ -264,28 +267,29 @@ public class Base64 {
 	}
 
 	public static String decodeToString(final String s) {
-		return StringUtil.newString(decode(s));
+		return new String(decode(s));
 	}
 
 	/**
 	 * Decodes a BASE64 encoded string.
 	 */
 	public static byte[] decode(final String s) {
-		int length = s.length();
+		final int length = s.length();
 		if (length == 0) {
 			return new byte[0];
 		}
 
-		int sndx = 0, endx = length - 1;
-		int pad = s.charAt(endx) == '=' ? (s.charAt(endx - 1) == '=' ? 2 : 1) : 0;
-		int cnt = endx - sndx + 1;
-		int sepCnt = length > 76 ? (s.charAt(76) == '\r' ? cnt / 78 : 0) << 1 : 0;
-		int len = ((cnt - sepCnt) * 6 >> 3) - pad;
-		byte[] dest = new byte[len];
+		int sndx = 0;
+		final int endx = length - 1;
+		final int pad = s.charAt(endx) == '=' ? (s.charAt(endx - 1) == '=' ? 2 : 1) : 0;
+		final int cnt = endx - sndx + 1;
+		final int sepCnt = length > 76 ? (s.charAt(76) == '\r' ? cnt / 78 : 0) << 1 : 0;
+		final int len = ((cnt - sepCnt) * 6 >> 3) - pad;
+		final byte[] dest = new byte[len];
 
 		int d = 0;
 		for (int cc = 0, eLen = (len / 3) * 3; d < eLen;) {
-			int i = INV[s.charAt(sndx++)] << 18 | INV[s.charAt(sndx++)] << 12 | INV[s.charAt(sndx++)] << 6 | INV[s.charAt(sndx++)];
+			final int i = INV[s.charAt(sndx++)] << 18 | INV[s.charAt(sndx++)] << 12 | INV[s.charAt(sndx++)] << 6 | INV[s.charAt(sndx++)];
 
 			dest[d++] = (byte) (i >> 16);
 			dest[d++] = (byte) (i >> 8);

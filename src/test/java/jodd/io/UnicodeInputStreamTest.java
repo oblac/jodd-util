@@ -30,6 +30,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -38,76 +40,76 @@ class UnicodeInputStreamTest {
 
 	@Test
 	void testUtf8() throws IOException {
-		byte[] bytes = new byte[4];
+		final byte[] bytes = new byte[4];
 		Bits.putInt(bytes, 0, 0xEFBBBF65);
 
-		ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
-		UnicodeInputStream uis = new UnicodeInputStream(basis, null);
+		final ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
+		final UnicodeInputStream uis = new UnicodeInputStream(basis, null);
 		uis.init();
 
 		assertEquals(3, uis.getBOMSize());
-		assertEquals("UTF-8", uis.getDetectedEncoding());
+		assertEquals(StandardCharsets.UTF_8, uis.getDetectedEncoding());
 	}
 
 	@Test
 	void testUtf16BE() throws IOException {
-		byte[] bytes = new byte[4];
+		final byte[] bytes = new byte[4];
 		Bits.putInt(bytes, 0, 0xFEFF6565);
 
-		ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
-		UnicodeInputStream uis = new UnicodeInputStream(basis, null);
+		final ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
+		final UnicodeInputStream uis = new UnicodeInputStream(basis, null);
 		uis.init();
 
 		assertEquals(2, uis.getBOMSize());
-		assertEquals("UTF-16BE", uis.getDetectedEncoding());
+		assertEquals(StandardCharsets.UTF_16BE, uis.getDetectedEncoding());
 	}
 
 	@Test
 	void testUtf16LE() throws IOException {
-		byte[] bytes = new byte[4];
+		final byte[] bytes = new byte[4];
 		Bits.putInt(bytes, 0, 0xFFFE6565);
 
-		ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
-		UnicodeInputStream uis = new UnicodeInputStream(basis, null);
+		final ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
+		final UnicodeInputStream uis = new UnicodeInputStream(basis, null);
 		uis.init();
 
 		assertEquals(2, uis.getBOMSize());
-		assertEquals("UTF-16LE", uis.getDetectedEncoding());
+		assertEquals(StandardCharsets.UTF_16LE, uis.getDetectedEncoding());
 	}
 
 	@Test
 	void testUtf32BE() throws IOException {
-		byte[] bytes = new byte[4];
+		final byte[] bytes = new byte[4];
 		Bits.putInt(bytes, 0, 0x0000FEFF);
 
-		ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
-		UnicodeInputStream uis = new UnicodeInputStream(basis, null);
+		final ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
+		final UnicodeInputStream uis = new UnicodeInputStream(basis, null);
 		uis.init();
 
 		assertEquals(4, uis.getBOMSize());
-		assertEquals("UTF-32BE", uis.getDetectedEncoding());
+		assertEquals(Charset.forName("UTF-32BE"), uis.getDetectedEncoding());
 	}
 
 	@Test
 	void testUtf32LE() throws IOException {
-		byte[] bytes = new byte[4];
+		final byte[] bytes = new byte[4];
 		Bits.putInt(bytes, 0, 0xFFFE0000);
 
-		ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
-		UnicodeInputStream uis = new UnicodeInputStream(basis, null);
+		final ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
+		final UnicodeInputStream uis = new UnicodeInputStream(basis, null);
 		uis.init();
 
 		assertEquals(4, uis.getBOMSize());
-		assertEquals("UTF-32LE", uis.getDetectedEncoding());
+		assertEquals(Charset.forName("UTF-32LE"), uis.getDetectedEncoding());
 	}
 
 	@Test
 	void testNoUtf() throws IOException {
-		byte[] bytes = new byte[4];
+		final byte[] bytes = new byte[4];
 		Bits.putInt(bytes, 0, 0x11223344);
 
-		ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
-		UnicodeInputStream uis = new UnicodeInputStream(basis, null);
+		final ByteArrayInputStream basis = new ByteArrayInputStream(bytes);
+		final UnicodeInputStream uis = new UnicodeInputStream(basis, null);
 		uis.init();
 
 		assertEquals(0, uis.getBOMSize());

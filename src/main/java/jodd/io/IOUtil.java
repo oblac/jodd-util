@@ -25,8 +25,6 @@
 
 package jodd.io;
 
-import jodd.Jodd;
-
 import javax.activation.DataSource;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -40,8 +38,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Optimized byte and character stream utilities.
@@ -237,23 +236,23 @@ public class IOUtil {
 	// ---------------------------------------------------------------- copy to OutputStream
 
 	/**
-	 * @see #copy(Reader, OutputStream, String)
+	 * @see #copy(Reader, OutputStream, Charset)
 	 */
 	public static <T extends OutputStream> T copy(final Reader input, final T output) throws IOException {
 		return copy(input, output, encoding());
 	}
 
 	/**
-	 * @see #copy(Reader, OutputStream, String, int)
+	 * @see #copy(Reader, OutputStream, Charset, int)
 	 */
 	public static <T extends OutputStream> T copy(final Reader input, final T output, final int count) throws IOException {
 		return copy(input, output, encoding(), count);
 	}
 
 	/**
-	 * @see #copy(Reader, OutputStream, String, int)
+	 * @see #copy(Reader, OutputStream, Charset, int)
 	 */
-	public static <T extends OutputStream> T copy(final Reader input, final T output, final String encoding) throws IOException {
+	public static <T extends OutputStream> T copy(final Reader input, final T output, final Charset encoding) throws IOException {
 		return copy(input, output, encoding, ALL);
 	}
 
@@ -262,7 +261,7 @@ public class IOUtil {
 	 *
 	 * @see #copy(Reader, Writer, int)
 	 */
-	public static <T extends OutputStream> T copy(final Reader input, final T output, final String encoding, final int count) throws IOException {
+	public static <T extends OutputStream> T copy(final Reader input, final T output, final Charset encoding, final int count) throws IOException {
 		try (final Writer out = outputStreamWriterOf(output, encoding)) {
 			copy(input, out, count);
 			return output;
@@ -300,21 +299,21 @@ public class IOUtil {
 	}
 
 	/**
-	 * @see #copyToOutputStream(Reader, String)
+	 * @see #copyToOutputStream(Reader, Charset)
 	 */
 	public static ByteArrayOutputStream copyToOutputStream(final Reader input) throws IOException {
 		return copyToOutputStream(input, encoding());
 	}
 
 	/**
-	 * @see #copyToOutputStream(Reader, String, int)
+	 * @see #copyToOutputStream(Reader, Charset, int)
 	 */
-	public static ByteArrayOutputStream copyToOutputStream(final Reader input, final String encoding) throws IOException {
+	public static ByteArrayOutputStream copyToOutputStream(final Reader input, final Charset encoding) throws IOException {
 		return copyToOutputStream(input, encoding, ALL);
 	}
 
 	/**
-	 * @see #copyToOutputStream(Reader, String, int)
+	 * @see #copyToOutputStream(Reader, Charset, int)
 	 */
 	public static ByteArrayOutputStream copyToOutputStream(final Reader input, final int count) throws IOException {
 		return copyToOutputStream(input, encoding(), count);
@@ -323,9 +322,9 @@ public class IOUtil {
 	/**
 	 * Copies {@link Reader} to a new {@link ByteArrayOutputStream} using buffer and specified encoding.
 	 *
-	 * @see #copy(Reader, OutputStream, String, int)
+	 * @see #copy(Reader, OutputStream, Charset, int)
 	 */
-	public static ByteArrayOutputStream copyToOutputStream(final Reader input, final String encoding, final int count) throws IOException {
+	public static ByteArrayOutputStream copyToOutputStream(final Reader input, final Charset encoding, final int count) throws IOException {
 		try (final ByteArrayOutputStream output = createFastByteArrayOutputStream()) {
 			copy(input, output, encoding, count);
 			return output;
@@ -335,23 +334,23 @@ public class IOUtil {
 	// ---------------------------------------------------------------- copy to Writer
 
 	/**
-	 * @see #copy(InputStream, Writer, String)
+	 * @see #copy(InputStream, Writer, Charset)
 	 */
 	public static <T extends Writer> T copy(final InputStream input, final T output) throws IOException {
 		return copy(input, output, encoding());
 	}
 
 	/**
-	 * @see #copy(InputStream, Writer, String, int)
+	 * @see #copy(InputStream, Writer, Charset, int)
 	 */
 	public static <T extends Writer> T copy(final InputStream input, final T output, final int count) throws IOException {
 		return copy(input, output, encoding(), count);
 	}
 
 	/**
-	 * @see #copy(InputStream, Writer, String, int)
+	 * @see #copy(InputStream, Writer, Charset, int)
 	 */
-	public static <T extends Writer> T copy(final InputStream input, final T output, final String encoding) throws IOException {
+	public static <T extends Writer> T copy(final InputStream input, final T output, final Charset encoding) throws IOException {
 		return copy(input, output, encoding, ALL);
 	}
 
@@ -360,38 +359,38 @@ public class IOUtil {
 	 *
 	 * @see #copy(Reader, Writer, int)
 	 */
-	public static <T extends Writer> T copy(final InputStream input, final T output, final String encoding, final int count) throws IOException {
+	public static <T extends Writer> T copy(final InputStream input, final T output, final Charset encoding, final int count) throws IOException {
 		copy(inputStreamReadeOf(input, encoding), output, count);
 		return output;
 	}
 
 	/**
-	 * @see #copy(InputStream, String)
+	 * @see #copy(InputStream, Charset)
 	 */
 	public static CharArrayWriter copy(final InputStream input) throws IOException {
 		return copy(input, encoding());
 	}
 
 	/**
-	 * @see #copy(InputStream, String, int)
+	 * @see #copy(InputStream, Charset, int)
 	 */
 	public static CharArrayWriter copy(final InputStream input, final int count) throws IOException {
 		return copy(input, encoding(), count);
 	}
 
 	/**
-	 * @see #copy(InputStream, String, int)
+	 * @see #copy(InputStream, Charset, int)
 	 */
-	public static CharArrayWriter copy(final InputStream input, final String encoding) throws IOException {
+	public static CharArrayWriter copy(final InputStream input, final Charset encoding) throws IOException {
 		return copy(input, encoding, ALL);
 	}
 
 	/**
 	 * Copies {@link InputStream} to a new {@link CharArrayWriter} using buffer and specified encoding.
 	 *
-	 * @see #copy(InputStream, Writer, String, int)
+	 * @see #copy(InputStream, Writer, Charset, int)
 	 */
-	public static CharArrayWriter copy(final InputStream input, final String encoding, final int count) throws IOException {
+	public static CharArrayWriter copy(final InputStream input, final Charset encoding, final int count) throws IOException {
 		try (final CharArrayWriter output = createFastCharArrayWriter()) {
 			copy(input, output, encoding, count);
 			return output;
@@ -445,30 +444,30 @@ public class IOUtil {
 	}
 
 	/**
-	 * @see #readBytes(Reader, String)
+	 * @see #readBytes(Reader, Charset)
 	 */
 	public static byte[] readBytes(final Reader input) throws IOException {
 		return readBytes(input, encoding());
 	}
 
 	/**
-	 * @see #readBytes(Reader, String, int)
+	 * @see #readBytes(Reader, Charset, int)
 	 */
 	public static byte[] readBytes(final Reader input, final int count) throws IOException {
 		return readBytes(input, encoding(), count);
 	}
 
 	/**
-	 * @see #readBytes(Reader, String, int)
+	 * @see #readBytes(Reader, Charset, int)
 	 */
-	public static byte[] readBytes(final Reader input, final String encoding) throws IOException {
+	public static byte[] readBytes(final Reader input, final Charset encoding) throws IOException {
 		return readBytes(input, encoding, ALL);
 	}
 
 	/**
-	 * @see #copyToOutputStream(Reader, String, int)
+	 * @see #copyToOutputStream(Reader, Charset, int)
 	 */
-	public static byte[] readBytes(final Reader input, final String encoding, final int count) throws IOException {
+	public static byte[] readBytes(final Reader input, final Charset encoding, final int count) throws IOException {
 		return copyToOutputStream(input, encoding, count).toByteArray();
 	}
 
@@ -496,23 +495,23 @@ public class IOUtil {
 	}
 
 	/**
-	 * @see #readChars(InputStream, String, int)
+	 * @see #readChars(InputStream, Charset, int)
 	 */
-	public static char[] readChars(final InputStream input, final String encoding) throws IOException {
+	public static char[] readChars(final InputStream input, final Charset encoding) throws IOException {
 		return readChars(input, encoding, ALL);
 	}
 
 	/**
-	 * @see #readChars(InputStream, String, int)
+	 * @see #readChars(InputStream, Charset, int)
 	 */
 	public static char[] readChars(final InputStream input, final int count) throws IOException {
 		return readChars(input, encoding(), count);
 	}
 
 	/**
-	 * @see #copy(InputStream, String, int)
+	 * @see #copy(InputStream, Charset, int)
 	 */
-	public static char[] readChars(final InputStream input, final String encoding, final int count) throws IOException {
+	public static char[] readChars(final InputStream input, final Charset encoding, final int count) throws IOException {
 		return copy(input, encoding, count).toCharArray();
 	}
 
@@ -593,10 +592,9 @@ public class IOUtil {
 
 	/**
 	 * Returns default encoding.
-	 * @return default encoding.
 	 */
-	private static String encoding() {
-		return Jodd.encoding.name();
+	private static Charset encoding() {
+		return StandardCharsets.UTF_8;
 	}
 
 	// ---------------------------------------------------------------- wrappers
@@ -615,9 +613,9 @@ public class IOUtil {
 	}
 
 	/**
-	 * @see #inputStreamReadeOf(InputStream, String)
+	 * @see #inputStreamReadeOf(InputStream, Charset)
 	 */
-	public static InputStreamReader inputStreamReadeOf(final InputStream input) throws UnsupportedEncodingException {
+	public static InputStreamReader inputStreamReadeOf(final InputStream input) {
 		return inputStreamReadeOf(input, encoding());
 	}
 
@@ -627,16 +625,15 @@ public class IOUtil {
 	 * @param input    {@link InputStream}
 	 * @param encoding Encoding as {@link String} to use for {@link InputStreamReader}.
 	 * @return new {@link InputStreamReader}
-	 * @throws UnsupportedEncodingException if encoding is not valid.
 	 */
-	public static InputStreamReader inputStreamReadeOf(final InputStream input, final String encoding) throws UnsupportedEncodingException {
+	public static InputStreamReader inputStreamReadeOf(final InputStream input, final Charset encoding) {
 		return new InputStreamReader(input, encoding);
 	}
 
 	/**
-	 * @see #outputStreamWriterOf(OutputStream, String)
+	 * @see #outputStreamWriterOf(OutputStream, Charset)
 	 */
-	public static OutputStreamWriter outputStreamWriterOf(final OutputStream output) throws UnsupportedEncodingException {
+	public static OutputStreamWriter outputStreamWriterOf(final OutputStream output) {
 		return outputStreamWriterOf(output, encoding());
 	}
 
@@ -646,9 +643,8 @@ public class IOUtil {
 	 * @param output   {@link OutputStream}
 	 * @param encoding Encoding as {@link String} to use for {@link OutputStreamWriter}.
 	 * @return new {@link OutputStreamWriter}
-	 * @throws UnsupportedEncodingException if encoding is not valid.
 	 */
-	public static OutputStreamWriter outputStreamWriterOf(final OutputStream output, final String encoding) throws UnsupportedEncodingException {
+	public static OutputStreamWriter outputStreamWriterOf(final OutputStream output, final Charset encoding) {
 		return new OutputStreamWriter(output, encoding);
 	}
 }

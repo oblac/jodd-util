@@ -25,8 +25,6 @@
 
 package jodd.io;
 
-import jodd.util.StringUtil;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -146,7 +144,7 @@ public class ZipBuilder {
 	// ---------------------------------------------------------------- add content
 
 	public AddContentToZip add(final String content) {
-		return new AddContentToZip(StringUtil.getBytes(content, StandardCharsets.UTF_8.name()));
+		return new AddContentToZip(content.getBytes(StandardCharsets.UTF_8));
 	}
 
 	public AddContentToZip add(final byte[] content) {

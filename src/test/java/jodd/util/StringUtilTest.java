@@ -27,6 +27,7 @@ package jodd.util;
 
 import org.junit.jupiter.api.Test;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -922,21 +923,14 @@ class StringUtilTest {
 
 	@Test
 	void testCharset() {
-		assertEquals("123", StringUtil.convertCharset("123", "UTF-8", "UTF-8"));
-		assertEquals("123", StringUtil.convertCharset("123", "ISO-8859-1", "UTF-8"));
-		final String s = StringUtil.convertCharset("\250\275", "UTF-8", "ISO-8859-1");
+		assertEquals("123", StringUtil.convertCharset("123", StandardCharsets.UTF_8, StandardCharsets.UTF_8));
+		assertEquals("123", StringUtil.convertCharset("123", StandardCharsets.ISO_8859_1, StandardCharsets.UTF_8));
+		final String s = StringUtil.convertCharset("\250\275", StandardCharsets.UTF_8, StandardCharsets.ISO_8859_1);
 		assertEquals(4, s.length());
 		assertEquals(194, s.charAt(0));
 		assertEquals(168, s.charAt(1));
 		assertEquals(194, s.charAt(2));
 		assertEquals(189, s.charAt(3));
-
-		try {
-			assertEquals("123", StringUtil.convertCharset("123", "yyy", "xxx"));
-			fail("error");
-		} catch (final RuntimeException e) {
-			// ignore
-		}
 	}
 
 	@Test

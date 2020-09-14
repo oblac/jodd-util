@@ -25,12 +25,11 @@
 
 package jodd.net;
 
-import jodd.Jodd;
 import jodd.util.StringPool;
-import jodd.util.StringUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -190,7 +189,7 @@ public class URLCoder {
 			return null;
 		}
 
-		final byte[] bytes = encodeBytes(StringUtil.getBytes(source, encoding.name()), uriPart);
+		final byte[] bytes = encodeBytes(source.getBytes(encoding), uriPart);
 
 		final char[] chars = new char[bytes.length];
 		for (int i = 0; i < bytes.length; i++) {
@@ -226,21 +225,21 @@ public class URLCoder {
 	/**
 	 * Encodes string using default RFCP rules.
 	 */
-	public static String encode(final String string, final String encoding) {
-		return encodeUriComponent(string, Charset.forName(encoding), URIPart.UNRESERVED);
+	public static String encode(final String string, final Charset encoding) {
+		return encodeUriComponent(string, encoding, URIPart.UNRESERVED);
 	}
 	public static String encode(final String string) {
-		return encodeUriComponent(string, Jodd.encoding, URIPart.UNRESERVED);
+		return encodeUriComponent(string, StandardCharsets.UTF_8, URIPart.UNRESERVED);
 	}
 
 	/**
 	 * Encodes the given URI scheme with the given encoding.
 	 */
-	public static String encodeScheme(final String scheme, final String encoding) {
-		return encodeUriComponent(scheme, Charset.forName(encoding), URIPart.SCHEME);
+	public static String encodeScheme(final String scheme, final Charset encoding) {
+		return encodeUriComponent(scheme, encoding, URIPart.SCHEME);
 	}
 	public static String encodeScheme(final String scheme) {
-		return encodeUriComponent(scheme, Jodd.encoding, URIPart.SCHEME);
+		return encodeUriComponent(scheme, StandardCharsets.UTF_8, URIPart.SCHEME);
 	}
 
 /*	/**
@@ -258,91 +257,91 @@ public class URLCoder {
 	/**
 	 * Encodes the given URI user info with the given encoding.
 	 */
-	public static String encodeUserInfo(final String userInfo, final String encoding) {
-		return encodeUriComponent(userInfo, Charset.forName(encoding), URIPart.USER_INFO);
+	public static String encodeUserInfo(final String userInfo, final Charset encoding) {
+		return encodeUriComponent(userInfo, encoding, URIPart.USER_INFO);
 	}
 	public static String encodeUserInfo(final String userInfo) {
-		return encodeUriComponent(userInfo, Jodd.encoding, URIPart.USER_INFO);
+		return encodeUriComponent(userInfo, StandardCharsets.UTF_8, URIPart.USER_INFO);
 	}
 
 	/**
 	 * Encodes the given URI host with the given encoding.
 	 */
-	public static String encodeHost(final String host, final String encoding) {
-		return encodeUriComponent(host, Charset.forName(encoding), URIPart.HOST);
+	public static String encodeHost(final String host, final Charset encoding) {
+		return encodeUriComponent(host, encoding, URIPart.HOST);
 	}
 	public static String encodeHost(final String host) {
-		return encodeUriComponent(host, Jodd.encoding, URIPart.HOST);
+		return encodeUriComponent(host, StandardCharsets.UTF_8, URIPart.HOST);
 	}
 
 	/**
 	 * Encodes the given URI port with the given encoding.
 	 */
-	public static String encodePort(final String port, final String encoding) {
-		return encodeUriComponent(port, Charset.forName(encoding), URIPart.PORT);
+	public static String encodePort(final String port, final Charset encoding) {
+		return encodeUriComponent(port, encoding, URIPart.PORT);
 	}
 	public static String encodePort(final String port) {
-		return encodeUriComponent(port, Jodd.encoding, URIPart.PORT);
+		return encodeUriComponent(port, StandardCharsets.UTF_8, URIPart.PORT);
 	}
 
 	/**
 	 * Encodes the given URI path with the given encoding.
 	 */
-	public static String encodePath(final String path, final String encoding) {
-		return encodeUriComponent(path, Charset.forName(encoding), URIPart.PATH);
+	public static String encodePath(final String path, final Charset encoding) {
+		return encodeUriComponent(path, encoding, URIPart.PATH);
 	}
 	public static String encodePath(final String path) {
-		return encodeUriComponent(path, Jodd.encoding, URIPart.PATH);
+		return encodeUriComponent(path, StandardCharsets.UTF_8, URIPart.PATH);
 	}
 
 	/**
 	 * Encodes the given URI path segment with the given encoding.
 	 */
-	public static String encodePathSegment(final String segment, final String encoding) {
-		return encodeUriComponent(segment, Charset.forName(encoding), URIPart.PATH_SEGMENT);
+	public static String encodePathSegment(final String segment, final Charset encoding) {
+		return encodeUriComponent(segment, encoding, URIPart.PATH_SEGMENT);
 	}
 	public static String encodePathSegment(final String segment) {
-		return encodeUriComponent(segment, Jodd.encoding, URIPart.PATH_SEGMENT);
+		return encodeUriComponent(segment, StandardCharsets.UTF_8, URIPart.PATH_SEGMENT);
 	}
 
 	/**
 	 * Encodes the given URI query with the given encoding.
 	 */
-	public static String encodeQuery(final String query, final String encoding) {
-		return encodeUriComponent(query, Charset.forName(encoding), URIPart.QUERY);
+	public static String encodeQuery(final String query, final Charset encoding) {
+		return encodeUriComponent(query, encoding, URIPart.QUERY);
 	}
 	public static String encodeQuery(final String query) {
-		return encodeUriComponent(query, Jodd.encoding, URIPart.QUERY);
+		return encodeUriComponent(query, StandardCharsets.UTF_8, URIPart.QUERY);
 	}
 
 	/**
 	 * Encodes the given URI query parameter with the given encoding.
 	 */
-	public static String encodeQueryParam(final String queryParam, final String encoding) {
-		return encodeUriComponent(queryParam, Charset.forName(encoding), URIPart.QUERY_PARAM);
+	public static String encodeQueryParam(final String queryParam, final Charset encoding) {
+		return encodeUriComponent(queryParam, encoding, URIPart.QUERY_PARAM);
 	}
 	public static String encodeQueryParam(final String queryParam) {
-		return encodeUriComponent(queryParam, Jodd.encoding, URIPart.QUERY_PARAM);
+		return encodeUriComponent(queryParam, StandardCharsets.UTF_8, URIPart.QUERY_PARAM);
 	}
 
 	/**
 	 * Encodes the given URI fragment with the given encoding.
 	 */
-	public static String encodeFragment(final String fragment, final String encoding) {
-		return encodeUriComponent(fragment, Charset.forName(encoding), URIPart.FRAGMENT);
+	public static String encodeFragment(final String fragment, final Charset encoding) {
+		return encodeUriComponent(fragment, encoding, URIPart.FRAGMENT);
 	}
 	public static String encodeFragment(final String fragment) {
-		return encodeUriComponent(fragment, Jodd.encoding, URIPart.FRAGMENT);
+		return encodeUriComponent(fragment, StandardCharsets.UTF_8, URIPart.FRAGMENT);
 	}
 
 
 	// ---------------------------------------------------------------- url
 
 	/**
-	 * @see #encodeUri(String, String)
+	 * @see #encodeUri(String, Charset)
 	 */
 	public static String encodeUri(final String uri) {
-		return encodeUri(uri, Jodd.encoding.name());
+		return encodeUri(uri, StandardCharsets.UTF_8);
 	}
 	/**
 	 * Encodes the given source URI into an encoded String. All various URI components are
@@ -351,7 +350,7 @@ public class URLCoder {
 	 * characters in query parameter names and query parameter values because they cannot
 	 * be parsed in a reliable way.
 	 */
-	public static String encodeUri(final String uri, final String encoding) {
+	public static String encodeUri(final String uri, final Charset encoding) {
 		final Matcher m = URI_PATTERN.matcher(uri);
 		if (m.matches()) {
 			final String scheme = m.group(2);
@@ -369,10 +368,10 @@ public class URLCoder {
 	}
 
 	/**
-	 * @see #encodeHttpUrl(String, String)
+	 * @see #encodeHttpUrl(String, Charset)
 	 */
 	public static String encodeHttpUrl(final String httpUrl) {
-		return encodeHttpUrl(httpUrl, Jodd.encoding.name());
+		return encodeHttpUrl(httpUrl, StandardCharsets.UTF_8);
 	}
 	/**
 	 * Encodes the given HTTP URI into an encoded String. All various URI components are
@@ -383,7 +382,7 @@ public class URLCoder {
 	 * characters in query parameter names and query parameter values because they cannot
 	 * be parsed in a reliable way.
 	 */
-	public static String encodeHttpUrl(final String httpUrl, final String encoding) {
+	public static String encodeHttpUrl(final String httpUrl, final Charset encoding) {
 		final Matcher m = HTTP_URL_PATTERN.matcher(httpUrl);
 		if (m.matches()) {
 			final String scheme = m.group(1);
@@ -402,7 +401,7 @@ public class URLCoder {
 	private static String encodeUriComponents(
 		final String scheme, final String authority, final String userInfo,
 		final String host, final String port, final String path, final String query,
-		final String fragment, final String encoding) {
+		final String fragment, final Charset encoding) {
 
 		final StringBuilder sb = new StringBuilder();
 
@@ -462,15 +461,15 @@ public class URLCoder {
 	 * should be set previously or after the URL is built.
 	 */
 	public static Builder build(final String path, final boolean encodePath) {
-		return new Builder(path, encodePath, Jodd.encoding.name());
+		return new Builder(path, encodePath, StandardCharsets.UTF_8);
 	}
 
 	public static class Builder {
 		protected final StringBuilder url;
-		protected final String encoding;
+		protected final Charset encoding;
 		protected boolean hasParams;
 
-		public Builder(final String path, final boolean encodePath, final String encoding) {
+		public Builder(final String path, final boolean encodePath, final Charset encoding) {
 			this.encoding = encoding;
 			url = new StringBuilder();
 			if (encodePath) {

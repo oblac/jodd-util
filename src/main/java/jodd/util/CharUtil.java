@@ -25,6 +25,9 @@
 
 package jodd.util;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 /**
  * Various character and character sequence utilities, including <code>char[]</code> - <code>byte[]</code> conversions.
  */
@@ -43,7 +46,7 @@ public class CharUtil {
 	 * Converts char array into byte array by stripping the high byte of each character.
 	 */
 	public static byte[] toSimpleByteArray(final char[] carr) {
-		byte[] barr = new byte[carr.length];
+		final byte[] barr = new byte[carr.length];
 		for (int i = 0; i < carr.length; i++) {
 			barr[i] = (byte) carr[i];
 		}
@@ -55,7 +58,7 @@ public class CharUtil {
 	 * @see #toSimpleByteArray(char[])
 	 */
 	public static byte[] toSimpleByteArray(final CharSequence charSequence) {
-		byte[] barr = new byte[charSequence.length()];
+		final byte[] barr = new byte[charSequence.length()];
 		for (int i = 0; i < barr.length; i++) {
 			barr[i] = (byte) charSequence.charAt(i);
 		}
@@ -66,7 +69,7 @@ public class CharUtil {
 	 * Converts byte array to char array by simply extending bytes to chars.
 	 */
 	public static char[] toSimpleCharArray(final byte[] barr) {
-		char[] carr = new char[barr.length];
+		final char[] carr = new char[barr.length];
 		for (int i = 0; i < barr.length; i++) {
 			carr[i] = (char) (barr[i] & 0xFF);
 		}
@@ -90,7 +93,7 @@ public class CharUtil {
 	 * Converts char array into {@link #toAscii(char) ASCII} array.
 	 */
 	public static byte[] toAsciiByteArray(final char[] carr) {
-		byte[] barr = new byte[carr.length];
+		final byte[] barr = new byte[carr.length];
 		for (int i = 0; i < carr.length; i++) {
 			barr[i] = (byte) ((int) (carr[i] <= 0xFF ? carr[i] : 0x3F));
 		}
@@ -101,9 +104,9 @@ public class CharUtil {
 	 * Converts char sequence into ASCII byte array.
 	 */
 	public static byte[] toAsciiByteArray(final CharSequence charSequence) {
-		byte[] barr = new byte[charSequence.length()];
+		final byte[] barr = new byte[charSequence.length()];
 		for (int i = 0; i < barr.length; i++) {
-			char c = charSequence.charAt(i);
+			final char c = charSequence.charAt(i);
 			barr[i] = (byte) ((int) (c <= 0xFF ? c : 0x3F));
 		}
 		return barr;
@@ -115,9 +118,9 @@ public class CharUtil {
 	 * Converts char array into byte array by replacing each character with two bytes.
 	 */
 	public static byte[] toRawByteArray(final char[] carr) {
-		byte[] barr = new byte[carr.length << 1];
+		final byte[] barr = new byte[carr.length << 1];
 		for (int i = 0, bpos = 0; i < carr.length; i++) {
-			char c = carr[i];
+			final char c = carr[i];
 			barr[bpos++] = (byte) ((c & 0xFF00) >> 8);
 			barr[bpos++] = (byte) (c & 0x00FF);
 		}
@@ -129,7 +132,7 @@ public class CharUtil {
 		if (carrLen << 1 < barr.length) {
 			carrLen++;
 		}
-		char[] carr = new char[carrLen];
+		final char[] carr = new char[carrLen];
 		int i = 0, j = 0;
 		while (i < barr.length) {
 			char c = (char) (barr[i] << 8);
@@ -150,28 +153,28 @@ public class CharUtil {
 	 * Converts char array to byte array using default Jodd encoding.
 	 */
 	public static byte[] toByteArray(final char[] carr) {
-		return StringUtil.getBytes(new String(carr));
+		return new String(carr).getBytes(StandardCharsets.UTF_8);
 	}
 
 	/**
 	 * Converts char array to byte array using provided encoding.  
 	 */
-	public static byte[] toByteArray(final char[] carr, final String charset) {
-		return StringUtil.getBytes(new String(carr), charset);
+	public static byte[] toByteArray(final char[] carr, final Charset charset) {
+		return new String(carr).getBytes(charset);
 	}
 
 	/**
 	 * Converts byte array of default Jodd encoding to char array.
 	 */
 	public static char[] toCharArray(final byte[] barr) {
-		return StringUtil.newString(barr).toCharArray();
+		return new String(barr).toCharArray();
 	}
 
 	/**
 	 * Converts byte array of specific encoding to char array.
 	 */
-	public static char[] toCharArray(final byte[] barr, final String charset) {
-		return StringUtil.newString(barr, charset).toCharArray();
+	public static char[] toCharArray(final byte[] barr, final Charset charset) {
+		return new String(barr, charset).toCharArray();
 	}
 
 	// ---------------------------------------------------------------- find
@@ -184,7 +187,7 @@ public class CharUtil {
 	 *         otherwise <code>false</code>
 	 */
 	public static boolean equalsOne(final char c, final char[] match) {
-		for (char aMatch : match) {
+		for (final char aMatch : match) {
 			if (c == aMatch) {
 				return true;
 			}

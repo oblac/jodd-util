@@ -25,9 +25,9 @@
 
 package jodd.io;
 
-import jodd.util.SystemUtil;
 import jodd.util.RandomString;
 import jodd.util.StringUtil;
+import jodd.util.SystemUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystemException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
@@ -73,7 +74,7 @@ class PathUtilTest {
 
 	@Test
 	void testResolve() {
-		Path base = Paths.get(fixpath("/aaa/bbb"));
+		final Path base = Paths.get(fixpath("/aaa/bbb"));
 
 		Path path = PathUtil.resolve(base, "ccc");
 		assertEquals(fixpath("/aaa/bbb/ccc"), path.toString());
@@ -94,7 +95,7 @@ class PathUtilTest {
 		assertEquals(fixpath("/aaa/bbb/ccc/ddd"), path.toString());
 	}
 
-	private String fixpath(String path) {
+	private String fixpath(final String path) {
 		return StringUtil.replace(path, "/", File.separator);
 	}
 
@@ -115,9 +116,9 @@ class PathUtilTest {
 
 			final String expected = "üöä ÜÖÄ ß";
 
-			File file = new File(BASE_DIR, "file_with_german_umlaut.txt");
+			final File file = new File(BASE_DIR, "file_with_german_umlaut.txt");
 
-			FileUtil.writeString(file, expected, "UTF-8");
+			FileUtil.writeString(file, expected, StandardCharsets.UTF_8);
 
 			final String actual = PathUtil.readString(file.toPath());
 
@@ -176,13 +177,13 @@ class PathUtilTest {
 			// Sometimes, a lock might do more than this on a particular platform, but this behavior is unspecified,
 			// and relying on more than is guaranteed in the class documentation is a recipe for failure.
 
-			try (RandomAccessFile randomAccessFile = new RandomAccessFile(locked_file, "rw");
-				 FileLock lock = randomAccessFile.getChannel().lock())
+			try (final RandomAccessFile randomAccessFile = new RandomAccessFile(locked_file, "rw");
+			     final FileLock lock = randomAccessFile.getChannel().lock())
 			{
 				assumeTrue(lock.isValid(), locked_file.getAbsolutePath() + " is NOT locked...");
 
 				// asserts
-				IOException expectedException = assertThrows(
+				final IOException expectedException = assertThrows(
 					IOException.class, () -> PathUtil.deleteFileTree(baseDir_Not_Successful.toPath()));
 				assertTrue(expectedException instanceof FileSystemException);
 				assertEquals(locked_file.getAbsolutePath(), ((FileSystemException)expectedException).getFile());

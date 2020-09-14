@@ -25,11 +25,9 @@
 
 package jodd.net;
 
-import jodd.Jodd;
-import jodd.util.StringUtil;
-
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * URL decoder.
@@ -40,31 +38,31 @@ public class URLDecoder {
 	 * Decodes URL elements.
 	 */
 	public static String decode(final String url) {
-		return decode(url, Jodd.encoding, false);
+		return decode(url, StandardCharsets.UTF_8, false);
 	}
 
 	/**
 	 * Decodes URL elements. This method may be used for all
 	 * parts of URL, except for the query parts, since it does
 	 * not decode the '+' character.
-	 * @see #decodeQuery(String, String)
+	 * @see #decodeQuery(String, Charset)
 	 */
-	public static String decode(final String source, final String encoding) {
-		return decode(source, Charset.forName(encoding), false);
+	public static String decode(final String source, final Charset encoding) {
+		return decode(source, encoding, false);
 	}
 
 	/**
 	 * Decodes query name or value.
 	 */
 	public static String decodeQuery(final String source) {
-		return decode(source, Jodd.encoding, true);
+		return decode(source, StandardCharsets.UTF_8, true);
 	}
 
 	/**
 	 * Decodes query name or value.
 	 */
-	public static String decodeQuery(final String source, final String encoding) {
-		return decode(source, Charset.forName(encoding), true);
+	public static String decodeQuery(final String source, final Charset encoding) {
+		return decode(source, encoding, true);
 	}
 
 	private static String decode(final String source, final Charset encoding, final boolean decodePlus) {
@@ -103,7 +101,7 @@ public class URLDecoder {
 					bos.write(ch);
 			}
 		}
-		return changed ? StringUtil.newString(bos.toByteArray(), encoding) : source;
+		return changed ? new String(bos.toByteArray(), encoding) : source;
 	}
 
 }
