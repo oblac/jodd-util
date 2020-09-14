@@ -37,145 +37,95 @@ class FormatTest {
 
 	@Test
 	void testByteSizes_noSi() {
-		assertEquals("10 B", Format.humanReadableByteCount(10, false));
-		assertEquals("1.0 KiB", Format.humanReadableByteCount(1024, false));
-		assertEquals("1.5 KiB", Format.humanReadableByteCount(1024 + 512, false));
+		assertEquals("10 B", MathUtil.humanReadableByteCount(10, false));
+		assertEquals("1.0 KiB", MathUtil.humanReadableByteCount(1024, false));
+		assertEquals("1.5 KiB", MathUtil.humanReadableByteCount(1024 + 512, false));
 	}
-
-	@Test
-	void testPadLeft() {
-		assertEquals("123   ", Format.alignLeftAndPad("123", 6));
-		assertEquals("123", Format.alignLeftAndPad("123", 3));
-		assertEquals("12", Format.alignLeftAndPad("123", 2));
-	}
-
-	@Test
-	void testPadRight() {
-		assertEquals("   123", Format.alignRightAndPad("123", 6));
-		assertEquals("123", Format.alignRightAndPad("123", 3));
-		assertEquals("23", Format.alignRightAndPad("123", 2));
-	}
-
 
 	@Test
 	void testToPrettyString() {
-		assertEquals(StringPool.NULL, Format.toPrettyString(null));
+		assertEquals(StringPool.NULL, Util.toPrettyString(null));
 
-		assertEquals("[A,B]", Format.toPrettyString(new String[]{"A", "B"}));
-		assertEquals("[1,2]", Format.toPrettyString(new int[]{1,2}));
-		assertEquals("[1,2]", Format.toPrettyString(new long[]{1,2}));
-		assertEquals("[1,2]", Format.toPrettyString(new short[]{1,2}));
-		assertEquals("[1,2]", Format.toPrettyString(new byte[]{1,2}));
-		assertEquals("[1.0,2.0]", Format.toPrettyString(new double[]{1,2}));
-		assertEquals("[1.0,2.0]", Format.toPrettyString(new float[]{1,2}));
-		assertEquals("[true,false]", Format.toPrettyString(new boolean[] {true, false}));
+		assertEquals("[A,B]", Util.toPrettyString(new String[]{"A", "B"}));
+		assertEquals("[1,2]", Util.toPrettyString(new int[]{1,2}));
+		assertEquals("[1,2]", Util.toPrettyString(new long[]{1,2}));
+		assertEquals("[1,2]", Util.toPrettyString(new short[]{1,2}));
+		assertEquals("[1,2]", Util.toPrettyString(new byte[]{1,2}));
+		assertEquals("[1.0,2.0]", Util.toPrettyString(new double[]{1,2}));
+		assertEquals("[1.0,2.0]", Util.toPrettyString(new float[]{1,2}));
+		assertEquals("[true,false]", Util.toPrettyString(new boolean[] {true, false}));
 
 		try {
-			Format.toPrettyString(new char[]{'a','b'});
+			Util.toPrettyString(new char[]{'a','b'});
 			fail("error");
-		} catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			// ignore
 		}
 
-		assertEquals("[[1,2],[3,4]]", Format.toPrettyString(new int[][] {{1, 2}, {3, 4}}));
+		assertEquals("[[1,2],[3,4]]", Util.toPrettyString(new int[][] {{1, 2}, {3, 4}}));
 
-		List<Integer> list = new ArrayList<>();
+		final List<Integer> list = new ArrayList<>();
 		list.add(1);
 		list.add(4);
 
-		assertEquals("{1,4}", Format.toPrettyString(list));
+		assertEquals("{1,4}", Util.toPrettyString(list));
 	}
 
 	@Test
 	void testToCamelCase() {
-		assertEquals("oneTwoThree", Format.toCamelCase("one two   three", false, ' '));
-		assertEquals("OneTwo.Three", Format.toCamelCase("one two. three", true, ' '));
-		assertEquals("OneTwoThree", Format.toCamelCase("One-two-three", true, '-'));
+		assertEquals("oneTwoThree", StringUtil.toCamelCase("one two   three", false, ' '));
+		assertEquals("OneTwo.Three", StringUtil.toCamelCase("one two. three", true, ' '));
+		assertEquals("OneTwoThree", StringUtil.toCamelCase("One-two-three", true, '-'));
 
-		assertEquals("userName", Format.toCamelCase("user_name", false, '_'));
-		assertEquals("UserName", Format.toCamelCase("user_name", true, '_'));
-		assertEquals("user", Format.toCamelCase("user", false, '_'));
-		assertEquals("User", Format.toCamelCase("user", true, '_'));
+		assertEquals("userName", StringUtil.toCamelCase("user_name", false, '_'));
+		assertEquals("UserName", StringUtil.toCamelCase("user_name", true, '_'));
+		assertEquals("user", StringUtil.toCamelCase("user", false, '_'));
+		assertEquals("User", StringUtil.toCamelCase("user", true, '_'));
 	}
 
 	@Test
 	void testFromCamelCase() {
-		assertEquals("one two three", Format.fromCamelCase("oneTwoThree", ' '));
-		assertEquals("one-two-three", Format.fromCamelCase("oneTwoThree", '-'));
-		assertEquals("one. two. three", Format.fromCamelCase("one.Two.Three", ' '));
+		assertEquals("one two three", StringUtil.fromCamelCase("oneTwoThree", ' '));
+		assertEquals("one-two-three", StringUtil.fromCamelCase("oneTwoThree", '-'));
+		assertEquals("one. two. three", StringUtil.fromCamelCase("one.Two.Three", ' '));
 
-		assertEquals("user_name", Format.fromCamelCase("userName", '_'));
-		assertEquals("user_name", Format.fromCamelCase("UserName", '_'));
-		assertEquals("user_name", Format.fromCamelCase("USER_NAME", '_'));
-		assertEquals("user_name", Format.fromCamelCase("user_name", '_'));
-		assertEquals("user", Format.fromCamelCase("user", '_'));
-		assertEquals("user", Format.fromCamelCase("User", '_'));
-		assertEquals("user", Format.fromCamelCase("USER", '_'));
-		assertEquals("user", Format.fromCamelCase("_user", '_'));
-		assertEquals("user", Format.fromCamelCase("_User", '_'));
-		assertEquals("_user", Format.fromCamelCase("__user", '_'));
-		assertEquals("user__name", Format.fromCamelCase("user__name", '_'));
-	}
-
-
-	@Test
-	void testFormatPara() {
-		String txt = "123 567 90AB";
-		String p = Format.formatParagraph(txt, 6, false);
-		assertEquals("123 56\n7 90AB\n", p);
-
-		p = Format.formatParagraph(txt, 4, false);
-		assertEquals("123\n567\n90AB\n", p);
-
-		txt = "123  67 90AB";
-		p = Format.formatParagraph(txt, 4, false);
-		assertEquals("123\n67\n90AB\n", p);
-
-		txt = "123 567 90AB";
-		p = Format.formatParagraph(txt, 6, true);
-		assertEquals("123\n567\n90AB\n", p);
-
-		txt = "123  67 90AB";
-		p = Format.formatParagraph(txt, 4, true);
-		assertEquals("123\n67\n90AB\n", p);
-		txt = "123  67 90ABCDE";
-		p = Format.formatParagraph(txt, 4, true);
-		assertEquals("123\n67\n90AB\nCDE\n", p);
-
-		txt = "1234567";
-		p = Format.formatParagraph(txt, 4, true);
-		assertEquals("1234\n567\n", p);
-		p = Format.formatParagraph(txt, 4, false);
-		assertEquals("1234\n567\n", p);
-
+		assertEquals("user_name", StringUtil.fromCamelCase("userName", '_'));
+		assertEquals("user_name", StringUtil.fromCamelCase("UserName", '_'));
+		assertEquals("user_name", StringUtil.fromCamelCase("USER_NAME", '_'));
+		assertEquals("user_name", StringUtil.fromCamelCase("user_name", '_'));
+		assertEquals("user", StringUtil.fromCamelCase("user", '_'));
+		assertEquals("user", StringUtil.fromCamelCase("User", '_'));
+		assertEquals("user", StringUtil.fromCamelCase("USER", '_'));
+		assertEquals("user", StringUtil.fromCamelCase("_user", '_'));
+		assertEquals("user", StringUtil.fromCamelCase("_User", '_'));
+		assertEquals("_user", StringUtil.fromCamelCase("__user", '_'));
+		assertEquals("user__name", StringUtil.fromCamelCase("user__name", '_'));
 	}
 
 	@Test
 	void testTabsToSpaces() {
-		String s = Format.convertTabsToSpaces("q\tqa\t", 3);
+		String s = StringUtil.convertTabsToSpaces("q\tqa\t", 3);
 		assertEquals("q  qa ", s);
 
-		s = Format.convertTabsToSpaces("q\tqa\t", 0);
+		s = StringUtil.convertTabsToSpaces("q\tqa\t", 0);
 		assertEquals("qqa", s);
 	}
 
 
 	@Test
 	void testJavaEscapes() {
-		String from = "\r\t\b\f\n\\\"asd\u0111q\u0173aa\u0ABC\u0abc";
-		String to = "\\r\\t\\b\\f\\n\\\\\\\"asd\\u0111q\\u0173aa\\u0abc\\u0abc";
+		final String from = "\r\t\b\f\n\\\"asd\u0111q\u0173aa\u0ABC\u0abc";
+		final String to = "\\r\\t\\b\\f\\n\\\\\\\"asd\\u0111q\\u0173aa\\u0abc\\u0abc";
 
-		assertEquals(to, Format.escapeJava(from));
-		assertEquals(from, Format.unescapeJava(to));
+		assertEquals(to, StringUtil.escapeJava(from));
+		assertEquals(from, StringUtil.unescapeJava(to));
 
 		try {
-			Format.unescapeJava("\\r\\t\\b\\f\\q");
+			StringUtil.unescapeJava("\\r\\t\\b\\f\\q");
 			fail("error");
-		} catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			// ignore
 		}
 	}
-
-
 
 }

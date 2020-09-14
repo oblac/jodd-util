@@ -35,8 +35,7 @@ import java.util.function.Function;
 import static jodd.util.StringPool.EMPTY;
 
 /**
- * Various String utilities.
- * For even more String utilities, see {@link Format}.
+ * String utilities.
  */
 public class StringUtil {
 
@@ -2809,5 +2808,179 @@ public class StringUtil {
 		}
 
 		return 0;
+	}
+
+	/**
+	 * Changes CamelCase string to lower case words separated by provided
+	 * separator character. The following translations are applied:
+	 * <ul>
+	 *     <li>Every upper case letter in the CamelCase name is translated into
+	 * two characters, a separator and the lower case equivalent of the target character,
+	 * with three exceptions.
+	 * 		<ol><li>For contiguous sequences of upper case letters, characters after the first
+	 * character are replaced only by their lower case equivalent, and are not
+	 * preceded by a separator (<code>theFOO</code> to <code>the_foo</code>).
+	 *		<li>An upper case character in the first position of the CamelCase name
+	 * is not preceded by a separator character, and is translated only to its
+	 * lower case equivalent. (<code>Foo</code> to <code>foo</code> and not <code>_foo</code>)
+	 * 		<li>An upper case character in the CamelCase name that is already preceded
+	 * by a separator character is translated only to its lower case equivalent,
+	 * and is not preceded by an additional separator. (<code>user_Name</code>
+	 * to <code>user_name</code> and not <code>user__name</code>.
+	 * 		</ol>
+	 * <li>If the CamelCase name starts with a separator, then that
+	 * separator is not included in the translated name, unless the CamelCase
+	 * name is just one character in length, i.e., it is the separator character.
+	 * This applies only to the first character of the CamelCase name.
+	 * </ul>
+	 */
+	public static String fromCamelCase(final String input, final char separator) {
+		final int length = input.length();
+		final StringBuilder result = new StringBuilder(length * 2);
+		int resultLength = 0;
+		boolean prevTranslated = false;
+		for (int i = 0; i < length; i++) {
+			char c = input.charAt(i);
+			if (i > 0 || c != separator) {// skip first starting separator
+				if (Character.isUpperCase(c)) {
+					if (!prevTranslated && resultLength > 0 && result.charAt(resultLength - 1) != separator) {
+						result.append(separator);
+						resultLength++;
+					}
+					c = Character.toLowerCase(c);
+					prevTranslated = true;
+				} else {
+					prevTranslated = false;
+				}
+				result.append(c);
+				resultLength++;
+			}
+		}
+		return resultLength > 0 ? result.toString() : input;
+	}
+
+	/**
+	 * Converts separated string value to CamelCase.
+	 */
+	public static String toCamelCase(final String input, final boolean firstCharUppercase, final char separator) {
+		final int length = input.length();
+		final StringBuilder sb = new StringBuilder(length);
+		boolean upperCase = firstCharUppercase;
+
+		for (int i = 0; i < length; i++) {
+			final char ch = input.charAt(i);
+			if (ch == separator) {
+				upperCase = true;
+			} else if (upperCase) {
+				sb.append(Character.toUpperCase(ch));
+				upperCase = false;
+			} else {
+				sb.append(ch);
+			}
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * Converts all tabs on a line to spaces according to the provided tab width.
+	 * This is not a simple tab to spaces replacement, since the resulting
+	 * indentation remains the same.
+	 */
+	public static String convertTabsToSpaces(final String line, final int tabWidth) {
+		int tab_index, tab_size;
+		int last_tab_index = 0;
+		int added_chars = 0;
+
+		if (tabWidth == 0) {
+			return remove(line, '\t');
+		}
+
+		final StringBuilder result = new StringBuilder();
+
+		while ((tab_index = line.indexOf('\t', last_tab_index)) != -1) {
+			tab_size = tabWidth - ((tab_index + added_chars) % tabWidth);
+			if (tab_size == 0) {
+				tab_size = tabWidth;
+			}
+			added_chars += tab_size - 1;
+			result.append(line, last_tab_index, tab_index);
+			result.append(repeat(' ', tab_size));
+			last_tab_index = tab_index+1;
+		}
+
+		if (last_tab_index == 0) {
+			return line;
+		}
+
+		result.append(line.substring(last_tab_index));
+		return result.toString();
+	}
+
+	/**
+	 * Escapes a string using java rules.
+	 */
+	public static String escapeJava(final String string) {
+		final int strLen = string.length();
+		final StringBuilder sb = new StringBuilder(strLen);
+
+		for (int i = 0; i < strLen; i++) {
+			final char c = string.charAt(i);
+			switch (c) {
+				case '\b' : sb.append("\\b"); break;
+				case '\t' : sb.append("\\t"); break;
+				case '\n' : sb.append("\\n"); break;
+				case '\f' : sb.append("\\f"); break;
+				case '\r' : sb.append("\\r"); break;
+				case '\"' : sb.append("\\\""); break;
+				case '\\' : sb.append("\\\\"); break;
+				default:
+					if ((c < 32) || (c > 127)) {
+						final String hex = Integer.toHexString(c);
+						sb.append("\\u");
+						for (int k = hex.length(); k < 4; k++) {
+							sb.append('0');
+						}
+						sb.append(hex);
+					} else {
+						sb.append(c);
+					}
+			}
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * Unescapes a string using java rules.
+	 */
+	public static String unescapeJava(final String str) {
+		final char[] chars = str.toCharArray();
+
+		final StringBuilder sb = new StringBuilder(str.length());
+		for (int i = 0; i < chars.length; i++) {
+			char c = chars[i];
+			if (c != '\\') {
+				sb.append(c);
+				continue;
+			}
+			i++;
+			c = chars[i];
+			switch (c) {
+				case 'b': sb.append('\b'); break;
+				case 't': sb.append('\t'); break;
+				case 'n': sb.append('\n'); break;
+				case 'f': sb.append('\f'); break;
+				case 'r': sb.append('\r'); break;
+				case '"': sb.append('\"'); break;
+				case '\\': sb.append('\\'); break;
+				case 'u' :
+					final char hex = (char) Integer.parseInt(new String(chars, i + 1, 4), 16);
+					sb.append(hex);
+					i += 4;
+					break;
+				default:
+					throw new IllegalArgumentException("Invalid escaping character: " + c);
+			}
+		}
+		return sb.toString();
 	}
 }

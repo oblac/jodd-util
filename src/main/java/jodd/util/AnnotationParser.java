@@ -195,7 +195,7 @@ public class AnnotationParser {
 			if (value == null) {
 				return defaultValue;
 			}
-			return value.booleanValue();
+			return value;
 		}
 
 
@@ -207,7 +207,7 @@ public class AnnotationParser {
 			if (value == null) {
 				return defaultValue;
 			}
-			return value.intValue();
+			return value;
 		}
 
 	}
