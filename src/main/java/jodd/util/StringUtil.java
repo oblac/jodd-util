@@ -531,7 +531,7 @@ public class StringUtil {
 	 * @return The decapitalized version of the string.
 	 */
 	public static String decapitalize(final String name) {
-		if (name.length() == 0) {
+		if (name.isEmpty()) {
 			return name;
 		}
 		if (name.length() > 1 &&
@@ -707,7 +707,7 @@ public class StringUtil {
 	 * @return array of tokens
 	 */
 	public static String[] splitc(final String src, final String d) {
-		if ((d.length() == 0) || (src.length() == 0)) {
+		if ((d.isEmpty()) || (src.isEmpty())) {
 			return new String[] {src};
 		}
 		return splitc(src, d.toCharArray());
@@ -723,7 +723,7 @@ public class StringUtil {
 	 * @return array of tokens
 	 */
 	public static String[] splitc(final String src, final char[] delimiters) {
-		if ((delimiters.length == 0) || (src.length() == 0) ) {
+		if ((delimiters.length == 0) || (src.isEmpty()) ) {
 			return new String[] {src};
 		}
 		final char[] srcc = src.toCharArray();
@@ -781,7 +781,7 @@ public class StringUtil {
 	 * @return array of tokens
 	 */
 	public static String[] splitc(final String src, final char delimiter) {
-		if (src.length() == 0) {
+		if (src.isEmpty()) {
 			return new String[] {EMPTY};
 		}
 		final char[] srcc = src.toCharArray();
@@ -1321,7 +1321,7 @@ public class StringUtil {
 	 * Returns if string starts with given character.
 	 */
 	public static boolean startsWithChar(final String s, final char c) {
-		if (s.length() == 0) {
+		if (s.isEmpty()) {
 			return false;
 		}
 		return s.charAt(0) == c;
@@ -1331,7 +1331,7 @@ public class StringUtil {
 	 * Returns if string ends with provided character.
 	 */
 	public static boolean endsWithChar(final String s, final char c) {
-		if (s.length() == 0) {
+		if (s.isEmpty()) {
 			return false;
 		}
 		return s.charAt(s.length() - 1) == c;
@@ -1892,7 +1892,7 @@ public class StringUtil {
 	 * Strips leading and trailing char from given string.
 	 */
 	public static String stripChar(final String string, final char c) {
-		if (string.length() == 0) {
+		if (string.isEmpty()) {
 			return string;
 		}
 		if (string.length() == 1) {
@@ -1974,7 +1974,7 @@ public class StringUtil {
 	 */
 	public static String trimDown(String string) {
 		string = string.trim();
-		if (string.length() == 0) {
+		if (string.isEmpty()) {
 			string = null;
 		}
 		return string;
@@ -1984,7 +1984,7 @@ public class StringUtil {
 	 * Crops string by setting empty strings to <code>null</code>.
 	 */
 	public static String crop(final String string) {
-		if (string.length() == 0) {
+		if (string.isEmpty()) {
 			return null;
 		}
 		return string;
