@@ -25,20 +25,14 @@
 
 package jodd.util;
 
-import jodd.Jodd;
-import jodd.io.FileUtil;
 import jodd.io.IOUtil;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -47,8 +41,9 @@ import java.util.jar.Manifest;
  */
 public class ClassLoaderUtil {
 
-	// ---------------------------------------------------------------- default class loader
+	public static ClassLoaderStrategy classLoaderStrategy = new ClassLoaderStrategy.DefaultClassLoaderStrategy();
 
+	// ---------------------------------------------------------------- default class loader
 
 	/**
 	 * Returns default class loader. By default, it is {@link #getContextClassLoader() threads context class loader}.
@@ -152,119 +147,6 @@ public class ClassLoaderUtil {
 		return base;
 	}
 
-	/**
-	 * Returns default classpath using
-	 * {@link #getDefaultClassLoader() default classloader}.
-	 */
-	public static File[] getDefaultClasspath() {
-		return getDefaultClasspath(getDefaultClassLoader());
-	}
-
-	/**
-	 * Returns default class path from all available <code>URLClassLoader</code>
-	 * in classloader hierarchy. The following is added to the classpath list:
-	 * <ul>
-	 * <li>file URLs from <code>URLClassLoader</code> (other URL protocols are ignored)</li>
-	 * <li>inner entries from containing <b>manifest</b> files (if exist)</li>
-	 * <li>bootstrap classpath is ignored</li>
-	 * </ul>
-	 */
-	public static File[] getDefaultClasspath(ClassLoader classLoader) {
-		final Set<File> classpaths = new TreeSet<>();
-
-		while (classLoader != null) {
-			final URL[] urls = ClassPathURLs.of(classLoader, null);
-			if (urls != null) {
-				for (final URL u : urls) {
-					File f = FileUtil.toContainerFile(u);
-					if ((f != null) && f.exists()) {
-						try {
-							f = f.getCanonicalFile();
-
-							final boolean newElement = classpaths.add(f);
-							if (newElement) {
-								addInnerClasspathItems(classpaths, f);
-							}
-						} catch (final IOException ignore) {
-						}
-					}
-				}
-			}
-			classLoader = classLoader.getParent();
-		}
-
-		final File[] result = new File[classpaths.size()];
-		return classpaths.toArray(result);
-	}
-
-	private static void addInnerClasspathItems(final Set<File> classpaths, final File item) {
-
-		final Manifest manifest = getClasspathItemManifest(item);
-		if (manifest == null) {
-			return;
-		}
-
-		final Attributes attributes = manifest.getMainAttributes();
-		if (attributes == null) {
-			return;
-		}
-
-		final String s = attributes.getValue(Attributes.Name.CLASS_PATH);
-		if (s == null) {
-			return;
-		}
-
-		final String base = getClasspathItemBaseDir(item);
-
-		final String[] tokens = StringUtil.splitc(s, ' ');
-		for (final String t : tokens) {
-			File file;
-
-			// try file with the base path
-			try {
-				file = new File(base, t);
-				file = file.getCanonicalFile();
-				if (!file.exists()) {
-					file = null;
-				}
-			} catch (final Exception ignore) {
-				file = null;
-			}
-
-			if (file == null) {
-				// try file with absolute path
-				try {
-					file = new File(t);
-					file = file.getCanonicalFile();
-					if (!file.exists()) {
-						file = null;
-					}
-				} catch (final Exception ignore) {
-					file = null;
-				}
-			}
-
-			if (file == null) {
-				// try the URL
-				try {
-					final URL url = new URL(t);
-
-					file = new File(url.getFile());
-					file = file.getCanonicalFile();
-					if (!file.exists()) {
-						file = null;
-					}
-				} catch (final Exception ignore) {
-					file = null;
-				}
-			}
-
-			if (file != null && file.exists()) {
-				classpaths.add(file);
-			}
-		}
-	}
-
 	// ---------------------------------------------------------------- class stream
 
 	/**
@@ -293,18 +175,18 @@ public class ClassLoaderUtil {
 
 	/**
 	 * Loads a class using default class loader strategy.
-	 * @see DefaultClassLoaderStrategy
+	 * @see ClassLoaderStrategy.DefaultClassLoaderStrategy
 	 */
 	public static Class loadClass(final String className) throws ClassNotFoundException {
-		return ClassLoaderStrategy.get().loadClass(className, null);
+		return classLoaderStrategy.loadClass(className, null);
 	}
 	
 	/**
 	 * Loads a class using default class loader strategy.
-	 * @see DefaultClassLoaderStrategy
+	 * @see ClassLoaderStrategy.DefaultClassLoaderStrategy
 	 */
 	public static Class loadClass(final String className, final ClassLoader classLoader) throws ClassNotFoundException {
-		return ClassLoaderStrategy.get().loadClass(className, classLoader);
+		return classLoaderStrategy.loadClass(className, classLoader);
 	}
 
 	// ---------------------------------------------------------------- class location
@@ -315,14 +197,6 @@ public class ClassLoaderUtil {
 	 */
 	public static String classLocation(final Class clazz) {
 		return clazz.getProtectionDomain().getCodeSource().getLocation().getPath();
-	}
-
-	/**
-	 * Returns Jodd {@link #classLocation(Class) location}.
-	 * @see #classLocation
-	 */
-	public static String joddLocation() {
-		return classLocation(Jodd.class);
 	}
 
 }

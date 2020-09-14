@@ -121,7 +121,7 @@ class ClassLoaderUtilTest {
 
 		// special case
 
-		final DefaultClassLoaderStrategy defaultClassLoaderStrategy = (DefaultClassLoaderStrategy) ClassLoaderStrategy.get();
+		final ClassLoaderStrategy.DefaultClassLoaderStrategy defaultClassLoaderStrategy = (ClassLoaderStrategy.DefaultClassLoaderStrategy) ClassLoaderStrategy.get();
 
 		defaultClassLoaderStrategy.setLoadArrayClassByComponentTypes(true);
 
