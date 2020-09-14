@@ -34,7 +34,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -128,17 +127,6 @@ class ClassLoaderUtilTest {
 
 		final URLClassLoader parentClassloader = (URLClassLoader)this.getClass().getClassLoader();
 		final URL[] urls = parentClassloader.getURLs();
-		final ExtendedURLClassLoader excl = new ExtendedURLClassLoader(urls, parentClassloader, false);
-
-		final Class dummyClass = ClassLoaderUtil.loadClass(dummyClassName, excl);
-		assertFalse(Dummy.class == dummyClass); // classes are NOT the same as they are loaded by different class loaders
-		assertEquals(Dummy.class.getName(), dummyClass.getName());
-
-		// special case with array!
-
-		final Class dummyClassArray = ClassLoaderUtil.loadClass(dummyClassName + "[]", excl);
-		assertFalse(Dummy[].class == dummyClassArray);
-		assertEquals(Dummy[].class.getName(), dummyClassArray.getName());
 
 		defaultClassLoaderStrategy.setLoadArrayClassByComponentTypes(false);
 	}

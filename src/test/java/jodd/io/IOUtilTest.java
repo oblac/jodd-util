@@ -717,7 +717,7 @@ class IOUtilTest {
 
     @Test
     void testCopy_withSize() throws IOException {
-    	final byte[] bytes = randomBuffer(128 * 1024*1024);
+    	final byte[] bytes = randomBuffer(64 * 1024*1024);
 
     	final InputStream inputStream = new ByteArrayInputStream(bytes);
 		final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();

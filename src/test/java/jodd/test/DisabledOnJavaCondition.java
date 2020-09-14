@@ -46,7 +46,7 @@ public class DisabledOnJavaCondition implements ExecutionCondition {
 			.flatMap(annotatedElement -> findAnnotation(annotatedElement, DisabledOnJava.class))
 			.map(DisabledOnJava::value)
 			.map(javaVersionNumber ->
-				SystemUtil.info().getJavaVersionNumber() == javaVersionNumber ?
+				SystemUtil.info().getJavaVersionNumber() >= javaVersionNumber ?
 					disabled("Disabled on Java " + javaVersionNumber) :
 					enabled("Enabled on Java " + javaVersionNumber))
 			.orElse(DEFAULT);
