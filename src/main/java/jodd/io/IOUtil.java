@@ -25,7 +25,6 @@
 
 package jodd.io;
 
-import javax.activation.DataSource;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -269,17 +268,6 @@ public class IOUtil {
 	}
 
 	/**
-	 * Copies data from {@link DataSource} to a new {@link ByteArrayOutputStream} and returns this.
-	 *
-	 * @param input {@link DataSource} to copy from.
-	 * @return new {@link ByteArrayOutputStream} with data from input.
-	 * @see #copyToOutputStream(InputStream)
-	 */
-	public static ByteArrayOutputStream copyToOutputStream(final DataSource input) throws IOException {
-		return copyToOutputStream(input.getInputStream());
-	}
-
-	/**
 	 * @see #copyToOutputStream(InputStream, int)
 	 */
 	public static ByteArrayOutputStream copyToOutputStream(final InputStream input) throws IOException {
@@ -414,17 +402,6 @@ public class IOUtil {
 			copy(input, output, count);
 			return output;
 		}
-	}
-
-	/**
-	 * Copies data from {@link DataSource} to a new {@link CharArrayWriter} and returns this.
-	 *
-	 * @param input {@link DataSource} to copy from.
-	 * @return new {@link CharArrayWriter} with data from input.
-	 * @see #copy(InputStream)
-	 */
-	public static CharArrayWriter copy(final DataSource input) throws IOException {
-		return copy(input.getInputStream());
 	}
 
 	// ---------------------------------------------------------------- read bytes
