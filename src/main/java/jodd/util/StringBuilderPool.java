@@ -41,7 +41,12 @@ public class StringBuilderPool {
 
 	private StringBuilder poll() {
 		final StringBuilder sb = pool.poll();
-		return sb != null ? sb : new StringBuilder();
+		if (sb != null) {
+			sb.setLength(0);
+			return sb;
+		} else {
+			return new StringBuilder();
+		}
 	}
 
 	private void offer(final StringBuilder sb) {
