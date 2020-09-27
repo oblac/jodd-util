@@ -158,7 +158,7 @@ public class HtmlDecoder {
 						}
 						ndx = html.indexOf('&', lastIndex);
 					}
-					result.append(html.substring(lastIndex));
+					result.append(html, lastIndex, len);
 					return result.toString();
 				}
 		);
