@@ -254,20 +254,22 @@ public class StringUtil {
 	 * @param ch  character to remove
 	 */
 	public static String remove(final String string, final char ch) {
-		if (isEmpty(string)) {
+		int originalNdx = string.indexOf(ch);
+		if (originalNdx == -1) {
 			return string;
 		}
 
-		final int stringLen = string.length();
-
 		return StringBuilderPool.DEFAULT.withPooledBuffer(sb -> {
-			for (int i = 0; i < stringLen; i++) {
-				final char c = string.charAt(i);
-				if (c != ch) {
-					sb.append(c);
-				}
+			int offset = 0;
+			int ndx = originalNdx;
+			while (ndx != -1) {
+				sb.append(string, offset, ndx);
+				offset = ndx + 1;
+				ndx = string.indexOf(ch, offset);
 			}
-			return sb.length() == stringLen ? string : sb.toString();
+			// tail
+			sb.append(string, offset, string.length());
+			return sb.toString();
 		});
 	}
 
