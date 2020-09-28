@@ -111,6 +111,33 @@ jacocoTestReport {
 check.dependsOn jacocoTestReport
 
 //
+// JMH
+//
+
+sourceSets {
+	jmh
+}
+
+dependencies {
+	jmhCompile project
+	jmhCompile 'org.openjdk.jmh:jmh-core:1.25.2'
+	jmhAnnotationProcessor 'org.openjdk.jmh:jmh-generator-annprocess:1.25.2'
+}
+
+tasks.addRule("Pattern: <ClassName>Benchmark : Run benchmark.") { String taskName ->
+	if (taskName.endsWith("Benchmark")) {
+		println "\nRunning Benchmark: " + taskName + "\n"
+
+		task "$taskName"(type: JavaExec, dependsOn: 'build') {
+			main 'org.openjdk.jmh.Main'
+			args =  ['.' + taskName + '.*']
+//				jvmArgs = ["-XX:+PrintCompilation"]
+			classpath = sourceSets.main.runtimeClasspath + sourceSets.jmh.runtimeClasspath
+		}
+	}
+}
+
+//
 // PUBLISH
 //
 
