@@ -199,6 +199,14 @@ class StringUtilTest {
 		assertEquals("qwerty", StringUtil.replace("qwerty", "", "xxxxxxxxxxxxx"));
 	}
 
+	@Test
+	void testRemoveSingleChar() {
+		assertEquals("werty", StringUtil.remove("qwerty", 'q'));
+		assertEquals("qwert", StringUtil.remove("qwerty", 'y'));
+		assertEquals("qwrty", StringUtil.remove("qwerty", 'e'));
+		assertEquals("qwerty", StringUtil.remove("qwerty", 'a'));
+		assertEquals("", StringUtil.remove("", 'q'));
+	}
 
 	@Test
 	void testIndexOf() {
