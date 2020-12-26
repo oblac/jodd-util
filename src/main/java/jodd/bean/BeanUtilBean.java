@@ -83,6 +83,8 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 		bp.setName(name);
 	}
 
+	// used only for hasProperty & getPropertyType (!)
+	// it continues to work even there is no bean instance!
 	protected boolean resolveExistingNestedProperties(final BeanProperty bp) {
 		String name = bp.name;
 		int dotNdx;
@@ -94,7 +96,17 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 				return false;
 			}
 			bp.setName(temp);
-			bp.updateBean(getIndexProperty(bp));
+
+			final Object indexProperty = bp.bean != null ? getIndexProperty(bp) : null;
+			if (indexProperty != null) {
+				// regular case, when there is an instance
+				bp.updateBean(indexProperty);
+			}
+			else {
+				// when bean is null, continue with the type
+				bp.updateBeanClassFromProperty();
+			}
+
 			name = name.substring(dotNdx + 1);
 		}
 		bp.last = true;
@@ -111,9 +123,9 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 	}
 
 	protected boolean hasSimpleProperty(final BeanProperty bp) {
-		if (bp.bean == null) {
-			return false;
-		}
+//		if (bp.bean == null) {
+//			return false;
+//		}
 
 		// try: getter
 		final Getter getter = bp.getGetter(isDeclared);
@@ -226,14 +238,17 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 	// ---------------------------------------------------------------- indexed property
 
 	protected boolean hasIndexProperty(final BeanProperty bp) {
-
-		if (bp.bean == null) {
-			return false;
-		}
+//		if (bp.bean == null) {
+//			return false;
+//		}
 		final String indexString = extractIndex(bp);
 
 		if (indexString == null) {
 			return hasSimpleProperty(bp);
+		}
+
+		if (bp.bean == null) {
+			return false;
 		}
 
 		final Object resultBean = getSimpleProperty(bp);

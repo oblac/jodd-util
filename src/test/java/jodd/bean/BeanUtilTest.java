@@ -1014,7 +1014,7 @@ class BeanUtilTest {
 	void testForced() {
 		final XBean x = new XBean();
 		assertTrue(BeanUtil.declared.hasProperty(x, "y"));
-		assertFalse(BeanUtil.declared.hasProperty(x, "y.foo"));
+		assertTrue(BeanUtil.declared.hasProperty(x, "y.foo"));
 		assertTrue(BeanUtil.declared.hasRootProperty(x, "y.foo"));
 		assertFalse(BeanUtil.declared.hasProperty(x, "y[23].foo"));
 		assertTrue(BeanUtil.declared.hasRootProperty(x, "y[23].foo"));

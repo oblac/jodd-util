@@ -100,6 +100,12 @@ class BeanProperty {
 		}
 	}
 
+	public void updateBeanClassFromProperty() {
+		final Class c = propertyDescriptor.getType();
+		this.setBean(null);
+		this.cd = introspector.lookup(c);
+	}
+
 	// ---------------------------------------------------------------- simple properties
 
 	// indicates that property descriptor has to be updated
