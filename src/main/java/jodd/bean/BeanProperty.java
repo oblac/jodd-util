@@ -43,13 +43,18 @@ import java.util.function.Supplier;
  */
 class BeanProperty {
 
-	BeanProperty(final BeanUtilBean beanUtilBean, final Object bean, final String propertyName) {
+	BeanProperty(final BeanUtilBean beanUtilBean, final Object bean, final String propertyName, final boolean isSet) {
 		this.introspector = beanUtilBean.introspector;
 		setName(propertyName);
 		updateBean(bean);
 		this.last = true;
 		this.first = true;
 		this.fullName = bean.getClass().getSimpleName() + '#' + propertyName;
+//		this.isSet = isSet;
+
+		// when setting, allowing creating simple properties in forced mode
+		// when reading, forced mode should not create the last property and should be ignored
+		this.isForced = isSet && beanUtilBean.isForced;
 	}
 
 	// ---------------------------------------------------------------- bean and descriptor
@@ -62,6 +67,8 @@ class BeanProperty {
 	boolean last;       // is it a last property (when nested)
 	boolean first;		// is it first property (when nested)
 	String indexString;	// indexString for index property
+//	final boolean isSet;// indicate read or write (isSet)
+	final boolean isForced;
 
 	/**
 	 * Sets current property name.

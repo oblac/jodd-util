@@ -72,7 +72,7 @@ class BeanUtilTest {
 
 	@Test
 	void testSimpleProperty() {
-		FooBean fb = new FooBean();
+		final FooBean fb = new FooBean();
 
 		// read non initialized property (null)
 		assertNull(BeanUtil.pojo.getSimpleProperty(fb, "fooInteger"));
@@ -94,9 +94,9 @@ class BeanUtilTest {
 		// read forced non-initialized property (not null)
 		assertTrue(BeanUtil.pojo.hasProperty(fb, "fooByte"));
 		assertEquals(Byte.class, BeanUtil.pojo.getPropertyType(fb, "fooByte"));
-		assertEquals(new Byte((byte) 0), BeanUtil.forced.getSimpleProperty(fb, "fooByte"));
+		assertEquals((Byte)null, BeanUtil.forced.getSimpleProperty(fb, "fooByte"));
 
-		Map m = new HashMap();
+		final Map m = new HashMap();
 		// set property in map
 		BeanUtil.pojo.setSimpleProperty(m, "foo", new Integer(173));
 		// read property from map
@@ -108,14 +108,14 @@ class BeanUtilTest {
 		assertEquals(Map.class, BeanUtil.pojo.getPropertyType(fb, "fooMap"));
 		assertNull(BeanUtil.pojo.getSimpleProperty(fb, "fooMap"));
 		// read forced non-initialized map property
-		assertNotNull(BeanUtil.forced.getSimpleProperty(fb, "fooMap"));
+		assertNull(BeanUtil.forced.getSimpleProperty(fb, "fooMap"));
 
 		// read non-initialized list property
 		assertTrue(BeanUtil.pojo.hasProperty(fb, "fooList"));
 		assertEquals(List.class, BeanUtil.pojo.getPropertyType(fb, "fooList"));
 		assertNull(BeanUtil.pojo.getSimpleProperty(fb, "fooList"));
 		// read forced non-initialized list property
-		assertNotNull(BeanUtil.forced.getSimpleProperty(fb, "fooList"));
+		assertNull(BeanUtil.forced.getSimpleProperty(fb, "fooList"));
 
 		// read non-initialized array (null)
 		assertTrue(BeanUtil.pojo.hasProperty(fb, "fooStringA"));
@@ -135,7 +135,7 @@ class BeanUtilTest {
 		assertEquals(String[].class, BeanUtil.pojo.getPropertyType(fb, "fooStringA"));
 		assertNull(BeanUtil.pojo.getSimpleProperty(fb, "fooStringA"));
 		// read forced non-initialized array property
-		assertNotNull(BeanUtil.forced.getSimpleProperty(fb, "fooStringA"));
+		assertNull(BeanUtil.forced.getSimpleProperty(fb, "fooStringA"));
 	}
 
 	@Test
@@ -159,9 +159,9 @@ class BeanUtilTest {
 
 		// read forced non-initialized property (not null)
 		assertTrue(BeanUtil.declared.hasProperty(fb, "fooByte"));
-		assertEquals(new Byte((byte) 0), BeanUtil.declaredForced.getSimpleProperty(fb, "fooByte"));
+		assertEquals((Byte)null, BeanUtil.declaredForced.getSimpleProperty(fb, "fooByte"));
 
-		Map m = new HashMap();
+		final Map m = new HashMap();
 		// set property in map
 		assertFalse(BeanUtil.declared.hasProperty(m, "foo"));
 		BeanUtil.declared.setSimpleProperty(m, "foo", new Integer(173));
@@ -173,13 +173,13 @@ class BeanUtilTest {
 		assertTrue(BeanUtil.declared.hasProperty(fb, "fooMap"));
 		assertNull(BeanUtil.declared.getSimpleProperty(fb, "fooMap"));
 		// read forced non-initialized map property
-		assertNotNull(BeanUtil.declaredForced.getSimpleProperty(fb, "fooMap"));
+		assertNull(BeanUtil.declaredForced.getSimpleProperty(fb, "fooMap"));
 
 		// read non-initialized list property
 		assertTrue(BeanUtil.declared.hasProperty(fb, "fooList"));
 		assertNull(BeanUtil.declared.getSimpleProperty(fb, "fooList"));
 		// read forced non-initialized list property
-		assertNotNull(BeanUtil.declaredForced.getSimpleProperty(fb, "fooList"));
+		assertNull(BeanUtil.declaredForced.getSimpleProperty(fb, "fooList"));
 
 		// read non-initialized array (null)
 		assertTrue(BeanUtil.declared.hasProperty(fb, "fooStringA"));
@@ -196,12 +196,12 @@ class BeanUtilTest {
 		// read non-initialized array property
 		assertNull(BeanUtil.declared.getSimpleProperty(fb, "fooStringA"));
 		// read forced non-initialized array property
-		assertNotNull(BeanUtil.declaredForced.getSimpleProperty(fb, "fooStringA"));
+		assertNull(BeanUtil.declaredForced.getSimpleProperty(fb, "fooStringA"));
 	}
 
 	@Test
 	void testIndexProperty() {
-		FooBean fb = new FooBean();
+		final FooBean fb = new FooBean();
 
 		// read forced non-initialized array property
 		assertNull(fb.getFooStringA());
@@ -210,11 +210,9 @@ class BeanUtilTest {
 		try {
 			BeanUtil.forced.getIndexProperty(fb, "fooStringA", 0);
 			fail("error");
-		} catch (ArrayIndexOutOfBoundsException aioobex) {
-			// ignore
+		} catch (final BeanException ignore) {
 		}
-		assertNotNull(fb.getFooStringA());
-		assertEquals(0, fb.getFooStringA().length);
+		assertNull(fb.getFooStringA());
 
 		// set array property (non-forced)
 		assertFalse(BeanUtil.declared.hasProperty(fb, "fooStringA[7]"));
@@ -222,8 +220,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setIndexProperty(fb, "fooStringA", 7, "xxx");
 			fail("error");
-		} catch (ArrayIndexOutOfBoundsException aioobex) {
-			// ignore
+		} catch (final BeanException ignore) {
 		}
 
 		// set forced array property
@@ -246,9 +243,9 @@ class BeanUtilTest {
 
 		// get forced
 		assertTrue(BeanUtil.declared.hasProperty(fb, "fooStringA[15]"));
-		assertNotNull(BeanUtil.forced.getIndexProperty(fb, "fooStringA", 15));
+		assertNull(BeanUtil.forced.getIndexProperty(fb, "fooStringA", 15));
 		assertNull(fb.getFooStringA()[0]);
-		assertNotNull(fb.getFooStringA()[15]);
+		assertNull(fb.getFooStringA()[15]);
 
 
 		// set uninitialized array property
@@ -265,17 +262,15 @@ class BeanUtilTest {
 		try {
 			BeanUtil.forced.getIndexProperty(fb, "fooList", 1);
 			fail("error");
-		} catch (IndexOutOfBoundsException ioobex) {
-			// ignore
+		} catch (final BeanException ignore) {
 		}
-		assertNotNull(fb.getFooList());
+		assertNull(fb.getFooList());
 
 		// set list property (non-forced)
 		try {
 			BeanUtil.pojo.setIndexProperty(fb, "fooList", 1, "xxx");
 			fail("error");
-		} catch (IndexOutOfBoundsException ioobex) {
-			// ignore
+		} catch (final BeanException ignore) {
 		}
 
 		// set forced list property
@@ -299,8 +294,7 @@ class BeanUtilTest {
 		// read forced non-initialized map property
 		assertFalse(BeanUtil.declared.hasProperty(fb, "fooMap[foo]"));
 		assertEquals(Object.class, BeanUtil.declared.getPropertyType(fb, "fooMap[foo]"));
-		assertNull(BeanUtil.forced.getProperty(fb, "fooMap[foo]"));
-		assertNotNull(fb.getFooMap());
+		assertNull(fb.getFooMap());
 		// set non-initialized map property
 		fb.setFooMap(null);
 		assertFalse(BeanUtil.declared.hasProperty(fb, "fooMap[foo]"));
@@ -319,18 +313,15 @@ class BeanUtilTest {
 		try {
 			BeanUtil.declaredForced.getIndexProperty(fb, "fooStringA", 0);
 			fail("error");
-		} catch (ArrayIndexOutOfBoundsException aioobex) {
-			// ignore
+		} catch (final BeanException ignore) {
 		}
-		assertNotNull(fb.getStringA());
-		assertEquals(0, fb.getStringA().length);
+		assertNull(fb.getStringA());
 
 		// set array property (non-forced)
 		try {
 			BeanUtil.declared.setIndexProperty(fb, "fooStringA", 7, "xxx");
 			fail("error");
-		} catch (ArrayIndexOutOfBoundsException aioobex) {
-			// ignore
+		} catch (final BeanException ignore) {
 		}
 
 		// set forced array property
@@ -356,17 +347,15 @@ class BeanUtilTest {
 		try {
 			BeanUtil.declaredForced.getIndexProperty(fb, "fooList", 1);
 			fail("error");
-		} catch (IndexOutOfBoundsException ioobex) {
-			// ignore
+		} catch (final BeanException ignore) {
 		}
-		assertNotNull(fb.getList());
+		assertNull(fb.getList());
 
 		// set list property (non-forced)
 		try {
 			BeanUtil.declared.setIndexProperty(fb, "fooList", 1, "xxx");
 			fail("error");
-		} catch (IndexOutOfBoundsException ioobex) {
-			// ignore
+		} catch (final BeanException ignore) {
 		}
 
 		// set forced list property
@@ -381,8 +370,6 @@ class BeanUtilTest {
 
 		// read forced non-initialized map property
 		assertNull(fb.getMap());
-		assertNull(BeanUtil.declaredForced.getProperty(fb, "fooMap[foo]"));
-		assertNotNull(fb.getMap());
 
 		// set non-initialized map property
 		fb = new FooBeanSlim();
@@ -397,7 +384,7 @@ class BeanUtilTest {
 
 	@Test
 	void testSetPropertyNumbers() {
-		FooBean fb = new FooBean();
+		final FooBean fb = new FooBean();
 
 		// Integer
 		String propName = "fooInteger";
@@ -410,7 +397,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, "x");        // invalid string - value stays the same
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(2, fb.getFooInteger().intValue());
 
@@ -422,7 +409,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, null);     // null is not an int
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(1, fb.getFooint());
 
@@ -432,7 +419,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, "w");    // invalid string
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(2, fb.getFooint());
 
@@ -451,7 +438,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, "x");        // invalid string - value stays the same
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(2L, fb.getFooLong().longValue());
 
@@ -465,7 +452,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, null);             // null is not a long
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 
 		assertEquals(3L, fb.getFoolong());
@@ -474,7 +461,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, "w");        // invalid string
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(2L, fb.getFoolong());
 
@@ -494,7 +481,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, "x");            // invalid string - value stays the same
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(2, fb.getFooByte().byteValue());
 
@@ -509,7 +496,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, null);        // null is not a byte
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(1, fb.getFoobyte());
 		BeanUtil.pojo.setProperty(fb, propName, "2");            // valid string
@@ -517,7 +504,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, "x");        // invalid string - value stays the same
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(2, fb.getFoobyte());
 
@@ -560,7 +547,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, null);
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 
 		assertFalse(fb.getFooboolean());
@@ -598,7 +585,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, "x");        // invalid string - value stays the same
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(2.2, fb.getFooFloat(), 0.0005);
 
@@ -611,7 +598,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, null);            // null is not a long
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(3.0, fb.getFoofloat(), 0.0005);
 		BeanUtil.pojo.setProperty(fb, propName, "2.2");                // valid string
@@ -620,7 +607,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, "w");            // invalid string
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(2.2, fb.getFoofloat(), 0.0005);
 
@@ -637,7 +624,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, "x");        // invalid string - value stays the same
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(2.2, fb.getFooDouble(), 0.0005);
 
@@ -650,7 +637,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, null);        // null is not a long
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(3.0, fb.getFoodouble(), 0.0005);
 		BeanUtil.pojo.setProperty(fb, propName, "2.2");                // valid string
@@ -659,7 +646,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(fb, propName, "w");                    // invalid string
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertEquals(2.2, fb.getFoodouble(), 0.0005);
 	}
@@ -667,25 +654,25 @@ class BeanUtilTest {
 
 	@Test
 	void testSetPropertySql() {
-		FooBean2 fb = new FooBean2();
+		final FooBean2 fb = new FooBean2();
 
 		String propName = "fooTimestamp";
 		//noinspection deprecation
-		Timestamp ts = new Timestamp(101, 0, 17, 1, 2, 3, 4);
+		final Timestamp ts = new Timestamp(101, 0, 17, 1, 2, 3, 4);
 		assertEquals(Timestamp.class, BeanUtil.pojo.getPropertyType(fb, propName));
 		BeanUtil.pojo.setProperty(fb, propName, ts);
 		assertEquals("2001-01-17 01:02:03.000000004", fb.getFooTimestamp().toString());
 
 		propName = "fooTime";
 		//noinspection deprecation
-		Time t = new Time(17, 13, 15);
+		final Time t = new Time(17, 13, 15);
 		BeanUtil.pojo.setProperty(fb, propName, t);
 
 		assertEquals("17:13:15", fb.getFooTime().toString());
 
 		propName = "fooDate";
 		//noinspection deprecation
-		Date d = new Date(101, 1, 17);
+		final Date d = new Date(101, 1, 17);
 		assertEquals(Date.class, BeanUtil.pojo.getPropertyType(fb, propName));
 		BeanUtil.pojo.setProperty(fb, propName, d);
 		assertEquals("2001-02-17", fb.getFooDate().toString());
@@ -694,8 +681,8 @@ class BeanUtilTest {
 
 	@Test
 	void testSetPropertyMath() {
-		FooBean2 fb = new FooBean2();
-		String propName = "fooBigDecimal";
+		final FooBean2 fb = new FooBean2();
+		final String propName = "fooBigDecimal";
 		assertEquals(BigDecimal.class, BeanUtil.pojo.getPropertyType(fb, propName));
 		BeanUtil.pojo.setProperty(fb, propName, new BigDecimal("1.2"));
 		assertEquals(1.2, fb.getFooBigDecimal().doubleValue(), 0.0005);
@@ -703,7 +690,7 @@ class BeanUtilTest {
 
 	@Test
 	void testSetPropertyString() {
-		FooBean fb = new FooBean();
+		final FooBean fb = new FooBean();
 
 		// String
 		String propName = "fooString";
@@ -745,7 +732,7 @@ class BeanUtilTest {
 
 	@Test
 	void testGet() {
-		FooBean fb = new FooBean();
+		final FooBean fb = new FooBean();
 		fb.setFooInteger(new Integer(101));
 		fb.setFooint(102);
 		fb.setFooLong(new Long(103));
@@ -791,9 +778,9 @@ class BeanUtilTest {
 		assertEquals(111.0, d, 0.005);
 		d = BeanUtil.pojo.getProperty(fb, "foodouble");
 		assertEquals(112.0, d, 0.005);
-		String s = BeanUtil.pojo.getProperty(fb, "fooString");
+		final String s = BeanUtil.pojo.getProperty(fb, "fooString");
 		assertEquals("113", s);
-		String[] sa = BeanUtil.pojo.getProperty(fb, "fooStringA");
+		final String[] sa = BeanUtil.pojo.getProperty(fb, "fooStringA");
 		assertEquals(2, sa.length);
 		assertEquals("114", sa[0]);
 		assertEquals("115", sa[1]);
@@ -802,19 +789,19 @@ class BeanUtilTest {
 
 	@Test
 	void testNested() {
-		Cbean cbean = new Cbean();
-		String value = "testnest";
-		String value2 = "nesttest";
+		final Cbean cbean = new Cbean();
+		final String value = "testnest";
+		final String value2 = "nesttest";
 		assertEquals(String.class, BeanUtil.declared.getPropertyType(cbean, "bbean.abean.fooProp"));
 		assertTrue(BeanUtil.declared.hasProperty(cbean, "bbean.abean.fooProp"));
 		assertTrue(BeanUtil.declared.hasRootProperty(cbean, "bbean.abean.fooProp"));
 		BeanUtil.pojo.setProperty(cbean, "bbean.abean.fooProp", value);
 		assertEquals(value, BeanUtil.pojo.getProperty(cbean, "bbean.abean.fooProp"));
-		Bbean bbean = BeanUtil.pojo.getProperty(cbean, "bbean");
+		final Bbean bbean = BeanUtil.pojo.getProperty(cbean, "bbean");
 		assertTrue(BeanUtil.declared.hasProperty(bbean, "abean.fooProp"));
 		assertTrue(BeanUtil.declared.hasRootProperty(bbean, "abean.fooProp"));
 		assertEquals(value, BeanUtil.pojo.getProperty(bbean, "abean.fooProp"));
-		Abean abean = BeanUtil.pojo.getProperty(bbean, "abean");
+		final Abean abean = BeanUtil.pojo.getProperty(bbean, "abean");
 		assertEquals(value,  BeanUtil.pojo.getProperty(abean, "fooProp"));
 		BeanUtil.pojo.setProperty(bbean, "abean.fooProp", value2);
 		assertEquals(value2, BeanUtil.pojo.getProperty(bbean, "abean.fooProp"));
@@ -822,21 +809,21 @@ class BeanUtilTest {
 
 	@Test
 	void testIster() {
-		Abean abean = new Abean();
-		Boolean b = BeanUtil.pojo.getProperty(abean, "something");
+		final Abean abean = new Abean();
+		final Boolean b = BeanUtil.pojo.getProperty(abean, "something");
 		assertTrue(b);
 		try {
 			BeanUtil.pojo.getProperty(abean, "Something");
 			fail("error");
-		} catch (BeanException bex) {
+		} catch (final BeanException bex) {
 			// ignore
 		}
 	}
 
 	@Test
 	void testMap() {
-		Cbean cbean = new Cbean();
-		Abean abean = cbean.getBbean().getAbean();
+		final Cbean cbean = new Cbean();
+		final Abean abean = cbean.getBbean().getAbean();
 		assertNull(BeanUtil.declared.getPropertyType(abean, "mval"));
 		BeanUtil.pojo.setProperty(abean, "mval", new Integer(173));
 		BeanUtil.pojo.setProperty(abean, "mval2", new Integer(1));
@@ -848,21 +835,21 @@ class BeanUtilTest {
 		BeanUtil.pojo.setProperty(cbean, "bbean.abean.mval", new Integer(3));
 		assertEquals(3, ((Integer) BeanUtil.pojo.getProperty(abean, "mval")).intValue());
 		assertEquals(3, ((Integer) BeanUtil.pojo.getProperty(cbean, "bbean.abean.mval")).intValue());
-		HashMap map = new HashMap();
+		final HashMap map = new HashMap();
 		BeanUtil.pojo.setProperty(map, "val1", new Integer(173));
 		assertEquals(173, ((Integer) map.get("val1")).intValue());
-		Integer i = BeanUtil.pojo.getProperty(map, "val1");
+		final Integer i = BeanUtil.pojo.getProperty(map, "val1");
 		assertEquals(173, i.intValue());
 	}
 
 	@Test
 	void testMap2() {
-		Map<String, String> m = new HashMap<>();
+		final Map<String, String> m = new HashMap<>();
 		m.put("dd.dd", "value");
 		m.put("dd", "value2");
-		Map<String, Object> m2 = new HashMap<>();
+		final Map<String, Object> m2 = new HashMap<>();
 		m2.put("map", m);
-		FooBean fb = new FooBean();
+		final FooBean fb = new FooBean();
 		fb.setFooMap(m);
 
 		assertEquals(Object.class, BeanUtil.declared.getPropertyType(fb, "fooMap[dd]"));
@@ -876,7 +863,7 @@ class BeanUtilTest {
 
 	@Test
 	void testMap3() {
-		Map m = new HashMap();
+		final Map m = new HashMap();
 		BeanUtil.pojo.setProperty(m, "Foo", "John");
 		assertEquals("John", m.get("Foo"));
 		assertNull(m.get("foo"));
@@ -896,51 +883,51 @@ class BeanUtilTest {
 		try {
 			assertNull(BeanUtil.pojo.getProperty(m, "foo.name"));
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 	}
 
 	@Test
 	void testNotDeclared() {
-		FooBean3 fb = new FooBean3();
+		final FooBean3 fb = new FooBean3();
 
 		try {
 			BeanUtil.pojo.setProperty(fb, "pprotected", new Integer(1));
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		try {
 			BeanUtil.pojo.getProperty(fb, "pprotected");
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 
 		try {
 			BeanUtil.pojo.setProperty(fb, "ppackage", new Integer(2));
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		try {
 			BeanUtil.pojo.getProperty(fb, "ppackage");
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 
 		try {
 			BeanUtil.pojo.setProperty(fb, "pprivate", new Integer(3));
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		try {
 			BeanUtil.pojo.getProperty(fb, "pprivate");
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 	}
 
 	@Test
 	void testDeclared() {
-		FooBean3 fb = new FooBean3();
+		final FooBean3 fb = new FooBean3();
 
 		BeanUtil.declared.setProperty(fb, "pprotected", new Integer(1));
 		Integer value = BeanUtil.declared.getProperty(fb, "pprotected");
@@ -966,14 +953,14 @@ class BeanUtilTest {
 			return fb;
 		}
 
-		public void setFb(FooBean4 fb) {
+		public void setFb(final FooBean4 fb) {
 			this.fb = fb;
 		}
 
 		/**
 		 * @noinspection UnnecessaryBoxing
 		 */
-		private Integer[] data = new Integer[]{Integer.valueOf("173"), Integer.valueOf("2")};
+		private final Integer[] data = new Integer[]{Integer.valueOf("173"), Integer.valueOf("2")};
 
 		public Integer[] getData() {
 			return data;
@@ -982,8 +969,8 @@ class BeanUtilTest {
 
 	@Test
 	void testArrays() {
-		FooBean4 fb4 = new FooBean4();
-		Dummy dummy = new Dummy();
+		final FooBean4 fb4 = new FooBean4();
+		final Dummy dummy = new Dummy();
 		assertTrue(BeanUtil.declared.hasProperty(fb4, "data[0].bbean.abean.fooProp"));
 		assertTrue(BeanUtil.declared.hasRootProperty(fb4, "data[0].bbean.abean.fooProp"));
 		assertEquals("xxx", BeanUtil.pojo.getProperty(fb4, "data[0].bbean.abean.fooProp"));
@@ -1025,7 +1012,7 @@ class BeanUtilTest {
 
 	@Test
 	void testForced() {
-		XBean x = new XBean();
+		final XBean x = new XBean();
 		assertTrue(BeanUtil.declared.hasProperty(x, "y"));
 		assertFalse(BeanUtil.declared.hasProperty(x, "y.foo"));
 		assertTrue(BeanUtil.declared.hasRootProperty(x, "y.foo"));
@@ -1034,7 +1021,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(x, "y.foo", "yyy");
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertNull(x.getY());
 
@@ -1048,7 +1035,7 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(x, "yy[2].foo", "yyy");
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 		assertNull(x.getYy()[2]);
 
@@ -1066,18 +1053,18 @@ class BeanUtilTest {
 
 	@Test
 	void testSilent() {
-		FooBean fb = new FooBean();
+		final FooBean fb = new FooBean();
 		assertFalse(BeanUtil.declared.hasProperty(fb, "notexisting"));
 		assertFalse(BeanUtil.declared.hasRootProperty(fb, "notexisting"));
 		try {
 			BeanUtil.pojo.setProperty(fb, "notexisting", null);
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 
 		try {
 			BeanUtil.silent.setProperty(fb, "notexisting", null);
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			fail("error");
 		}
 	}
@@ -1085,7 +1072,7 @@ class BeanUtilTest {
 
 	@Test
 	void testGenerics() {
-		Gig gig = new Gig();
+		final Gig gig = new Gig();
 
 		assertEquals(String.class, BeanUtil.declared.getPropertyType(gig, "listOfStrings[1]"));
 		BeanUtil.forced.setProperty(gig, "listOfStrings[1]", "string");
@@ -1128,7 +1115,7 @@ class BeanUtilTest {
 
 	@Test
 	void testNoGenerics() {
-		Gig gig = new Gig();
+		final Gig gig = new Gig();
 
 		BeanUtil.forced.setProperty(gig, "listOfStrings2[1]", "string");
 		assertNull(gig.getListOfStrings2().get(0));
@@ -1169,41 +1156,41 @@ class BeanUtilTest {
 	 */
 	@Test
 	void testExceptions() {
-		Map map = new HashMap();
-		Gig gig = new Gig();
+		final Map map = new HashMap();
+		final Gig gig = new Gig();
 
 		try {
 			BeanUtil.pojo.getProperty(map, "xxx");
 			fail("error");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.out.println(e.getMessage());
 		}
 
 		try {
 			BeanUtil.pojo.getProperty(gig, "doo");
 			fail("error");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.out.println(e.getMessage());
 		}
 
 		try {
 			BeanUtil.pojo.setProperty(gig, "xxx", "value");
 			fail("error");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.out.println(e.getMessage());
 		}
 
 		try {
 			BeanUtil.pojo.getProperty(gig, "listOfAbeans[1].fooProp");
 			fail("error");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.out.println(e.getMessage());
 		}
 
 		try {
 			BeanUtil.forced.setProperty(gig, "listOfAbeans[xxx].fooProp", "123");
 			fail("error");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.out.println(e.getMessage());
 		}
 
@@ -1212,20 +1199,20 @@ class BeanUtilTest {
 			gig.setZoro("zoro");
 			BeanUtil.pojo.getProperty(gig, "zoro[1].fooProp");
 			fail("error");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.out.println(e.getMessage());
 		}
 
 		try {
 			BeanUtil.pojo.setProperty(gig, "zoro[1]", "foo");
 			fail("error");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			System.out.println(e.getMessage());
 		}
 
 		try {
 			BeanUtil.silent.setProperty(gig, "zoro[1].doo", "foo");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			fail("error");
 			System.out.println(e.getMessage());
 		}
@@ -1249,20 +1236,20 @@ class BeanUtilTest {
 
 	@Test
 	void testInheritance() {
-		ZBean zb = new ZBean();
+		final ZBean zb = new ZBean();
 
 		assertEquals("public", BeanUtil.pojo.getProperty(zb, "ppublic"));
 		try {
 			assertEquals("protected", BeanUtil.pojo.getProperty(zb, "pprotected"));
 			fail("error");
-		} catch (BeanException ignored) {
+		} catch (final BeanException ignored) {
 		}
 
 		assertEquals("protected", BeanUtil.declared.getProperty(zb, "pprotected"));
 		try {
 			assertEquals("private", BeanUtil.declared.getProperty(zb, "pprivate"));
 			fail("error");
-		} catch (BeanException ignored) {
+		} catch (final BeanException ignored) {
 		}
 
 		// top
@@ -1271,7 +1258,7 @@ class BeanUtilTest {
 		try {
 			assertEquals("protected", BeanUtil.pojo.getProperty(zb, "tprotected"));
 			fail("error");
-		} catch (BeanException ignored) {
+		} catch (final BeanException ignored) {
 		}
 
 		assertEquals("protected", BeanUtil.declared.getProperty(zb, "tprotected"));
@@ -1281,15 +1268,15 @@ class BeanUtilTest {
 
 	@Test
 	void testSimpleThis() {
-		FooBean fb = new FooBean();
-		BeanUtilBean beanUtilBean = new BeanUtilBean();
+		final FooBean fb = new FooBean();
+		final BeanUtilBean beanUtilBean = new BeanUtilBean();
 
 		beanUtilBean.setSimpleProperty(fb, "fooString", "test");
 		assertEquals("test", fb.getFooString());
 		assertEquals("test", beanUtilBean.getSimpleProperty(fb, "fooString"));
 		assertEquals("test", beanUtilBean.getProperty(fb, "fooString"));
 
-		FooBean4 fb4 = new FooBean4();
+		final FooBean4 fb4 = new FooBean4();
 		assertEquals("xxx", beanUtilBean.getProperty(fb4, "data[0].bbean.abean.fooProp"));
 		assertEquals("xxx", beanUtilBean.getProperty(fb4, "data.[0].bbean.abean.fooProp"));
 
@@ -1301,26 +1288,28 @@ class BeanUtilTest {
 
 	@Test
 	void testIsGetBoolean() {
-		IsGetBool i = new IsGetBool();
+		final IsGetBool i = new IsGetBool();
 		Object value = BeanUtil.pojo.getProperty(i, "flag");
 		assertNotNull(value);
 		assertTrue((Boolean) value);
 
 		ClassDescriptor cd = ClassIntrospector.get().lookup(IsGetBool.class);
 
-		PropertyDescriptor[] propertyDescriptors = cd.getAllPropertyDescriptors();
+		final PropertyDescriptor[] propertyDescriptors = cd.getAllPropertyDescriptors();
 
 		assertEquals(1, propertyDescriptors.length);
 		assertEquals("flag", propertyDescriptors[0].getName());
 		assertEquals("isFlag", propertyDescriptors[0].getReadMethodDescriptor().getMethod().getName());
 		MethodDescriptor[] mds = cd.getAllMethodDescriptors();
 		int c = 0;
-		for (MethodDescriptor md : mds) {
-			if (md.isPublic()) c++;
+		for (final MethodDescriptor md : mds) {
+			if (md.isPublic()) {
+				c++;
+			}
 		}
 		assertEquals(3, c);
 
-		GetIsBool i2 = new GetIsBool();
+		final GetIsBool i2 = new GetIsBool();
 		value = BeanUtil.pojo.getProperty(i2, "flag");
 		assertNotNull(value);
 		assertTrue((Boolean) value);
@@ -1330,25 +1319,27 @@ class BeanUtilTest {
 		assertEquals("isFlag", propertyDescriptors[0].getReadMethodDescriptor().getMethod().getName());
 		mds = cd.getAllMethodDescriptors();
 		c = 0;
-		for (MethodDescriptor md : mds) {
-			if (md.isPublic()) c++;
+		for (final MethodDescriptor md : mds) {
+			if (md.isPublic()) {
+				c++;
+			}
 		}
 		assertEquals(3, c);
 	}
 
 	@Test
 	void testUppercase() {
-		UppercaseBean ub = new UppercaseBean();
+		final UppercaseBean ub = new UppercaseBean();
 		try {
 			BeanUtil.pojo.getProperty(ub, "URLaddress");
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			fail("error");
 		}
 	}
 
 	@Test
 	void testPropertiesWithDot() {
-		Properties props = new Properties();
+		final Properties props = new Properties();
 		BeanUtil.pojo.setProperty(props, "ldap", "data");
 
 		assertEquals("data", props.getProperty("ldap"));
@@ -1359,8 +1350,8 @@ class BeanUtilTest {
 		assertEquals("data2", props.getProperty("ldap.auth.enabled"));
 
 
-		Map map = new HashMap();
-		FooBean fb = new FooBean();
+		final Map map = new HashMap();
+		final FooBean fb = new FooBean();
 
 		BeanUtil.pojo.setProperty(map, "[aaa.bbb]", fb);
 		BeanUtil.forced.setProperty(map, "[aaa.bbb].fooMap[xxx.ccc]", "zzzz");
@@ -1372,13 +1363,13 @@ class BeanUtilTest {
 		try {
 			BeanUtil.pojo.setProperty(map, ".[aaa.bbb]", "zzzz");
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 
 		try {
 			BeanUtil.forced.setProperty(fb, "..fooint", "123");
 			fail("error");
-		} catch (Exception ignored) {
+		} catch (final Exception ignored) {
 		}
 
 		BeanUtil.forced.setProperty(map, "[aaa.bbb].fooMap.[eee.ccc]", "zzzz");
@@ -1388,7 +1379,7 @@ class BeanUtilTest {
 
 	@Test
 	void testEnums() {
-		EnumBean enumBean = new EnumBean();
+		final EnumBean enumBean = new EnumBean();
 
 		BeanUtil.pojo.setProperty(enumBean, "id", Integer.valueOf(123));
 		BeanUtil.pojo.setProperty(enumBean, "color", "RED");
@@ -1416,18 +1407,18 @@ class BeanUtilTest {
 
 	@Test
 	void testSubSup2() {
-		SupBean supBean = new SubBean();
+		final SupBean supBean = new SubBean();
 		BeanUtil.pojo.setProperty(supBean, "v2", "V2");
 		//String v = (String) BeanUtil.pojo.getProperty(supBean, "v2");
 
-		String v = BeanUtil.pojo.getProperty(supBean, "v2");
+		final String v = BeanUtil.pojo.getProperty(supBean, "v2");
 
 		assertEquals("V2sub", v);
 	}
 
 	@Test
 	void testCollections() {
-		MixBean mixBean = new MixBean();
+		final MixBean mixBean = new MixBean();
 		BeanUtil.pojo.setProperty(mixBean, "data", "1,2,3");
 
 		assertNotNull(mixBean.data);
@@ -1449,10 +1440,10 @@ class BeanUtilTest {
 
 	@Test
 	void testMapWithKeyWithADot() {
-		Map innerMap = new HashMap();
+		final Map innerMap = new HashMap();
 		innerMap.put("zzz.xxx", "hey");
 
-		Map map = new HashMap();
+		final Map map = new HashMap();
 		map.put("foo.bar", innerMap);
 
 		Object value = BeanUtil.pojo.getProperty(map, "[foo.bar]");
