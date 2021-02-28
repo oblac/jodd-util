@@ -38,19 +38,22 @@ public class StringTemplateMatcher {
 		}
 
 		/**
-		 * {@inheritDoc}
+		 * Returns macro name.
 		 */
 		public String name() {
 			return name;
 		}
 
 		/**
-		 * {@inheritDoc}
+		 * Returns macro pattern, if any. Otherwise returns {@code null}.
 		 */
 		public String pattern() {
 			return pattern;
 		}
 
+		/**
+		 * Returns resolved value.
+		 */
 		public String value() {
 			return value;
 		}
@@ -101,10 +104,18 @@ public class StringTemplateMatcher {
 
 	private BiFunction<Integer, String, Boolean> matchValue = REGEX;
 
+	/**
+	 * Uses wildcard matching patterns.
+	 * @see Wildcard
+	 */
 	public StringTemplateMatcher useWildcardMatch() {
 		this.matchValue = WILDCARD;
 		return this;
 	}
+
+	/**
+	 * Uses regex matching patterns.
+	 */
 	public StringTemplateMatcher useRegexMatch() {
 		this.matchValue = REGEX;
 		return this;
@@ -113,7 +124,10 @@ public class StringTemplateMatcher {
 	private StringTemplateMatcherCompiled compiled;
 
 	/**
-	 * {@inheritDoc}
+	 * Compiles the given pattern so it can be used for matching.
+	 * It is invoked by {@link #match(String)} and {@link #matches(String)}
+	 * methods, so need to do it manually. You can call it any number of times,
+	 * the pattern is compiled only once.
 	 */
 	public StringTemplateMatcherCompiled compile() {
 		if (compiled != null) {
@@ -169,16 +183,25 @@ public class StringTemplateMatcher {
 		return compiled;
 	}
 
+	/**
+	 * Returns {@code true} if macros are detected in the pattern.
+	 */
 	public boolean hasMacros() {
 		return compile().macrosCount != 0;
 	}
 
-	public boolean matches(final String actionPath) {
-		return compile().matches(actionPath);
+	/**
+	 * Returns {@code true} if the input matches the pattern.
+	 */
+	public boolean matches(final String input) {
+		return compile().matches(input);
 	}
 
-	public Match[] match(final String actionPath) {
-		return compile().match(actionPath);
+	/**
+	 * Returns all the matches for given input. If no matches found, an empty array is returned.
+	 */
+	public Match[] match(final String input) {
+		return compile().match(input);
 	}
 
 	// ---------------------------------------------------------------- compiled
@@ -205,32 +228,33 @@ public class StringTemplateMatcher {
 		}
 
 		/**
-		 * {@inheritDoc}
+		 * Returns all patterns. Some elements may be <code>null</code>
+		 * 	if some macro does not define a pattern.
 		 */
 		public String[] patterns() {
 			return patterns;
 		}
 
 		/**
-		 * {@inheritDoc}
+		 * Returns macros count.
 		 */
 		public int macrosCount() {
 			return macrosCount;
 		}
 
 		/**
-		 * {@inheritDoc}
+		 * Returns {@code true} if the input matches the compiled pattern.
 		 */
-		public boolean matches(final String actionPath) {
-			final String[] values = process(actionPath, true);
+		public boolean matches(final String input) {
+			final String[] values = process(input, true);
 			return values != null;
 		}
 
 		/**
-		 * {@inheritDoc}
+		 * Returns all the matches or the empty array if no matches found.
 		 */
-		public Match[] match(final String actionPath) {
-			final String[] values = process(actionPath, false);
+		public Match[] match(final String input) {
+			final String[] values = process(input, false);
 			if (values == null) {
 				return NO_MATCH;
 			}
@@ -242,7 +266,7 @@ public class StringTemplateMatcher {
 		}
 
 		/**
-		 * Process action path in two modes: matching mode and extracting mode.
+		 * Process input in two modes: matching mode and extracting mode.
 		 * @return string array of extracted macro values (null element is allowed) or null
 		 */
 		private String[] process(final String input, final boolean match) {
@@ -309,7 +333,7 @@ public class StringTemplateMatcher {
 			}
 
 			if (offset != input.length()) {
-				// action path is not consumed fully during this matching
+				// input is not consumed fully during this matching
 				return null;
 			}
 
@@ -317,6 +341,5 @@ public class StringTemplateMatcher {
 		}
 
 	}
-
 
 }
