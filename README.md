@@ -14,4 +14,4 @@
 
 🏡 Website: [util.jodd.org](https://util.jodd.org)
 
-❤️ For developers, by a developer.
+❤️ For developers, by developer.
