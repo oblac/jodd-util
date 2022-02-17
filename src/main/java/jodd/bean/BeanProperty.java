@@ -41,7 +41,7 @@ import java.util.function.Supplier;
  * </ol>
  * Used only internally by {@link BeanUtil} and similar utils.
  */
-class BeanProperty {
+public class BeanProperty {
 
 	BeanProperty(final BeanUtilBean beanUtilBean, final Object bean, final String propertyName, final boolean isSet) {
 		this.introspector = beanUtilBean.introspector;
@@ -62,6 +62,7 @@ class BeanProperty {
 	final String fullName;  // initial name
 	final ClassIntrospector introspector;
 	Object bean;
+	private Object lastBean;
 	private ClassDescriptor cd;
 	String name;        // property name
 	boolean last;       // is it a last property (when nested)
@@ -70,10 +71,13 @@ class BeanProperty {
 //	final boolean isSet;// indicate read or write (isSet)
 	final boolean isForced;
 
+	String lastName;    // tracking last name for debugging and information purposes
+
 	/**
 	 * Sets current property name.
 	 */
 	public void setName(final String name) {
+		this.lastName = this.name;
 		this.name = name;
 		this.updateProperty = true;
 	}
@@ -82,6 +86,7 @@ class BeanProperty {
 	 * Sets new bean instance.
 	 */
 	private void setBean(final Object bean) {
+		this.lastBean = this.bean;
 		this.bean = bean;
 		this.cd = (bean == null ? null : introspector.lookup(bean.getClass()));
 		this.first = false;
@@ -95,13 +100,16 @@ class BeanProperty {
 		this.setBean(bean);
 
 		if (this.cd != null && this.cd.isSupplier()) {
-			final Object newBean = ((Supplier)this.bean).get();
+			final Object newBean = ((Supplier<?>)this.bean).get();
 			setBean(newBean);
+		}
+		else {
+			this.lastBean = null;
 		}
 	}
 
 	public void updateBeanClassFromProperty() {
-		final Class c = propertyDescriptor.getType();
+		final Class<?> c = propertyDescriptor.getType();
 		this.setBean(null);
 		this.cd = introspector.lookup(c);
 	}
@@ -114,12 +122,29 @@ class BeanProperty {
 
 	// most recent property descriptor
 	private PropertyDescriptor propertyDescriptor;
+	private PropertyDescriptor lastPropertyDescriptor;
+
+	public boolean isExistingParentNull() {
+		return lastPropertyDescriptor != null && this.lastBean == null;
+	}
+
+	public boolean currentPropertyExistOnParent(boolean declared) {
+		PropertyDescriptor pd = this.propertyDescriptor;
+		if (pd == null) {
+			ClassDescriptor lastClassDescriptor = lastPropertyDescriptor.getClassDescriptor();
+			pd = lastClassDescriptor.getPropertyDescriptor(this.lastName, declared);
+			ClassDescriptor cs = introspector.lookup(pd.getType());
+			pd = cs.getPropertyDescriptor(this.name, declared);
+		}
+		return pd != null;
+	}
 
 	/**
 	 * Loads property descriptor, if property was updated.
 	 */
 	private void loadPropertyDescriptor() {
 		if (updateProperty) {
+			this.lastPropertyDescriptor = this.propertyDescriptor;
 			if (cd == null) {
 				propertyDescriptor = null;
 			} else {

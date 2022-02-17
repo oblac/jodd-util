@@ -25,6 +25,11 @@
 
 package jodd.bean;
 
+import jodd.bean.exception.ForcedBeanException;
+import jodd.bean.exception.InvalidPropertyBeanException;
+import jodd.bean.exception.InvokePropertyBeanException;
+import jodd.bean.exception.PropertyNotFoundBeanException;
+import jodd.bean.exception.NullPropertyBeanException;
 import jodd.introspector.Getter;
 import jodd.introspector.Setter;
 import jodd.util.ClassUtil;
@@ -151,13 +156,12 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 	}
 
 	protected Object getSimpleProperty(final BeanProperty bp) {
-
 		if (bp.name.isEmpty()) {
 			if (bp.indexString != null) {
 				// index string exist, but property name is missing
 				return bp.bean;
 			}
-			throw new BeanException("Invalid property", bp);
+			throw new InvalidPropertyBeanException("Empty property name.", bp);
 		}
 
 		final Getter getter = bp.getGetter(isDeclared);
@@ -170,7 +174,7 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 				if (isSilent) {
 					return null;
 				}
-				throw new BeanException("Getter failed: " + getter, ex);
+				throw new InvokePropertyBeanException("Invoking getter method failed.", bp, ex);
 			}
 
 			if ((result == null) && (bp.isForced)) {
@@ -189,7 +193,7 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 					if (isSilent) {
 						return null;
 					}
-					throw new BeanException("Map key not found: " + bp.name, bp);
+					throw new PropertyNotFoundBeanException("Map key '" +  bp.name + "' not found.", bp);
 				}
 				final Map value = new HashMap();
 				//noinspection unchecked
@@ -203,7 +207,11 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 		if (isSilent) {
 			return null;
 		}
-		throw new BeanException("Simple property not found: " + bp.name, bp);
+
+		if (bp.isExistingParentNull() && bp.currentPropertyExistOnParent(isDeclared)) {
+			throw new NullPropertyBeanException("Simple property '" + bp.lastName + "' is null.", bp);
+		}
+		throw new PropertyNotFoundBeanException("Simple property '" + bp.name + "' not found.", bp);
 	}
 
 	@Override
@@ -232,7 +240,7 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 		if (isSilent) {
 			return;
 		}
-		throw new BeanException("Simple property not found: " + bp.name, bp);
+		throw new PropertyNotFoundBeanException("Simple property '" + bp.name + "' not found.", bp);
 	}
 
 	// ---------------------------------------------------------------- indexed property
@@ -313,7 +321,7 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 			if (isSilent) {
 				return null;
 			}
-			throw new BeanException("Index property is null: " + bp.name, bp);
+			throw new NullPropertyBeanException("Index property '" + bp.name + "' is null.", bp);
 		}
 
 		// try: property[index]
@@ -349,7 +357,7 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 					if (isSilent) {
 						return null;
 					}
-					throw new BeanException("Invalid list element: " + bp.name + '[' + index + ']', bp, ex);
+					throw new ForcedBeanException("Invalid list element: " + bp.name + '[' + index + "].", bp, ex);
 				}
 				//noinspection unchecked
 				list.set(index, value);
@@ -378,7 +386,7 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 						if (isSilent) {
 							return null;
 						}
-						throw new BeanException("Invalid map element: " + bp.name + '[' + bp.indexString + ']', bp, ex);
+						throw new ForcedBeanException("Invalid map element: " + bp.name + '[' + bp.indexString + "].", bp, ex);
 					}
 
 					//noinspection unchecked
@@ -392,7 +400,7 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 		if (isSilent) {
 			return null;
 		}
-		throw new BeanException("Index property is not an array, list or map: " + bp.name, bp);
+		throw new InvalidPropertyBeanException("Index property '" + bp.name + "' is not an array, list or map.", bp);
 	}
 
 	@Override
@@ -432,7 +440,7 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 			if (isSilent) {
 				return;
 			}
-			throw new BeanException("Index property is null:" + bp.name, bp);
+			throw new NullPropertyBeanException("Index property '" + bp.name + " is null.", bp);
 		}
 
 		// inner bean found
@@ -475,7 +483,7 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 		if (isSilent) {
 			return;
 		}
-		throw new BeanException("Index property is not an array, list or map: " + bp.name, bp);
+		throw new InvalidPropertyBeanException("Index property '" + bp.name + "' is not an array, list or map.", bp);
 	}
 
 

@@ -25,6 +25,10 @@
 
 package jodd.bean;
 
+import jodd.bean.exception.ForcedBeanException;
+import jodd.bean.exception.InvalidPropertyBeanException;
+import jodd.bean.exception.InvokePropertyBeanException;
+import jodd.bean.exception.PropertyNotFoundBeanException;
 import jodd.introspector.ClassIntrospector;
 import jodd.introspector.Getter;
 import jodd.introspector.MapperFunction;
@@ -115,7 +119,7 @@ abstract class BeanUtilUtil implements BeanUtil {
 			if (isSilent) {
 				return null;
 			}
-			throw new BeanException("Setter failed: " + setter, ex);
+			throw new InvokePropertyBeanException("Invoking setter method failed.", bp, ex);
 		}
 		return value;
 	}
@@ -140,7 +144,7 @@ abstract class BeanUtilUtil implements BeanUtil {
 				if (isSilent) {
 					return null;
 				}
-				throw new BeanException("Invalid array element: " + bp.name + '[' + index + ']', bp, ex);
+				throw new ForcedBeanException("Invalid array element: " + bp.name + '[' + index + "].", bp, ex);
 			}
 			Array.set(array, index, value);
 		}
@@ -169,7 +173,7 @@ abstract class BeanUtilUtil implements BeanUtil {
 			final Setter setter = bp.getSetter(true);
 			if (setter == null) {
 				// no point to check for bp.silent, throws NPE later
-				throw new BeanException("Setter or field not found: " + bp.name, bp);
+				throw new PropertyNotFoundBeanException("Setter or field '"  + bp.name + "' not found.", bp);
 			}
 
 			newArray = invokeSetter(setter, bp, newArray);
@@ -249,7 +253,7 @@ abstract class BeanUtilUtil implements BeanUtil {
 			return Integer.parseInt(indexString);
 		} catch (final NumberFormatException nfex) {
 			// no point to use bp.silent, as will throw exception
-			throw new BeanException("Invalid index: " + indexString, bp, nfex);
+			throw new InvalidPropertyBeanException("Property index: '" + indexString +"' not a number.", bp);
 		}
 	}
 
@@ -274,7 +278,7 @@ abstract class BeanUtilUtil implements BeanUtil {
 			if (isSilent) {
 				return null;
 			}
-			throw new BeanException("Invalid property: " + bp.name, bp, ex);
+			throw new ForcedBeanException("Property '" + bp.name + "' creation failed.", bp, ex);
 		}
 
 		newInstance = invokeSetter(setter, bp, newInstance);
@@ -340,7 +344,7 @@ abstract class BeanUtilUtil implements BeanUtil {
 			return getter.getGetterRawType();
 		}
 
-		return null;	// this should not happens
+		return null;	// this should not happen
 	}
 
 }
