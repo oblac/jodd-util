@@ -1,4 +1,4 @@
-name: JoddBuild
+name: Build
 
 on: [push]
 
@@ -24,3 +24,12 @@ jobs:
       uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
       with:
         arguments: build
+
+  codecov:
+
+    steps:
+    - uses: actions/checkout@master
+    - uses: codecov/codecov-action@v2
+    with:
+      fail_ci_if_error: false
+      verbose: true # optional (default = false)
