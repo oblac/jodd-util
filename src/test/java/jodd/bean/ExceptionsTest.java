@@ -133,4 +133,16 @@ class ExceptionsTest {
 				() -> BeanUtil.declared.getProperty(new X(), "nested.na"));
 	}
 
+	@Test
+	void test_utils_read_through_non_nulls_2() {
+		assertThrows(NullPropertyBeanException.class,
+				() -> BeanUtil.declared.getProperty(new X(), "nested.a"));
+	}
+
+	@Test
+	void test_utils_write_through_nulls() {
+		assertThrows(NullPropertyBeanException.class,
+				() -> BeanUtil.declared.setProperty(new X(), "nested.a", 5));
+	}
+
 }

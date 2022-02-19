@@ -240,6 +240,9 @@ public class BeanUtilBean extends BeanUtilUtil implements BeanUtil {
 		if (isSilent) {
 			return;
 		}
+		if (bp.isExistingParentNull() && bp.currentPropertyExistOnParent(isDeclared)) {
+			throw new NullPropertyBeanException("Simple property '" + bp.lastName + "' is null.", bp);
+		}
 		throw new PropertyNotFoundBeanException("Simple property '" + bp.name + "' not found.", bp);
 	}
 
