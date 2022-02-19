@@ -1,4 +1,4 @@
-name: Gradle Package
+name: JoddBuild
 
 on: [push]
 
