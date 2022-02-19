@@ -17,19 +17,17 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
-        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
+        server-id: github
+        settings-path: ${{ github.workspace }}
 
     - name: Build with Gradle
       uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
       with:
         arguments: build
-
-  codecov:
-
-    steps:
-    - uses: actions/checkout@master
-    - uses: codecov/codecov-action@v2
+        
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
       with:
-        fail_ci_if_error: false
-        verbose: true # optional (default = false)
+        file: ./build/reports/jacoco/test/jacocoTestReport.xml
+        flags: unittests
+        verbose: true
