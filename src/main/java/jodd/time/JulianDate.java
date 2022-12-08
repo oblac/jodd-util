@@ -27,8 +27,10 @@ package jodd.time;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Objects;
 
 import static jodd.time.TimeUtil.MILLIS_IN_DAY;
@@ -74,6 +76,24 @@ public class JulianDate implements Serializable, Cloneable {
 	 */
 	public static final JulianDate JD_2001 = new JulianDate(2451910, 0.5);
 
+	/**
+	 * Julian Date when Reduced Julian Date (RJD) is 0.
+	 * RJD = JD − 2400000
+	 */
+	private static final JulianDate JD_RJD_0 = new JulianDate(2400000, 0);
+
+	/**
+	 * Julian Date when Modified Julian Date (MJD) is 0.
+	 * MJD = JD − 2400000.5
+	 */
+	private static final JulianDate JD_MJD_0 = new JulianDate(2400000, 0.5);
+
+	/**
+	 * Julian Date when Truncated Julian Date (TJD) is 0.
+	 * TJD began at midnight at the beginning of May 24, 1968 (Friday).
+	 */
+	private static final JulianDate JD_TJD_0 = new JulianDate(2440000, 0.5);
+
 
 	public static JulianDate of(final double value) {
 		return new JulianDate(value);
@@ -94,6 +114,10 @@ public class JulianDate implements Serializable, Cloneable {
 			localDate.getMonth().getValue(),
 			localDate.getDayOfMonth(),
 			0, 0, 0, 0);
+	}
+
+	public static JulianDate of(final Instant instant) {
+		return of(instant.atZone(ZoneOffset.UTC).toLocalDateTime());
 	}
 
 	public static JulianDate of(final long milliseconds) {
@@ -278,10 +302,13 @@ public class JulianDate implements Serializable, Cloneable {
 		double then = (fraction - JD_1970.fraction) * MILLIS_IN_DAY;
 		then += (integer - JD_1970.integer) * MILLIS_IN_DAY;
 		then += then > 0 ? 1.0e-6 : -1.0e-6;
-		return (long) then;
+		return Math.round(then);
 	}
 
 
+	/**
+	 * Converts to LocalDateTime at UTC.
+	 */
 	public LocalDateTime toLocalDateTime() {
 		int year, month, day;
 		double frac;
@@ -338,10 +365,18 @@ public class JulianDate implements Serializable, Cloneable {
 
 		double d_millis = (d_second - (double)time_second) * 1000.0;
 
-		// fix calculation errors
-		final int time_millisecond = (int) (((d_millis * 10) + 0.5) / 10);
+		// round to the nearest millisecond
+		final int time_millisecond = (int) Math.round(d_millis);
 
-		return LocalDateTime.of(time_year, time_month, time_day, time_hour, time_minute, time_second, time_millisecond * 1_000_000);
+		return LocalDateTime.of(time_year, time_month, time_day, time_hour, time_minute, time_second)
+				.plusNanos(time_millisecond * 1000000L);
+	}
+
+	/**
+	 * Converts to Instant.
+	 */
+	public Instant toInstant() {
+		return toLocalDateTime().toInstant(ZoneOffset.UTC);
 	}
 
 
@@ -360,7 +395,7 @@ public class JulianDate implements Serializable, Cloneable {
 	 * Adds a double delta value and returns a new instance.
 	 */
 	public JulianDate add(final double delta) {
-		return new JulianDate(this.integer, this.fraction + delta);
+		return add(new JulianDate(delta));
 	}
 
 
@@ -377,7 +412,7 @@ public class JulianDate implements Serializable, Cloneable {
 	 * Subtracts a double from current instance and returns a new instance.
 	 */
 	public JulianDate sub(final double delta) {
-		return new JulianDate(this.integer, this.fraction - delta);
+		return sub(new JulianDate(delta));
 	}
 
 	/**
@@ -452,15 +487,15 @@ public class JulianDate implements Serializable, Cloneable {
 	 * RJD = JD − 2400000
 	 */
 	public JulianDate getReducedJulianDate() {
-		return new JulianDate(integer - 2400000, fraction);
+		return sub(JD_RJD_0);
 	}
 
 	/**
 	 * Returns Modified Julian Date (MJD), where date starts from midnight rather than noon.
-	 * RJD = JD − 2400000.5
+	 * MJD = JD − 2400000.5
 	 */
 	public JulianDate getModifiedJulianDate() {
-		return new JulianDate(integer - 2400000, fraction - 0.5);
+		return sub(JD_MJD_0);
 	}
 
 	/**
@@ -468,7 +503,30 @@ public class JulianDate implements Serializable, Cloneable {
 	 * TJD began at midnight at the beginning of May 24, 1968 (Friday).
 	 */
 	public JulianDate getTruncatedJulianDate() {
-		return new JulianDate(integer - 2440000, fraction - 0.5);
+		return sub(JD_TJD_0);
 	}
 
+	/**
+	 * Returns the JD from a Reduced Julian Date (RJD), used by astronomers.
+	 * RJD = JD − 2400000
+	 */
+	public static JulianDate fromReducedJulianDate(double rjd) {
+		return JD_RJD_0.add(rjd);
+	}
+
+	/**
+	 * Returns the JD from a Modified Julian Date (MJD), where date starts from midnight rather than noon.
+	 * MJD = JD − 2400000.5
+	 */
+	public static JulianDate fromModifiedJulianDate(double mjd) {
+		return JD_MJD_0.add(mjd);
+	}
+
+	/**
+	 * Returns the JD from a Truncated Julian Day (TJD), introduced by NASA for the space program.
+	 * TJD began at midnight at the beginning of May 24, 1968 (Friday).
+	 */
+	public static JulianDate fromTruncatedJulianDate(double tjd) {
+		return JD_TJD_0.add(tjd);
+	}
 }
