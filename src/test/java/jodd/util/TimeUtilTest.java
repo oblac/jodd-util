@@ -93,19 +93,19 @@ class TimeUtilTest {
 		assertEquals(2440588, jds.getJulianDayNumber());
 
 		jds = JulianDate.of(2451774.726007);
-		assertEquals("2000-08-18T05:25:27.004", jds.toLocalDateTime().toString());
+		assertEquals("2000-08-18T05:25:27.005", jds.toLocalDateTime().toString());
 		assertEquals(2451774.726007, jds.doubleValue(), 1.0e-8);
 		assertEquals(2451775, jds.getJulianDayNumber());
 		JulianDate time2 = new JulianDate(jds.doubleValue());
 		assertEquals(time2, jds);
 
 		jds = JulianDate.of(2451774.72600701);
-		assertEquals("2000-08-18T05:25:27.005", jds.toLocalDateTime().toString());
+		assertEquals("2000-08-18T05:25:27.006", jds.toLocalDateTime().toString());
 		assertEquals(2451774.72600701, jds.doubleValue(), 1.0e-8);
 		assertEquals(2451775, jds.getJulianDayNumber());
 
 		jds = JulianDate.of(2451774.72600702);
-		assertEquals("2000-08-18T05:25:27.006", jds.toLocalDateTime().toString());
+		assertEquals("2000-08-18T05:25:27.007", jds.toLocalDateTime().toString());
 		assertEquals(2451774.72600702, jds.doubleValue(), 1.0e-8);
 		assertEquals(2451775, jds.getJulianDayNumber());
 
