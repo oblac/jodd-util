@@ -80,6 +80,10 @@ public class TimeUtil {
 		return localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 	}
 
+	public static long toMilliseconds(final LocalDateTime localDateTime, ZoneId zoneId) {
+		return localDateTime.atZone(zoneId).toInstant().toEpochMilli();
+	}
+
 	/**
 	 * Converts local date time to epoh milliseconds assuming start of the day as time point.
 	 */
@@ -100,6 +104,10 @@ public class TimeUtil {
 
 	public static LocalDateTime fromMilliseconds(final long milliseconds) {
 		return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), ZoneId.systemDefault());
+	}
+
+	public static LocalDateTime fromMilliseconds(final long milliseconds, final ZoneId timeZone) {
+		return LocalDateTime.ofInstant(Instant.ofEpochMilli(milliseconds), timeZone);
 	}
 
 

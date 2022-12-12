@@ -32,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import static jodd.time.TimeUtil.MILLIS_IN_DAY;
 
@@ -94,7 +95,6 @@ public class JulianDate implements Serializable, Cloneable {
 	 */
 	private static final JulianDate JD_TJD_0 = new JulianDate(2440000, 0.5);
 
-
 	public static JulianDate of(final double value) {
 		return new JulianDate(value);
 	}
@@ -121,11 +121,7 @@ public class JulianDate implements Serializable, Cloneable {
 	}
 
 	public static JulianDate of(final long milliseconds) {
-		int integer = (int) (milliseconds / MILLIS_IN_DAY);
-		double fraction = (double)(milliseconds % MILLIS_IN_DAY) / MILLIS_IN_DAY;
-		integer += JD_1970.integer;
-		fraction += JD_1970.fraction;
-		return new JulianDate(integer, fraction);
+		return of(TimeUtil.fromMilliseconds(milliseconds, ZoneOffset.UTC));
 	}
 
 	public static JulianDate of(final int i, final double f) {
@@ -184,8 +180,15 @@ public class JulianDate implements Serializable, Cloneable {
 		return new JulianDate(jd, frac + 0.5);
 	}
 
+	public static JulianDate of(final BigDecimal bd) {
+		double d = bd.doubleValue();
+		int integer = (int) d;
+		double fraction = bd.subtract(new BigDecimal(integer)).doubleValue();
+		return new JulianDate(integer, fraction);
+	}
+
 	public static JulianDate now() {
-		return of(LocalDateTime.now());
+		return of(Instant.now());
 	}
 
 	/**
@@ -253,16 +256,6 @@ public class JulianDate implements Serializable, Cloneable {
 		set(i, f);
 	}
 
-	/**
-	 * Creates JD from <code>BigDecimal</code>.
-	 */
-	public JulianDate(final BigDecimal bd) {
-		double d = bd.doubleValue();
-		integer = (int) d;
-		fraction = bd.subtract(new BigDecimal(integer)).doubleValue();
-	}
-
-
 	// ---------------------------------------------------------------- conversion
 	
 
@@ -299,10 +292,14 @@ public class JulianDate implements Serializable, Cloneable {
 	 * Converts to milliseconds.
 	 */
 	public long toMilliseconds() {
-		double then = (fraction - JD_1970.fraction) * MILLIS_IN_DAY;
-		then += (integer - JD_1970.integer) * MILLIS_IN_DAY;
-		then += then > 0 ? 1.0e-6 : -1.0e-6;
-		return Math.round(then);
+		return TimeUtil.toMilliseconds(toLocalDateTime(), ZoneOffset.UTC);
+	}
+
+	/**
+	 * Converts to Instant.
+	 */
+	public Instant toInstant() {
+		return toLocalDateTime().toInstant(ZoneOffset.UTC);
 	}
 
 
@@ -368,19 +365,12 @@ public class JulianDate implements Serializable, Cloneable {
 		// floor down to the nearest millisecond
 		final int time_millisecond = (int) Math.round(d_millis);
 
-		return LocalDateTime.of(time_year, time_month, time_day, time_hour, time_minute, time_second)
+		return LocalDateTime
+				.of(time_year, time_month, time_day, time_hour, time_minute, time_second)
 				.plusNanos(time_millisecond * 1000000L);
 	}
 
-	/**
-	 * Converts to Instant.
-	 */
-	public Instant toInstant() {
-		return toLocalDateTime().toInstant(ZoneOffset.UTC);
-	}
-
-
-	// ---------------------------------------------------------------- math
+	// <editor-fold desc="math operators">
 
 	/**
 	 * Adds two JD and returns a new instance.
@@ -432,8 +422,9 @@ public class JulianDate implements Serializable, Cloneable {
 		this.fraction = f;
 	}
 
+	// </editor-fold>
 
-	// ---------------------------------------------------------------- between
+	// <editor-fold desc="between comparators">
 
 	/**
 	 * Calculates the number of days between two dates. Returned value is always positive.
@@ -453,7 +444,9 @@ public class JulianDate implements Serializable, Cloneable {
 		return now - then;
 	}
 
-	// ---------------------------------------------------------------- equals & hashCode
+	// </editor-fold>
+
+	// <editor-fold desc="equals & hashCode & clone">
 
 	@Override
 	public boolean equals(final Object object) {
@@ -473,12 +466,12 @@ public class JulianDate implements Serializable, Cloneable {
 		return Objects.hash(integer, fraction);
 	}
 
-	// ---------------------------------------------------------------- clone
-
 	@Override
 	protected JulianDate clone() {
 		return new JulianDate(this.integer, this.fraction);
 	}
+
+	// </editor-fold>
 
 	// ---------------------------------------------------------------- conversion
 
