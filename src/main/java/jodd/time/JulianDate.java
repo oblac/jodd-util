@@ -32,9 +32,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
-import java.util.TimeZone;
-
-import static jodd.time.TimeUtil.MILLIS_IN_DAY;
 
 /**
  * Julian Date stamp, for high precision calculations. Julian date is a real
