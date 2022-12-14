@@ -362,7 +362,7 @@ public class JulianDate implements Serializable, Cloneable {
 
 		double d_millis = (d_second - (double)time_second) * 1000.0;
 
-		// floor down to the nearest millisecond
+		// rounds to the nearest millisecond
 		final int time_millisecond = (int) Math.round(d_millis);
 
 		return LocalDateTime
