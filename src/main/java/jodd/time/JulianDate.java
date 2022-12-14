@@ -121,7 +121,7 @@ public class JulianDate implements Serializable, Cloneable {
 	}
 
 	public static JulianDate of(final long milliseconds) {
-		return of(TimeUtil.fromMilliseconds(milliseconds, ZoneOffset.UTC));
+		return of(Instant.ofEpochMilli(milliseconds));
 	}
 
 	public static JulianDate of(final int i, final double f) {
