@@ -292,7 +292,7 @@ public class JulianDate implements Serializable, Cloneable {
 	 * Converts to milliseconds.
 	 */
 	public long toMilliseconds() {
-		return TimeUtil.toMilliseconds(toLocalDateTime(), ZoneOffset.UTC);
+		return toInstant().toEpochMilli();
 	}
 
 	/**
