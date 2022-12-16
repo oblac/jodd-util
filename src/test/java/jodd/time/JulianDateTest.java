@@ -27,6 +27,8 @@ package jodd.time;
 
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
@@ -84,210 +86,247 @@ class JulianDateTest {
 		assertEquals("2003-02-28T23:59:59.999", jdt.toLocalDateTime().format(ISO_LOCAL_DATE_TIME));
 	}
 
+	/*
+	 This test just verifies that the BigDecimal values
+	 are "close", e.g. within double precision.
+	 In theory, they should be even closer than that,
+	 but that would be more of a pain to test.
+	 */
 	@Test
-	void testRoundTripDouble() {
+	void testToAndFromBigDecimal() {
+		JulianDate jdt = JulianDate.of(2457754, 0.4);
+		BigDecimal bigDecimal = BigDecimal.valueOf(2457754.4);
+		assertEquals(bigDecimal.doubleValue(), jdt.toBigDecimal().doubleValue());
+		assertEquals(bigDecimal.doubleValue(), JulianDate.of(bigDecimal).toBigDecimal().doubleValue());
+
+		jdt = JulianDate.of(2457754, 0.5);
+		bigDecimal = BigDecimal.valueOf(2457754.5);
+		assertEquals(bigDecimal.doubleValue(), jdt.toBigDecimal().doubleValue());
+		assertEquals(bigDecimal.doubleValue(), JulianDate.of(bigDecimal).toBigDecimal().doubleValue());
+
+		jdt = JulianDate.of(2457754, 0.6);
+		bigDecimal = BigDecimal.valueOf(2457754.6);
+		assertEquals(bigDecimal.doubleValue(), jdt.toBigDecimal().doubleValue());
+		assertEquals(bigDecimal.doubleValue(), JulianDate.of(bigDecimal).toBigDecimal().doubleValue());
+
+		jdt = JulianDate.of(2457754, 0.7);
+		bigDecimal = BigDecimal.valueOf(2457754.7);
+		assertEquals(bigDecimal.doubleValue(), jdt.toBigDecimal().doubleValue());
+		assertEquals(bigDecimal.doubleValue(), JulianDate.of(bigDecimal).toBigDecimal().doubleValue());
+
+		jdt = JulianDate.of(2457754, 0.8);
+		bigDecimal = BigDecimal.valueOf(2457754.8);
+		assertEquals(bigDecimal.doubleValue(), jdt.toBigDecimal().doubleValue());
+		assertEquals(bigDecimal.doubleValue(), JulianDate.of(bigDecimal).toBigDecimal().doubleValue());
+
+		jdt = JulianDate.of(2457448, 0.43219907);
+		bigDecimal = BigDecimal.valueOf(2457448.43219907);
+		assertEquals(bigDecimal.doubleValue(), jdt.toBigDecimal().doubleValue());
+		assertEquals(bigDecimal.doubleValue(), JulianDate.of(bigDecimal).toBigDecimal().doubleValue());
+	}
+
+	@Test
+	void testToAndFromDouble() {
+		JulianDate jdt = JulianDate.of(2457754, 0.4);
 		double doubleValue = 2457754.4;
-		JulianDate jdt = JulianDate.of(doubleValue);
-		assertEquals(doubleValue, jdt.doubleValue());
+		assertEquals(doubleValue, jdt.toDouble());
+		assertEquals(doubleValue, JulianDate.of(doubleValue).toDouble());
 
+		jdt = JulianDate.of(2457754, 0.5);
 		doubleValue = 2457754.5;
-		jdt = JulianDate.of(doubleValue);
-		assertEquals(doubleValue, jdt.doubleValue());
+		assertEquals(doubleValue, jdt.toDouble());
+		assertEquals(doubleValue, JulianDate.of(doubleValue).toDouble());
 
+		jdt = JulianDate.of(2457754, 0.6);
 		doubleValue = 2457754.6;
-		jdt = JulianDate.of(doubleValue);
-		assertEquals(doubleValue, jdt.doubleValue());
+		assertEquals(doubleValue, jdt.toDouble());
+		assertEquals(doubleValue, JulianDate.of(doubleValue).toDouble());
 
+		jdt = JulianDate.of(2457754, 0.7);
 		doubleValue = 2457754.7;
-		jdt = JulianDate.of(doubleValue);
-		assertEquals(doubleValue, jdt.doubleValue());
+		assertEquals(doubleValue, jdt.toDouble());
+		assertEquals(doubleValue, JulianDate.of(doubleValue).toDouble());
 
+		jdt = JulianDate.of(2457754, 0.8);
 		doubleValue = 2457754.8;
-		jdt = JulianDate.of(doubleValue);
-		assertEquals(doubleValue, jdt.doubleValue());
+		assertEquals(doubleValue, jdt.toDouble());
+		assertEquals(doubleValue, JulianDate.of(doubleValue).toDouble());
 
+		jdt = JulianDate.of(2457448, 0.43219907);
 		doubleValue = 2457448.43219907;
-		jdt = JulianDate.of(doubleValue);
-		assertEquals(doubleValue, jdt.doubleValue());
+		assertEquals(doubleValue, jdt.toDouble());
+		assertEquals(doubleValue, JulianDate.of(doubleValue).toDouble());
 	}
 
 	@Test
-	void testRoundTripLocalDateTime() {
+	void testToAndFromLocalDateTime() {
+		JulianDate jdt = JulianDate.of(2016, 12, 31, 21, 36, 0, 0);
 		LocalDateTime ldt = LocalDateTime.of(2016, 12, 31, 21, 36, 0, 0);
-		JulianDate jdt = JulianDate.of(ldt);
+		assertEquals(jdt, JulianDate.of(ldt));
 		assertEquals(ldt, jdt.toLocalDateTime());
+		assertEquals(ldt, JulianDate.of(ldt).toLocalDateTime());
 
+		jdt = JulianDate.of(2017, 1, 1, 0, 0, 0, 0);
 		ldt = LocalDateTime.of(2017, 1, 1, 0, 0, 0, 0);
-		jdt = JulianDate.of(ldt);
+		assertEquals(jdt, JulianDate.of(ldt));
 		assertEquals(ldt, jdt.toLocalDateTime());
+		assertEquals(ldt, JulianDate.of(ldt).toLocalDateTime());
 
+		jdt = JulianDate.of(2017, 1, 1, 2, 24, 0, 0);
 		ldt = LocalDateTime.of(2017, 1, 1, 2, 24, 0, 0);
-		jdt = JulianDate.of(ldt);
+		assertEquals(jdt, JulianDate.of(ldt));
 		assertEquals(ldt, jdt.toLocalDateTime());
+		assertEquals(ldt, JulianDate.of(ldt).toLocalDateTime());
 
+		jdt = JulianDate.of(2017, 1, 1, 4, 48, 0, 0);
 		ldt = LocalDateTime.of(2017, 1, 1, 4, 48, 0, 0);
-		jdt = JulianDate.of(ldt);
+		assertEquals(jdt, JulianDate.of(ldt));
 		assertEquals(ldt, jdt.toLocalDateTime());
+		assertEquals(ldt, JulianDate.of(ldt).toLocalDateTime());
 
+		jdt = JulianDate.of(2017, 1, 1, 7, 12, 0, 0);
 		ldt = LocalDateTime.of(2017, 1, 1, 7, 12, 0, 0);
-		jdt = JulianDate.of(ldt);
+		assertEquals(jdt, JulianDate.of(ldt));
 		assertEquals(ldt, jdt.toLocalDateTime());
+		assertEquals(ldt, JulianDate.of(ldt).toLocalDateTime());
 
+		jdt = JulianDate.of(2016, 2, 29, 22, 22, 22, 0);
 		ldt = LocalDateTime.of(2016, 2, 29, 22, 22, 22, 0);
-		jdt = JulianDate.of(ldt);
+		assertEquals(jdt, JulianDate.of(ldt));
 		assertEquals(ldt, jdt.toLocalDateTime());
+		assertEquals(ldt, JulianDate.of(ldt).toLocalDateTime());
 	}
 
 	@Test
-	void testRoundTripMilliseconds() {
+	void testToAndFromInstant() {
+		JulianDate jdt = JulianDate.of(2016, 12, 31, 21, 36, 0, 0);
+		Instant instant = Instant.parse("2016-12-31T21:36:00Z");
+		assertEquals(jdt, JulianDate.of(instant));
+		assertEquals(instant, jdt.toInstant());
+		assertEquals(instant, JulianDate.of(instant).toInstant());
+
+		jdt = JulianDate.of(2017, 1, 1, 0, 0, 0, 0);
+		instant = Instant.parse("2017-01-01T00:00:00Z");
+		assertEquals(jdt, JulianDate.of(instant));
+		assertEquals(instant, jdt.toInstant());
+		assertEquals(instant, JulianDate.of(instant).toInstant());
+
+		jdt = JulianDate.of(2017, 1, 1, 2, 24, 0, 0);
+		instant = Instant.parse("2017-01-01T02:24:00Z");
+		assertEquals(jdt, JulianDate.of(instant));
+		assertEquals(instant, jdt.toInstant());
+		assertEquals(instant, JulianDate.of(instant).toInstant());
+
+		jdt = JulianDate.of(2017, 1, 1, 4, 48, 0, 0);
+		instant = Instant.parse("2017-01-01T04:48:00Z");
+		assertEquals(jdt, JulianDate.of(instant));
+		assertEquals(instant, jdt.toInstant());
+		assertEquals(instant, JulianDate.of(instant).toInstant());
+
+		jdt = JulianDate.of(2017, 1, 1, 7, 12, 0, 0);
+		instant = Instant.parse("2017-01-01T07:12:00Z");
+		assertEquals(jdt, JulianDate.of(instant));
+		assertEquals(instant, jdt.toInstant());
+		assertEquals(instant, JulianDate.of(instant).toInstant());
+
+		jdt = JulianDate.of(2016, 2, 29, 22, 22, 22, 0);
+		instant = Instant.parse("2016-02-29T22:22:22Z");
+		assertEquals(jdt, JulianDate.of(instant));
+		assertEquals(instant, jdt.toInstant());
+		assertEquals(instant, JulianDate.of(instant).toInstant());
+	}
+
+	@Test
+	void testToAndFromMilliseconds() {
+		JulianDate jdt = JulianDate.of(2016, 12, 31, 21, 36, 0, 0);
 		long milliseconds = 1483220160000L;
-		JulianDate jdt = JulianDate.of(milliseconds);
+		assertEquals(jdt, JulianDate.of(milliseconds));
 		assertEquals(milliseconds, jdt.toMilliseconds());
+		assertEquals(milliseconds, JulianDate.of(milliseconds).toMilliseconds());
 
+		jdt = JulianDate.of(2017, 1, 1, 0, 0, 0, 0);
 		milliseconds = 1483228800000L;
-		jdt = JulianDate.of(milliseconds);
+		assertEquals(jdt, JulianDate.of(milliseconds));
 		assertEquals(milliseconds, jdt.toMilliseconds());
+		assertEquals(milliseconds, JulianDate.of(milliseconds).toMilliseconds());
 
+		jdt = JulianDate.of(2017, 1, 1, 2, 24, 0, 0);
 		milliseconds = 1483237440000L;
-		jdt = JulianDate.of(milliseconds);
+		assertEquals(jdt, JulianDate.of(milliseconds));
 		assertEquals(milliseconds, jdt.toMilliseconds());
+		assertEquals(milliseconds, JulianDate.of(milliseconds).toMilliseconds());
 
+		jdt = JulianDate.of(2017, 1, 1, 4, 48, 0, 0);
 		milliseconds = 1483246080000L;
-		jdt = JulianDate.of(milliseconds);
+		assertEquals(jdt, JulianDate.of(milliseconds));
 		assertEquals(milliseconds, jdt.toMilliseconds());
+		assertEquals(milliseconds, JulianDate.of(milliseconds).toMilliseconds());
 
+		jdt = JulianDate.of(2017, 1, 1, 7, 12, 0, 0);
 		milliseconds = 1483254720000L;
-		jdt = JulianDate.of(milliseconds);
+		assertEquals(jdt, JulianDate.of(milliseconds));
 		assertEquals(milliseconds, jdt.toMilliseconds());
+		assertEquals(milliseconds, JulianDate.of(milliseconds).toMilliseconds());
 
+		jdt = JulianDate.of(2016, 2, 29, 22, 22, 22, 0);
 		milliseconds = 1456784542000L;
-		jdt = JulianDate.of(milliseconds);
+		assertEquals(jdt, JulianDate.of(milliseconds));
 		assertEquals(milliseconds, jdt.toMilliseconds());
+		assertEquals(milliseconds, JulianDate.of(milliseconds).toMilliseconds());
 	}
 
 	@Test
-	void testDoubleToLocalDateTime() {
-		JulianDate jdt = JulianDate.of(2457754.4);
-		assertEquals(LocalDateTime.of(2016, 12, 31, 21, 36, 0, 0), jdt.toLocalDateTime());
+	void testCalendarDateTimeCloseToJulianDateTime() {
+		JulianDate jdt1 = JulianDate.of(2016, 12, 31, 21, 36, 0, 0);
+		JulianDate jdt2 = JulianDate.of(2457754, 0.4);
+		assertEquals(jdt1.toDouble(), jdt2.toDouble());
+		assertEquals(jdt1.toMilliseconds(), jdt2.toMilliseconds());
 
-		jdt = JulianDate.of(2457754.5);
-		assertEquals(LocalDateTime.of(2017, 1, 1, 0, 0, 0, 0), jdt.toLocalDateTime());
+		jdt1 = JulianDate.of(2017, 1, 1, 0, 0, 0, 0);
+		jdt2 = JulianDate.of(2457754, 0.5);
+		assertEquals(jdt1.toDouble(), jdt2.toDouble());
+		assertEquals(jdt1.toMilliseconds(), jdt2.toMilliseconds());
 
-		jdt = JulianDate.of(2457754.6);
-		assertEquals(LocalDateTime.of(2017, 1, 1, 2, 24, 0, 0), jdt.toLocalDateTime());
+		jdt1 = JulianDate.of(2017, 1, 1, 2, 24, 0, 0);
+		jdt2 = JulianDate.of(2457754, 0.6);
+		assertEquals(jdt1.toDouble(), jdt2.toDouble());
+		assertEquals(jdt1.toMilliseconds(), jdt2.toMilliseconds());
 
-		jdt = JulianDate.of(2457754.7);
-		assertEquals(LocalDateTime.of(2017, 1, 1, 4, 48, 0, 0), jdt.toLocalDateTime());
+		jdt1 = JulianDate.of(2017, 1, 1, 4, 48, 0, 0);
+		jdt2 = JulianDate.of(2457754, 0.7);
+		assertEquals(jdt1.toDouble(), jdt2.toDouble());
+		assertEquals(jdt1.toMilliseconds(), jdt2.toMilliseconds());
 
-		jdt = JulianDate.of(2457754.8);
-		assertEquals(LocalDateTime.of(2017, 1, 1, 7, 12, 0, 0), jdt.toLocalDateTime());
+		jdt1 = JulianDate.of(2017, 1, 1, 7, 12, 0, 0);
+		jdt2 = JulianDate.of(2457754, 0.8);
+		assertEquals(jdt1.toDouble(), jdt2.toDouble());
+		assertEquals(jdt1.toMilliseconds(), jdt2.toMilliseconds());
 
-		jdt = JulianDate.of(2457448.43219907);
-		assertEquals(LocalDateTime.of(2016, 2, 29, 22, 22, 22, 0), jdt.toLocalDateTime());
+		jdt1 = JulianDate.of(2016, 2, 29, 22, 22, 22, 0);
+		jdt2 = JulianDate.of(2457448, 0.43219907);
+		assertEquals(jdt1.toDouble(), jdt2.toDouble(), 10e-9);
+		assertEquals(jdt1.toMilliseconds(), jdt2.toMilliseconds());
 	}
 
 	@Test
-	void testDoubleToMilliseconds() {
-		JulianDate jdt = JulianDate.of(2457754.4);
-		assertEquals(1483220160000L, jdt.toMilliseconds());
-
-		jdt = JulianDate.of(2457754.5);
-		assertEquals(1483228800000L, jdt.toMilliseconds());
-
-		jdt = JulianDate.of(2457754.6);
-		assertEquals(1483237440000L, jdt.toMilliseconds());
-
-		jdt = JulianDate.of(2457754.7);
-		assertEquals(1483246080000L, jdt.toMilliseconds());
-
-		jdt = JulianDate.of(2457754.8);
-		assertEquals(1483254720000L, jdt.toMilliseconds());
-
-		jdt = JulianDate.of(2457448.43219907);
-		assertEquals(1456784542000L, jdt.toMilliseconds());
+	void testDeltaRounding() {
+		testDeltaRounding(JulianDate.of(2457754, 0.4));
+		testDeltaRounding(JulianDate.of(2457754, 0.6));
+		testDeltaRounding(JulianDate.of(2457754, 0.7));
+		testDeltaRounding(JulianDate.of(2457754, 0.8));
 	}
 
-	@Test
-	void testLocalDateTimeToDouble() {
-		JulianDate jdt = JulianDate.of(LocalDateTime.of(2016, 12, 31, 21, 36, 0, 0));
-		assertEquals(2457754.4, jdt.doubleValue());
-
-		jdt = JulianDate.of(LocalDateTime.of(2017, 1, 1, 0, 0, 0, 0));
-		assertEquals(2457754.5, jdt.doubleValue());
-
-		jdt = JulianDate.of(LocalDateTime.of(2017, 1, 1, 2, 24, 0, 0));
-		assertEquals(2457754.6, jdt.doubleValue());
-
-		jdt = JulianDate.of(LocalDateTime.of(2017, 1, 1, 4, 48, 0, 0));
-		assertEquals(2457754.7, jdt.doubleValue());
-
-		jdt = JulianDate.of(LocalDateTime.of(2017, 1, 1, 7, 12, 0, 0));
-		assertEquals(2457754.8, jdt.doubleValue());
-
-		jdt = JulianDate.of(LocalDateTime.of(2016, 2, 29, 22, 22, 22, 0));
-		assertEquals(2457448.4321990740, jdt.doubleValue(), 1.0e-10);
-	}
-
-	@Test
-	void testLocalDateTimeToMilliseconds() {
-		JulianDate jdt = JulianDate.of(LocalDateTime.of(2016, 12, 31, 21, 36, 0, 0));
-		assertEquals(1483220160000L, jdt.toMilliseconds());
-
-		jdt = JulianDate.of(LocalDateTime.of(2017, 1, 1, 0, 0, 0, 0));
-		assertEquals(1483228800000L, jdt.toMilliseconds());
-
-		jdt = JulianDate.of(LocalDateTime.of(2017, 1, 1, 2, 24, 0, 0));
-		assertEquals(1483237440000L, jdt.toMilliseconds());
-
-		jdt = JulianDate.of(LocalDateTime.of(2017, 1, 1, 4, 48, 0, 0));
-		assertEquals(1483246080000L, jdt.toMilliseconds());
-
-		jdt = JulianDate.of(LocalDateTime.of(2017, 1, 1, 7, 12, 0, 0));
-		assertEquals(1483254720000L, jdt.toMilliseconds());
-
-		jdt = JulianDate.of(LocalDateTime.of(2016, 2, 29, 22, 22, 22, 0));
-		assertEquals(1456784542000L, jdt.toMilliseconds());
-	}
-
-	@Test
-	void testMillisecondsToDouble() {
-		JulianDate jdt = JulianDate.of(1483220160000L);
-		assertEquals(2457754.4, jdt.doubleValue());
-
-		jdt = JulianDate.of(1483228800000L);
-		assertEquals(2457754.5, jdt.doubleValue());
-
-		jdt = JulianDate.of(1483237440000L);
-		assertEquals(2457754.6, jdt.doubleValue());
-
-		jdt = JulianDate.of(1483246080000L);
-		assertEquals(2457754.7, jdt.doubleValue());
-
-		jdt = JulianDate.of(1483254720000L);
-		assertEquals(2457754.8, jdt.doubleValue());
-
-		jdt = JulianDate.of(1456784542000L);
-		assertEquals(2457448.432199074, jdt.doubleValue(), 1.0e-10);
-	}
-
-	@Test
-	void testMillisecondsToLocalDateTime() {
-		JulianDate jdt = JulianDate.of(1483220160000L);
-		assertEquals(LocalDateTime.of(2016, 12, 31, 21, 36, 0, 0), jdt.toLocalDateTime());
-
-		jdt = JulianDate.of(1483228800000L);
-		assertEquals(LocalDateTime.of(2017, 1, 1, 0, 0, 0, 0), jdt.toLocalDateTime());
-
-		jdt = JulianDate.of(1483237440000L);
-		assertEquals(LocalDateTime.of(2017, 1, 1, 2, 24, 0, 0), jdt.toLocalDateTime());
-
-		jdt = JulianDate.of(1483246080000L);
-		assertEquals(LocalDateTime.of(2017, 1, 1, 4, 48, 0, 0), jdt.toLocalDateTime());
-
-		jdt = JulianDate.of(1483254720000L);
-		assertEquals(LocalDateTime.of(2017, 1, 1, 7, 12, 0, 0), jdt.toLocalDateTime());
-
-		jdt = JulianDate.of(1456784542000L);
-		assertEquals(LocalDateTime.of(2016, 2, 29, 22, 22, 22, 0), jdt.toLocalDateTime());
+	/**
+	 * Tests that more than 0.5 ms to rounds up and less than 0.5 ms rounds down
+	 * @param jdt a JulianDate equal to a whole number of milliseconds
+	 */
+	private void testDeltaRounding(JulianDate jdt) {
+		long milliseconds = jdt.toMilliseconds();
+		double lessThanHalfMillisecond = 0.00000000578;
+		double moreThanHalfMillisecond = 0.00000000579;
+		assertEquals(milliseconds, jdt.sub(lessThanHalfMillisecond).toMilliseconds());
+		assertEquals(milliseconds, jdt.add(lessThanHalfMillisecond).toMilliseconds());
+		assertEquals(milliseconds - 1, jdt.sub(moreThanHalfMillisecond).toMilliseconds());
+		assertEquals(milliseconds + 1, jdt.add(moreThanHalfMillisecond).toMilliseconds());
 	}
 }
