@@ -35,7 +35,7 @@ import java.util.Objects;
 
 /**
  * Julian Date stamp, for high precision calculations. Julian date is a real
- * number and it basically consist of two parts: integer and fraction. Integer
+ * number and it basically consists of two parts: integer and fraction. Integer
  * part carries date information, fraction carries time information.
  *
  * <p>
@@ -52,9 +52,9 @@ import java.util.Objects;
  * For calculations that will have time precision of 1e-3 seconds, both
  * fraction and integer part must have enough digits in it. The problem is
  * that integer part is big and, on the other hand fractional is small, and
- * since final julian date is a sum of this two values, some fraction
+ * since final Julian date is a sum of this two values, some fraction
  * numerals may be lost. Therefore, for higher precision both
- * fractional and integer part of julian date real number has to be
+ * fractional and integer part of Julian date real number has to be
  * preserved.
  * <p>
  * This class stores the unmodified fraction part, but not all digits
@@ -92,8 +92,15 @@ public class JulianDate implements Serializable, Cloneable {
 	 */
 	private static final JulianDate JD_TJD_0 = new JulianDate(2440000, 0.5);
 
-	public static JulianDate of(final double value) {
-		return new JulianDate(value);
+	/**
+	 * Creates JD from a double value.
+	 * <b>CAUTION</b>: double values may not be suited for precision math.
+	 * If precision is needed, consider passing in a BigDecimal instead.
+	 */
+	public static JulianDate of(final double jd) {
+		int integer = (int) jd;
+		double fraction = jd - (double)integer;
+		return of(integer, fraction);
 	}
 
 	public static JulianDate of(final LocalDateTime localDateTime) {
@@ -174,14 +181,14 @@ public class JulianDate implements Serializable, Cloneable {
 		}
 		//return  jd + frac + 0.5;
 
-		return new JulianDate(jd, frac + 0.5);
+		return of(jd, frac + 0.5);
 	}
 
 	public static JulianDate of(final BigDecimal bd) {
 		double d = bd.doubleValue();
 		int integer = (int) d;
 		double fraction = bd.subtract(new BigDecimal(integer)).doubleValue();
-		return new JulianDate(integer, fraction);
+		return of(integer, fraction);
 	}
 
 	public static JulianDate now() {
@@ -233,24 +240,23 @@ public class JulianDate implements Serializable, Cloneable {
 	}
 
 	/**
-	 * Creates JD from a <code>double</code>.
-	 */
-	public JulianDate(final double jd) {
-		integer = (int) jd;
-		fraction = jd - (double)integer;
-	}
-
-	/**
 	 * Creates JD from both integer and fractional part using normalization.
-	 * Normalization occurs when fractional part is out of range. 
-	 *
-	 * @see #set(int, double)
+	 * Normalization means that if fractional part is out of range,
+	 * values will be correctly fixed.
 	 *
 	 * @param i      integer part
 	 * @param f      fractional part should be in range [0.0, 1.0)
 	 */
 	public JulianDate(final int i, final double f) {
-		set(i, f);
+		integer = i;
+		fraction = f;
+		int fi = (int) fraction;
+		fraction -= fi;
+		integer += fi;
+		if (fraction < 0) {
+			fraction += 1;
+			integer--;
+		}
 	}
 
 	// ---------------------------------------------------------------- conversion
@@ -258,10 +264,10 @@ public class JulianDate implements Serializable, Cloneable {
 
 	/**
 	 * Returns <code>double</code> value of JD.
-	 * <b>CAUTION</b>: double values may not be suit for precision math due to
+	 * <b>CAUTION</b>: double values may not be suited for precision math due to
 	 * loss of precision.
 	 */
-	public double doubleValue() {
+	public double toDouble() {
 		return (double)integer + fraction;
 	}
 
@@ -275,7 +281,7 @@ public class JulianDate implements Serializable, Cloneable {
 	/**
 	 * Returns string representation of JD.
 	 *
-	 * @return julian integer as string
+	 * @return Julian date as string
 	 */
 	@Override
 	public String toString() {
@@ -308,13 +314,9 @@ public class JulianDate implements Serializable, Cloneable {
 		double frac;
 		int jd, ka, kb, kc, kd, ke, ialp;
 
-		//double JD = jds.doubleValue();//jdate;
-		//jd = (int)(JD + 0.5);							// integer julian date
-		//frac = JD + 0.5 - (double)jd + 1.0e-10;		// day fraction
-
 		ka = (int)(fraction + 0.5);
 		jd = integer + ka;
-		frac = fraction + 0.5 - ka + 1.0e-10;
+		frac = fraction + 0.5 - ka;
 
 		ka = jd;
 		if (jd >= 2299161) {
@@ -382,7 +384,7 @@ public class JulianDate implements Serializable, Cloneable {
 	 * Adds a double delta value and returns a new instance.
 	 */
 	public JulianDate add(final double delta) {
-		return add(new JulianDate(delta));
+		return add(of(delta));
 	}
 
 
@@ -391,7 +393,7 @@ public class JulianDate implements Serializable, Cloneable {
 	 */
 	public JulianDate sub(final JulianDate jds) {
 		int i = this.integer - jds.integer;
-		double f = this.fraction -jds.fraction;
+		double f = this.fraction - jds.fraction;
 		return new JulianDate(i, f);
 	}
 
@@ -399,24 +401,7 @@ public class JulianDate implements Serializable, Cloneable {
 	 * Subtracts a double from current instance and returns a new instance.
 	 */
 	public JulianDate sub(final double delta) {
-		return sub(new JulianDate(delta));
-	}
-
-	/**
-	 * Sets integer and fractional part with normalization.
-	 * Normalization means that if double is out of range,
-	 * values will be correctly fixed. 
-	 */
-	private void set(final int i, double f) {
-		integer = i;
-		int fi = (int) f;
-		f -= fi;
-		integer += fi;
-		if (f < 0) {
-			f += 1;
-			integer--;
-		}
-		this.fraction = f;
+		return sub(of(delta));
 	}
 
 	// </editor-fold>
@@ -427,8 +412,7 @@ public class JulianDate implements Serializable, Cloneable {
 	 * Calculates the number of days between two dates. Returned value is always positive.
 	 */
 	public int daysBetween(final JulianDate otherDate) {
-		int difference = daysSpan(otherDate);
-		return difference >= 0 ? difference : -difference;
+		return Math.abs(daysSpan(otherDate));
 	}
 
 	/**
