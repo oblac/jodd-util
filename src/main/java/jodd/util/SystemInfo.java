@@ -26,7 +26,6 @@
 package jodd.util;
 
 import java.io.File;
-import java.lang.management.ManagementFactory;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -486,13 +485,6 @@ public final class SystemInfo {
 	 */
 	public final long getUsedMemory(){
 		return runtime.totalMemory() - runtime.freeMemory();
-	}
-
-	/**
-	 * Returns PID of current Java process.
-	 */
-	public final long getCurrentPID() {
-		return Long.parseLong(ManagementFactory.getRuntimeMXBean().getName().split("@")[0]);
 	}
 
 	/**
