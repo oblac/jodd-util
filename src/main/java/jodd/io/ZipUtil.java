@@ -37,6 +37,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -85,7 +87,7 @@ public class ZipUtil {
 
 		String zlibFileName = file.getAbsolutePath() + ZLIB_EXT;
 
-		DeflaterOutputStream dos = new DeflaterOutputStream(new FileOutputStream(zlibFileName), deflater);
+		DeflaterOutputStream dos = new DeflaterOutputStream(Files.newOutputStream(Paths.get(zlibFileName)), deflater);
 
 		try {
 			IOUtil.copy(fis, dos);
@@ -117,7 +119,7 @@ public class ZipUtil {
 
 		String gzipName = file.getAbsolutePath() + GZIP_EXT;
 
-		GZIPOutputStream gzos = new GZIPOutputStream(new FileOutputStream(gzipName));
+		GZIPOutputStream gzos = new GZIPOutputStream(Files.newOutputStream(Paths.get(gzipName)));
 		try {
 			IOUtil.copy(fis, gzos);
 		} finally {
@@ -144,7 +146,7 @@ public class ZipUtil {
 		out.createNewFile();
 
 		FileOutputStream fos = new FileOutputStream(out);
-		GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(file));
+		GZIPInputStream gzis = new GZIPInputStream(Files.newInputStream(file.toPath()));
 		try {
 			IOUtil.copy(gzis, fos);
 		} finally {
@@ -185,10 +187,10 @@ public class ZipUtil {
 		List<String> entries = new ArrayList<>();
 
 		ZipFile zip = new ZipFile(zipFile);
-		Enumeration zipEntries = zip.entries();
+		Enumeration<? extends ZipEntry> zipEntries = zip.entries();
 
 		while (zipEntries.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry) zipEntries.nextElement();
+			ZipEntry entry = zipEntries.nextElement();
 			String entryName = entry.getName();
 
 			entries.add(entryName);
@@ -215,10 +217,10 @@ public class ZipUtil {
 	 */
 	public static void unzip(final File zipFile, final File destDir, final String... patterns) throws IOException {
 		ZipFile zip = new ZipFile(zipFile);
-		Enumeration zipEntries = zip.entries();
+		Enumeration<? extends ZipEntry> zipEntries = zip.entries();
 
 		while (zipEntries.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry) zipEntries.nextElement();
+			ZipEntry entry = zipEntries.nextElement();
 			String entryName = entry.getName();
 
 			if (patterns != null && patterns.length > 0) {
@@ -254,7 +256,7 @@ public class ZipUtil {
 				InputStream in = zip.getInputStream(entry);
 				OutputStream out = null;
 				try {
-					out = new FileOutputStream(file);
+					out = Files.newOutputStream(file.toPath());
 					IOUtil.copy(in, out);
 				} finally {
 					IOUtil.close(out);
@@ -314,7 +316,7 @@ public class ZipUtil {
 		zos.putNextEntry(zipEntry);
 
 		if (!isDir) {
-			InputStream is = new FileInputStream(file);
+			InputStream is = Files.newInputStream(file.toPath());
 			try {
 				IOUtil.copy(is, zos);
 			} finally {
@@ -331,7 +333,7 @@ public class ZipUtil {
 
 			final File[] children = file.listFiles();
 
-			if (children != null && children.length != 0) {
+			if (children != null) {
 				for (File child : children) {
 					String childRelativePath = (noRelativePath ? StringPool.EMPTY : path) + child.getName();
 					addToZip(zos, child, childRelativePath, comment, recursive);
