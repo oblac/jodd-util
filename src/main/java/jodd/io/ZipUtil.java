@@ -234,7 +234,7 @@ public class ZipUtil {
 			// check for Zip slip FLAW
 			final File rootDir = destDir != null ? destDir : new File(".");
 			if (!FileUtil.isAncestor(rootDir, file, true)) {
-				throw new IOException("Unzipping");
+				throw new IOException("Unzip issue, entry is outside of the target dir: " + entryName);
 			}
 
 			if (entry.isDirectory()) {
