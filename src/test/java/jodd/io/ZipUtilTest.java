@@ -29,24 +29,28 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class ZipUtilTest {
 
 	protected String dataRoot;
 
 	@BeforeEach
-	void setUp() throws Exception {
+	void setUp() {
 		if (dataRoot != null) {
 			return;
 		}
@@ -68,7 +72,7 @@ class ZipUtilTest {
 		byte[] data2Bytes = FileUtil.readBytes(data);
 		byte[] data1Bytes = FileUtil.readBytes(new File(dataRoot, "sb.data"));
 
-		assertTrue(Arrays.equals(data1Bytes, data2Bytes));
+		assertArrayEquals(data1Bytes, data2Bytes);
 
 		// cleanup
 		FileUtil.delete(new File(dataRoot, "sb2.data"));
@@ -213,6 +217,44 @@ class ZipUtilTest {
 		FileUtil.deleteDir(new File(dataRoot, "folder"));
 		FileUtil.deleteDir(new File(dataRoot, "folder2"));
 		FileUtil.delete(zipFile);
+	}
+
+	@Test
+	void testCWE22() {
+		File zipFile = makeDangerousZip();
+		File destination = new File(dataRoot, "unzip");
+		try {
+			ZipUtil.unzip(zipFile, destination);
+		}
+		catch (IOException ioException) {
+			// expected
+			zipFile.delete();
+			return;
+		}
+		fail("Expected IOException");
+	}
+
+	private File makeDangerousZip() {
+		ZipOutputStream zos = null;
+		File zipFile = new File(dataRoot, "poc.zip");
+		try {
+			zos = new ZipOutputStream(Files.newOutputStream(zipFile.toPath()));
+			String srcFile = "../../a/b/c/poc.txt";  // the next filePath
+			zos.putNextEntry(new ZipEntry(srcFile));
+			FileInputStream in = new FileInputStream(new File(dataRoot, "zip.txt"));
+			int len;
+			byte[] buf = new byte[1024];
+			while ((len = in.read(buf)) != -1) {
+				zos.write(buf, 0, len);
+			}
+			zos.closeEntry();
+			in.close();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			IOUtil.close(zos);
+		}
+		return zipFile;
 	}
 
 }
