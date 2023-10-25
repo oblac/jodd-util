@@ -510,7 +510,7 @@ public class ClassUtil {
 					return null;
 				});
 			}
-		} catch (final SecurityException sex) {
+		} catch (final RuntimeException ex) {
 			// ignore
 		}
 	}
