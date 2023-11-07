@@ -39,7 +39,7 @@ repositories {
 
 group = 'org.jodd'
 //version = '6.1.1-SNAPSHOT'
-version = '6.2.1'
+version = '6.2.2'
 
 rootProject.description = 'Jodd Util'
 
