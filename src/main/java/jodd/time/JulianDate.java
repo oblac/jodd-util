@@ -62,7 +62,9 @@ import java.util.Objects;
  * the decimal point are significant.
  *
  * @see TimeUtil
+ * @deprecated "Use <a href="https://github.com/igr/julian-day">Julian Day Library</a> instead"
  */
+@Deprecated()
 public class JulianDate implements Serializable, Cloneable {
 	/**
 	 * Julian Date for 1970-01-01T00:00:00 (Thursday).
