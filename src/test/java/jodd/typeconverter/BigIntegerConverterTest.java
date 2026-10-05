@@ -47,4 +47,21 @@ class BigIntegerConverterTest {
 		assertEquals(new BigInteger("12345"), bigIntegerConverter.convert(Double.valueOf(12345.0D)));
 		assertEquals(new BigInteger("123456789"), bigIntegerConverter.convert(Long.valueOf(123456789)));
 	}
+
+    @Test
+    void convertsBigDecimalsOutsideLongRange() {
+        BigIntegerConverter converter = new BigIntegerConverter();
+        assertEquals(new BigInteger("9223372036854775808"),
+                converter.convert(new java.math.BigDecimal("9223372036854775808.75")));
+        assertEquals(new BigInteger("-9223372036854775809"),
+                converter.convert(new java.math.BigDecimal("-9223372036854775809.75")));
+    }
+
+    @Test
+    void truncatesFractionTowardZero() {
+        BigIntegerConverter converter = new BigIntegerConverter();
+        assertEquals(BigInteger.valueOf(12), converter.convert(new java.math.BigDecimal("12.75")));
+        assertEquals(BigInteger.valueOf(-12), converter.convert(new java.math.BigDecimal("-12.75")));
+    }
+
 }
